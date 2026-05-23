@@ -1,7 +1,7 @@
 package http
 
 import (
-	"fmt"
+	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -60,7 +60,10 @@ func (h *Handler) renderError(w http.ResponseWriter, r *http.Request, data Error
 		return
 	}
 
-	_, err := w.Write([]byte(fmt.Sprintf(`{"error":"%s"}`, data.ErrorDescription)))
+	b, _ := json.Marshal(map[string]string{
+		"error": data.ErrorDescription,
+	})
+	_, err := w.Write(b)
 	if err != nil {
 		log.Printf("Error writing response: %v", err)
 	}
