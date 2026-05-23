@@ -22,6 +22,10 @@ func (h *Handler) ShowMain(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) HandleSearch(query string, w http.ResponseWriter, r *http.Request) {
+
+}
+
 func (h *Handler) ShowNotFound(w http.ResponseWriter, r *http.Request) {
 	h.render404(w)
 }
