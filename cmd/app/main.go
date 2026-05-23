@@ -48,6 +48,10 @@ func main() {
 		handler.ShowMain(w, r)
 	})
 
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		handler.ShowNotFound(w, r)
+	})
+
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.ListenPort),
 		Handler:      mux,
