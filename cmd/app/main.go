@@ -53,13 +53,20 @@ func main() {
 		handler.HandleSearch(query, w, r)
 	})
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	notFound := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		handler.ShowNotFound(w, r)
 	})
 
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%d", cfg.ListenPort),
-		Handler:      mux,
+		Addr: fmt.Sprintf(":%d", cfg.ListenPort),
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			h, pattern := mux.Handler(r)
+			if pattern == "" {
+				notFound.ServeHTTP(w, r)
+				return
+			}
+			h.ServeHTTP(w, r)
+		}),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
