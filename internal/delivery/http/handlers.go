@@ -1,9 +1,11 @@
 package http
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type Handler struct {
@@ -18,7 +20,7 @@ func (h *Handler) ShowMain(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	err := h.tmpl.ExecuteTemplate(w, "main", nil)
 	if err != nil {
-		h.render500(w)
+		h.render500(w, r)
 	}
 }
 
@@ -27,29 +29,34 @@ func (h *Handler) HandleSearch(query string, w http.ResponseWriter, r *http.Requ
 }
 
 func (h *Handler) ShowNotFound(w http.ResponseWriter, r *http.Request) {
-	h.render404(w)
+	h.render404(w, r)
 }
 
-func (h *Handler) handleError(err error, w http.ResponseWriter, r *http.Request) {
-
-}
-
-func (h *Handler) render404(w http.ResponseWriter) {
+func (h *Handler) render404(w http.ResponseWriter, r *http.Request) {
 	data := ErrorPageData{ErrorCode: http.StatusNotFound, ErrorDescription: "Not Found"}
-	h.renderError(w, data)
+	h.renderError(w, r, data)
 }
 
-func (h *Handler) render500(w http.ResponseWriter) {
+func (h *Handler) render500(w http.ResponseWriter, r *http.Request) {
 	data := ErrorPageData{ErrorCode: http.StatusInternalServerError, ErrorDescription: "Internal Error"}
-	h.renderError(w, data)
+	h.renderError(w, r, data)
 }
 
-func (h *Handler) renderError(w http.ResponseWriter, data ErrorPageData) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+func (h *Handler) renderError(w http.ResponseWriter, r *http.Request, data ErrorPageData) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(data.ErrorCode)
 
-	err := h.tmpl.ExecuteTemplate(w, "error", data)
+	if strings.Contains(r.Header.Get("Accept"), "text/html") {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		err := h.tmpl.ExecuteTemplate(w, "error", data)
+		if err != nil {
+			log.Printf("Error executing template: %v", err)
+		}
+		return
+	}
+
+	_, err := w.Write([]byte(fmt.Sprintf(`{"error":"%s"}`, data.ErrorDescription)))
 	if err != nil {
-		log.Printf("Error executing template: %v", err)
+		log.Printf("Error writing response: %v", err)
 	}
 }
