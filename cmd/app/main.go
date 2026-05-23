@@ -44,7 +44,7 @@ func main() {
 
 	handler := deliveryHttp.NewHandler(tmpl)
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		handler.ShowMain(w, r)
 	})
 
