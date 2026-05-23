@@ -49,8 +49,7 @@ func main() {
 	})
 
 	mux.HandleFunc("GET /search", func(w http.ResponseWriter, r *http.Request) {
-		query := r.URL.Query().Get("q")
-		handler.HandleSearch(query, w, r)
+		handler.HandleSearch(w, r)
 	})
 
 	notFound := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
