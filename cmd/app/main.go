@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"html/template"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -12,6 +14,7 @@ import (
 	"time"
 
 	"github.com/nikitagrgv/movies/internal/config"
+	deliveryHttp "github.com/nikitagrgv/movies/internal/delivery/http"
 )
 
 func main() {
@@ -24,10 +27,24 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
+
+	staticFs, err := fs.Sub(deliveryHttp.Assets, "static")
+	if err != nil {
+		log.Fatalf("Error loading static assets: %v", err)
+	}
+
+	staticHandler := http.FileServer(http.FS(staticFs))
+	mux.Handle("/static/", http.StripPrefix("/static/", staticHandler))
+
+	tmpl, err := template.ParseFS(deliveryHttp.Assets, "templates/*.html")
+	if err != nil {
+		log.Fatalf("Error loading templates: %v", err)
+	}
+
+	handler := deliveryHttp.NewHandler(tmpl)
+
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Write([]byte("hello world"))
+		handler.ShowMain(w, r)
 	})
 
 	srv := &http.Server{
