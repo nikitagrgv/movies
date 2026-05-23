@@ -43,11 +43,16 @@ func (h *Handler) render500(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) renderError(w http.ResponseWriter, r *http.Request, data ErrorPageData) {
-	w.Header().Set("Content-Type", "application/json")
+	isHtml := strings.Contains(r.Header.Get("Accept"), "text/html")
+	if isHtml {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+	}
+
 	w.WriteHeader(data.ErrorCode)
 
-	if strings.Contains(r.Header.Get("Accept"), "text/html") {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if isHtml {
 		err := h.tmpl.ExecuteTemplate(w, "error", data)
 		if err != nil {
 			log.Printf("Error executing template: %v", err)
