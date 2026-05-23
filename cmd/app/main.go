@@ -35,6 +35,7 @@ func main() {
 
 	staticHandler := http.FileServer(http.FS(staticFs))
 	mux.Handle("/static/", http.StripPrefix("/static/", staticHandler))
+	mux.Handle("/favicon.ico", staticHandler)
 
 	tmpl, err := template.ParseFS(deliveryHttp.Assets, "templates/*.html")
 	if err != nil {
