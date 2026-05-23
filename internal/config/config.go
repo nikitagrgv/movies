@@ -8,6 +8,7 @@ import (
 
 type Config struct {
 	ListenPort int
+	TmdbAPIKey string
 }
 
 func LoadFromEnv() (Config, error) {
@@ -21,7 +22,13 @@ func LoadFromEnv() (Config, error) {
 		return Config{}, errors.New("MOVIES_LISTEN_PORT must be an integer")
 	}
 
+	tmdbKey, ok := os.LookupEnv("MOVIES_TMDB_KEY")
+	if !ok {
+		return Config{}, errors.New("MOVIES_TMDB_KEY must be set")
+	}
+
 	return Config{
 		ListenPort: port,
+		TmdbAPIKey: tmdbKey,
 	}, nil
 }
