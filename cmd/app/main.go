@@ -47,12 +47,16 @@ func main() {
 	}
 
 	noImageURL := "/static/noimage.png"
+	tmdbClient, err := tmdb.NewClient("https://api.themoviedb.org/3", cfg.TmdbToken)
+	if err != nil {
+		log.Fatalf("Error loading tmdb client: %v", err)
+	}
 
 	var searcher domain.MoviesSearcher
 	if cfg.IsStubUsed(config.SearchStub) {
 		searcher = stub.NewMovieSearcher()
 	} else {
-		searcher = tmdb.NewMovieSearcher()
+		searcher = tmdb.NewMovieSearcher(tmdbClient)
 	}
 	search := usecase.NewSearchMoviesUsecase(searcher, noImageURL)
 
@@ -60,7 +64,7 @@ func main() {
 	if cfg.IsStubUsed(config.SearchStub) {
 		getter = stub.NewMovieGetter()
 	} else {
-		getter = tmdb.NewMovieGetter()
+		getter = tmdb.NewMovieGetter(tmdbClient)
 	}
 	get := usecase.NewGetMovieUsecase(getter, noImageURL)
 

@@ -6,10 +6,12 @@ import (
 	"github.com/nikitagrgv/movies/internal/domain"
 )
 
-type MovieSearcher struct{}
+type MovieSearcher struct {
+	client *Client
+}
 
-func NewMovieSearcher() *MovieSearcher {
-	return &MovieSearcher{}
+func NewMovieSearcher(client *Client) *MovieSearcher {
+	return &MovieSearcher{client: client}
 }
 
 func (MovieSearcher) SearchMovies(ctx context.Context, query string, page int) (domain.SearchMoviesResult, error) {

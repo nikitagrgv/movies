@@ -6,10 +6,12 @@ import (
 	"github.com/nikitagrgv/movies/internal/domain"
 )
 
-type MovieGetter struct{}
+type MovieGetter struct {
+	client *Client
+}
 
-func NewMovieGetter() *MovieGetter {
-	return &MovieGetter{}
+func NewMovieGetter(client *Client) *MovieGetter {
+	return &MovieGetter{client: client}
 }
 
 func (g MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error) {
