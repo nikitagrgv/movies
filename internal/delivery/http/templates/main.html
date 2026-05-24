@@ -9,21 +9,7 @@
 </head>
 <body>
 
-<div class="search-wrapper">
-    <form class="search-form" action="/search" method="GET">
-        <input
-                type="text"
-                name="s"
-                class="search-input"
-                placeholder="Search..."
-                autocomplete="off"
-        >
-
-        <button type="submit" class="search-button">
-            Search
-        </button>
-    </form>
-</div>
+{{template "search-form" .}}
 
 </body>
 </html>

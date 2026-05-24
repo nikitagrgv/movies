@@ -12,48 +12,13 @@
 <div class="container">
     <div class="search-header">
         <a href="/" class="back-link" aria-label="Back to homepage">← Home</a>
-        <div class="search-wrapper">
-            <form class="search-form" action="/search" method="GET">
-                <div class="search-type-toggle">
-                    <button type="button" class="toggle-segment toggle-segment--active" data-type="movie">Movie</button>
-                    <button type="button" class="toggle-segment" data-type="tv">TV Show</button>
-                </div>
-                <input
-                        type="text"
-                        name="s"
-                        class="search-input"
-                        placeholder="Search movies..."
-                        value="{{.SearchString}}"
-                        autocomplete="off"
-                >
-                <button type="submit" class="search-button">Search</button>
-            </form>
-        </div>
+        {{template "search-form" .}}
     </div>
 
     <h1 class="results-heading">
         Results for "{{.SearchString}}"
         <span class="results-range">{{.CurrentPage}} of {{.TotalPages}}</span>
     </h1>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const toggleSegments = document.querySelectorAll('.toggle-segment');
-            const searchInput = document.querySelector('.search-input');
-            const searchForm = document.querySelector('.search-form');
-
-            toggleSegments.forEach(segment => {
-                segment.addEventListener('click', function () {
-                    toggleSegments.forEach(s => s.classList.remove('toggle-segment--active'));
-                    this.classList.add('toggle-segment--active');
-
-                    const type = this.getAttribute('data-type');
-                    searchInput.placeholder = type === 'movie' ? 'Search movies...' : 'Search TV shows...';
-                    searchInput.name = type === 'movie' ? 's' : 'tv';
-                });
-            });
-        });
-    </script>
 
     {{if .Movies}}
     <div class="movies-grid">

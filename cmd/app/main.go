@@ -41,7 +41,7 @@ func main() {
 	mux.Handle("/static/", http.StripPrefix("/static/", staticHandler))
 	mux.Handle("/favicon.ico", staticHandler)
 
-	tmpl, err := template.ParseFS(deliveryHttp.Assets, "templates/*.html")
+	tmpl, err := template.ParseFS(deliveryHttp.Assets, "templates/*.html", "templates/partials/*.html")
 	if err != nil {
 		log.Fatalf("Error loading templates: %v", err)
 	}
