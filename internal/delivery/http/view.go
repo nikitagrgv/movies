@@ -15,3 +15,8 @@ type SearchPageData struct {
 	NextPage     int
 	Movies       []domain.Movie
 }
+
+type MovieView struct {
+	MovieID int
+	Title   string
+}

@@ -14,9 +14,10 @@ import (
 type Handler struct {
 	tmpl   *template.Template
 	search *usecase.SearchMoviesUsecase
+	get    *usecase.GetMovieUsecase
 }
 
-func NewHandler(tmpl *template.Template, search *usecase.SearchMoviesUsecase) *Handler {
+func NewHandler(tmpl *template.Template, search *usecase.SearchMoviesUsecase, get *usecase.GetMovieUsecase) *Handler {
 	return &Handler{tmpl: tmpl, search: search}
 }
 
@@ -64,8 +65,37 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		h.render400(w, r)
+	}
+
+	movie, err := h.get.GetMovie(r.Context(), id)
+	if err != nil {
+		h.render500(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	data := MovieView{
+		MovieID: id,
+		Title:   movie.Title,
+	}
+	err = h.tmpl.ExecuteTemplate(w, "movie", data)
+	if err != nil {
+		h.render500(w, r)
+	}
+}
+
 func (h *Handler) ShowNotFound(w http.ResponseWriter, r *http.Request) {
 	h.render404(w, r)
+}
+
+func (h *Handler) render400(w http.ResponseWriter, r *http.Request) {
+	data := ErrorPageData{ErrorCode: http.StatusBadRequest, ErrorDescription: "Bad Request"}
+	h.renderError(w, r, data)
 }
 
 func (h *Handler) render404(w http.ResponseWriter, r *http.Request) {

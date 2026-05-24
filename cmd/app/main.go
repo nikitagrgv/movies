@@ -44,10 +44,17 @@ func main() {
 		log.Fatalf("Error loading templates: %v", err)
 	}
 
-	//searcher := tmdb.NewTMDBMovieSearcher()
+	noImageURL := "/static/noimage.png"
+
+	//searcher := tmdb.NewMovieSearcher()
 	searcher := stub.NewMovieSearcher()
-	search := usecase.NewSearchMoviesUsecase(searcher, "/static/noimage.png")
-	handler := deliveryHttp.NewHandler(tmpl, search)
+	search := usecase.NewSearchMoviesUsecase(searcher, noImageURL)
+
+	//getter := tmdb.NewMovieGetter()
+	getter := stub.NewMovieGetter()
+	get := usecase.NewGetMovieUsecase(getter, noImageURL)
+
+	handler := deliveryHttp.NewHandler(tmpl, search, get)
 
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		handler.ShowMain(w, r)
@@ -55,6 +62,11 @@ func main() {
 
 	mux.HandleFunc("GET /search", func(w http.ResponseWriter, r *http.Request) {
 		handler.HandleSearch(w, r)
+	})
+
+	mux.HandleFunc("GET /movie/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		handler.HandleMovie(id, w, r)
 	})
 
 	notFound := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

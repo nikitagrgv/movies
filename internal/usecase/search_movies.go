@@ -11,8 +11,8 @@ type SearchMoviesUsecase struct {
 	noImageURL string
 }
 
-func NewSearchMoviesUsecase(searcher domain.MoviesSearcher, noImageUrl string) *SearchMoviesUsecase {
-	return &SearchMoviesUsecase{searcher: searcher, noImageURL: noImageUrl}
+func NewSearchMoviesUsecase(searcher domain.MoviesSearcher, noImageURL string) *SearchMoviesUsecase {
+	return &SearchMoviesUsecase{searcher: searcher, noImageURL: noImageURL}
 }
 
 func (u *SearchMoviesUsecase) SearchMovies(ctx context.Context, query string, page int) (domain.SearchMoviesResult, error) {
