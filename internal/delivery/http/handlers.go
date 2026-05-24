@@ -25,8 +25,15 @@ func (h *Handler) ShowMain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
-	query := r.URL.Query().Get("q")
-	_ = query
+	query := r.URL.Query().Get("s")
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	data := SearchPageData{SearchString: query}
+	err := h.tmpl.ExecuteTemplate(w, "search", data)
+	if err != nil {
+		h.render500(w, r)
+	}
 }
 
 func (h *Handler) ShowNotFound(w http.ResponseWriter, r *http.Request) {
