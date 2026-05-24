@@ -2,7 +2,7 @@
 <div class="search-wrapper">
     <form class="search-form" action="/search" method="GET">
         <div class="search-type-toggle">
-            <button type="button" class="toggle-segment toggle-segment--active" data-type="movie">Movies</button>
+            <button type="button" class="toggle-segment" data-type="movie">Movies</button>
             <button type="button" class="toggle-segment" data-type="tv">TV Shows</button>
         </div>
         <input
@@ -23,6 +23,16 @@
         const toggleSegments = document.querySelectorAll('.toggle-segment');
         const searchInput = document.querySelector('.search-input');
 
+        const savedType = localStorage.getItem('searchType') || 'movie';
+        const activeSegment = document.querySelector(`.toggle-segment[data-type="${savedType}"]`);
+
+        if (activeSegment) {
+            toggleSegments.forEach(s => s.classList.remove('toggle-segment--active'));
+            activeSegment.classList.add('toggle-segment--active');
+            searchInput.placeholder = savedType === 'movie' ? 'Search movies...' : 'Search TV shows...';
+            searchInput.name = savedType === 'movie' ? 's' : 'tv';
+        }
+
         toggleContainer.addEventListener('click', function (e) {
             const clickedSegment = e.target.closest('.toggle-segment');
             if (clickedSegment) {
@@ -32,6 +42,8 @@
                 const type = clickedSegment.getAttribute('data-type');
                 searchInput.placeholder = type === 'movie' ? 'Search movies...' : 'Search TV shows...';
                 searchInput.name = type === 'movie' ? 's' : 'tv';
+
+                localStorage.setItem('searchType', type);
             }
         });
     });
