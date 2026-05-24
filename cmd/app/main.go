@@ -15,7 +15,7 @@ import (
 
 	"github.com/nikitagrgv/movies/internal/config"
 	deliveryHttp "github.com/nikitagrgv/movies/internal/delivery/http"
-	"github.com/nikitagrgv/movies/internal/infrastructure/tmdb"
+	"github.com/nikitagrgv/movies/internal/infrastructure/movie_searcher/stub"
 	"github.com/nikitagrgv/movies/internal/usecase"
 )
 
@@ -44,7 +44,8 @@ func main() {
 		log.Fatalf("Error loading templates: %v", err)
 	}
 
-	searcher := tmdb.NewTMDBMovieSearcher()
+	//searcher := tmdb.NewTMDBMovieSearcher()
+	searcher := stub.NewMovieSearcher()
 	search := usecase.NewSearchMovieUsecase(searcher)
 	handler := deliveryHttp.NewHandler(tmpl, search)
 
