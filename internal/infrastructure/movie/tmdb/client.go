@@ -40,12 +40,7 @@ func NewClient(baseURL string, imageURL string, token string) (*Client, error) {
 }
 
 func (c *Client) get(ctx context.Context, path string, query url.Values, out any) error {
-	rel, err := url.Parse(path)
-	if err != nil {
-		return err
-	}
-
-	full := c.baseURL.ResolveReference(rel)
+	full := c.baseURL.JoinPath(path)
 	full.RawQuery = query.Encode()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, full.String(), nil)

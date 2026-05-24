@@ -31,7 +31,7 @@ func (s *MovieSearcher) SearchMovies(ctx context.Context, query string, page int
 
 	err := s.client.get(
 		ctx,
-		"/search/movies",
+		"/search/movie",
 		url.Values{
 			"query": {query},
 			"page":  {strconv.Itoa(page)},
