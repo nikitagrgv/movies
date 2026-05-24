@@ -42,7 +42,15 @@
             localStorage.setItem('searchType', type);
         }
 
-        applyType(localStorage.getItem('searchType') || 'movie');
+        const params = new URLSearchParams(window.location.search);
+        const urlType = params.get('type');
+
+        const initialType =
+            urlType === 'movie' || urlType === 'tv'
+                ? urlType
+                : localStorage.getItem('searchType') || 'movie';
+
+        applyType(initialType);
 
         toggleContainer.addEventListener('click', function (e) {
             const clickedSegment = e.target.closest('.toggle-segment');
