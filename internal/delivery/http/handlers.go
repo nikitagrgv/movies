@@ -13,10 +13,10 @@ import (
 
 type Handler struct {
 	tmpl   *template.Template
-	search *usecase.SearchMovieUsecase
+	search *usecase.SearchMoviesUsecase
 }
 
-func NewHandler(tmpl *template.Template, search *usecase.SearchMovieUsecase) *Handler {
+func NewHandler(tmpl *template.Template, search *usecase.SearchMoviesUsecase) *Handler {
 	return &Handler{tmpl: tmpl, search: search}
 }
 
@@ -42,7 +42,7 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		page = p
 	}
 
-	result, err := h.search.SearchMovie(r.Context(), query, page)
+	result, err := h.search.SearchMovies(r.Context(), query, page)
 	if err != nil {
 		h.render500(w, r)
 		return

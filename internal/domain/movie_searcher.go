@@ -2,12 +2,12 @@ package domain
 
 import "context"
 
-type SearchMovieResult struct {
+type SearchMoviesResult struct {
 	Movies      []Movie
 	CurrentPage int
 	TotalPages  int
 }
 
-type MovieSearcher interface {
-	SearchMovie(ctx context.Context, query string, page int) (SearchMovieResult, error)
+type MoviesSearcher interface {
+	SearchMovies(ctx context.Context, query string, page int) (SearchMoviesResult, error)
 }

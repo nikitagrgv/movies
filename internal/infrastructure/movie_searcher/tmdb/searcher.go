@@ -12,7 +12,7 @@ func NewMovieSearcher() *MovieSearcher {
 	return &MovieSearcher{}
 }
 
-func (MovieSearcher) SearchMovie(ctx context.Context, query string, page int) (domain.SearchMovieResult, error) {
+func (MovieSearcher) SearchMovies(ctx context.Context, query string, page int) (domain.SearchMoviesResult, error) {
 
-	return domain.SearchMovieResult{}, nil
+	return domain.SearchMoviesResult{}, nil
 }

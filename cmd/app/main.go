@@ -46,7 +46,7 @@ func main() {
 
 	//searcher := tmdb.NewTMDBMovieSearcher()
 	searcher := stub.NewMovieSearcher()
-	search := usecase.NewSearchMovieUsecase(searcher)
+	search := usecase.NewSearchMoviesUsecase(searcher, "/static/noimage.png")
 	handler := deliveryHttp.NewHandler(tmpl, search)
 
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {

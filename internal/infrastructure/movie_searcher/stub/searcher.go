@@ -14,9 +14,9 @@ func NewMovieSearcher() *MovieSearcher {
 	return &MovieSearcher{}
 }
 
-func (MovieSearcher) SearchMovie(ctx context.Context, query string, page int) (domain.SearchMovieResult, error) {
+func (MovieSearcher) SearchMovies(ctx context.Context, query string, page int) (domain.SearchMoviesResult, error) {
 	if page < 1 || page > 3 {
-		return domain.SearchMovieResult{}, errors.New("invalid page")
+		return domain.SearchMoviesResult{}, errors.New("invalid page")
 	}
 
 	var movies []domain.Movie
@@ -36,7 +36,7 @@ func (MovieSearcher) SearchMovie(ctx context.Context, query string, page int) (d
 		movies = append(movies, genMovie(query, 9))
 	}
 
-	return domain.SearchMovieResult{Movies: movies, CurrentPage: page, TotalPages: 3}, nil
+	return domain.SearchMoviesResult{Movies: movies, CurrentPage: page, TotalPages: 3}, nil
 }
 
 func genMovie(query string, index int) domain.Movie {
