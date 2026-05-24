@@ -25,7 +25,7 @@
         const searchInput = document.querySelector('.search-input');
         const typeInput = document.querySelector('input[name="type"]');
 
-        function applyType(type) {
+        function applyType(type, save) {
             toggleSegments.forEach(segment => {
                 segment.classList.toggle(
                     'toggle-segment--active',
@@ -39,7 +39,9 @@
                     : 'Search TV shows...';
 
             typeInput.value = type;
-            localStorage.setItem('searchType', type);
+            if (save) {
+                localStorage.setItem('searchType', type);
+            }
         }
 
         const params = new URLSearchParams(window.location.search);
@@ -50,7 +52,7 @@
                 ? urlType
                 : localStorage.getItem('searchType') || 'movie';
 
-        applyType(initialType);
+        applyType(initialType, false);
 
         toggleContainer.addEventListener('click', function (e) {
             const clickedSegment = e.target.closest('.toggle-segment');
@@ -58,7 +60,7 @@
                 return;
             }
 
-            applyType(clickedSegment.dataset.type);
+            applyType(clickedSegment.dataset.type, true);
         });
     });
 </script>
