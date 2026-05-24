@@ -13,6 +13,7 @@
                 value="{{.SearchString}}"
                 autocomplete="off"
         >
+        <input type="hidden" name="type" value="movie">
         <button type="submit" class="search-button">Search</button>
     </form>
 </div>
@@ -22,6 +23,7 @@
         const toggleContainer = document.querySelector('.search-type-toggle');
         const toggleSegments = document.querySelectorAll('.toggle-segment');
         const searchInput = document.querySelector('.search-input');
+        const typeInput = document.querySelector('input[name="type"]');
 
         const savedType = localStorage.getItem('searchType') || 'movie';
         const activeSegment = document.querySelector(`.toggle-segment[data-type="${savedType}"]`);
@@ -30,7 +32,7 @@
             toggleSegments.forEach(s => s.classList.remove('toggle-segment--active'));
             activeSegment.classList.add('toggle-segment--active');
             searchInput.placeholder = savedType === 'movie' ? 'Search movies...' : 'Search TV shows...';
-            searchInput.name = savedType === 'movie' ? 's' : 'tv';
+            typeInput.value = savedType;
         }
 
         toggleContainer.addEventListener('click', function (e) {
@@ -41,7 +43,7 @@
 
                 const type = clickedSegment.getAttribute('data-type');
                 searchInput.placeholder = type === 'movie' ? 'Search movies...' : 'Search TV shows...';
-                searchInput.name = type === 'movie' ? 's' : 'tv';
+                typeInput.value = type;
 
                 localStorage.setItem('searchType', type);
             }
