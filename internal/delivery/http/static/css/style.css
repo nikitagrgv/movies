@@ -320,7 +320,7 @@ body:has(.error-container) {
     margin: 16px auto;
 }
 
-.error-description {
+.error-title {
     font-size: 18px;
     color: #b0b0b0;
     margin: 0 0 32px 0;
@@ -385,7 +385,7 @@ body:has(.error-container) {
         font-size: 52px;
     }
 
-    .error-description {
+    .error-title {
         font-size: 15px;
     }
 

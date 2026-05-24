@@ -3,8 +3,8 @@ package http
 import "github.com/nikitagrgv/movies/internal/domain"
 
 type ErrorPageData struct {
-	ErrorCode        int
-	ErrorDescription string
+	ErrorCode  int
+	ErrorTitle string
 }
 
 type SearchPageData struct {

@@ -97,17 +97,17 @@ func (h *Handler) ShowNotFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) render400(w http.ResponseWriter, r *http.Request) {
-	data := ErrorPageData{ErrorCode: http.StatusBadRequest, ErrorDescription: "Bad Request"}
+	data := ErrorPageData{ErrorCode: http.StatusBadRequest, ErrorTitle: "Bad Request"}
 	h.renderError(w, r, data)
 }
 
 func (h *Handler) render404(w http.ResponseWriter, r *http.Request) {
-	data := ErrorPageData{ErrorCode: http.StatusNotFound, ErrorDescription: "Not Found"}
+	data := ErrorPageData{ErrorCode: http.StatusNotFound, ErrorTitle: "Not Found"}
 	h.renderError(w, r, data)
 }
 
 func (h *Handler) render500(w http.ResponseWriter, r *http.Request) {
-	data := ErrorPageData{ErrorCode: http.StatusInternalServerError, ErrorDescription: "Internal Error"}
+	data := ErrorPageData{ErrorCode: http.StatusInternalServerError, ErrorTitle: "Internal Error"}
 	h.renderError(w, r, data)
 }
 
@@ -130,7 +130,7 @@ func (h *Handler) renderError(w http.ResponseWriter, r *http.Request, data Error
 	}
 
 	b, _ := json.Marshal(map[string]string{
-		"error": data.ErrorDescription,
+		"error": data.ErrorTitle,
 	})
 	_, err := w.Write(b)
 	if err != nil {
