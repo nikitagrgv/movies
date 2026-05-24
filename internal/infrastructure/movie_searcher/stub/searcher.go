@@ -19,7 +19,7 @@ func (MovieSearcher) SearchMovies(ctx context.Context, query string, page int) (
 		return domain.SearchMoviesResult{}, errors.New("invalid page")
 	}
 
-	var movies []domain.Movie
+	var movies []domain.Movie = make([]domain.Movie, 0, 3)
 	if page == 1 {
 		movies = append(movies, genMovie(query, 1))
 		movies = append(movies, genMovie(query, 2))

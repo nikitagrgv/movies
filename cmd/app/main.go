@@ -15,7 +15,9 @@ import (
 
 	"github.com/nikitagrgv/movies/internal/config"
 	deliveryHttp "github.com/nikitagrgv/movies/internal/delivery/http"
+	"github.com/nikitagrgv/movies/internal/domain"
 	"github.com/nikitagrgv/movies/internal/infrastructure/movie_searcher/stub"
+	"github.com/nikitagrgv/movies/internal/infrastructure/movie_searcher/tmdb"
 	"github.com/nikitagrgv/movies/internal/usecase"
 )
 
@@ -46,12 +48,20 @@ func main() {
 
 	noImageURL := "/static/noimage.png"
 
-	//searcher := tmdb.NewMovieSearcher()
-	searcher := stub.NewMovieSearcher()
+	var searcher domain.MoviesSearcher
+	if cfg.IsStubUsed(config.SearchStub) {
+		searcher = stub.NewMovieSearcher()
+	} else {
+		searcher = tmdb.NewMovieSearcher()
+	}
 	search := usecase.NewSearchMoviesUsecase(searcher, noImageURL)
 
-	//getter := tmdb.NewMovieGetter()
-	getter := stub.NewMovieGetter()
+	var getter domain.MovieGetter
+	if cfg.IsStubUsed(config.SearchStub) {
+		getter = stub.NewMovieGetter()
+	} else {
+		getter = tmdb.NewMovieGetter()
+	}
 	get := usecase.NewGetMovieUsecase(getter, noImageURL)
 
 	handler := deliveryHttp.NewHandler(tmpl, search, get)
