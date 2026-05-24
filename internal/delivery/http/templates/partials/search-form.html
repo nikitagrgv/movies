@@ -19,19 +19,20 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const toggleContainer = document.querySelector('.search-type-toggle');
     const toggleSegments = document.querySelectorAll('.toggle-segment');
     const searchInput = document.querySelector('.search-input');
-    const searchForm = document.querySelector('.search-form');
     
-    toggleSegments.forEach(segment => {
-        segment.addEventListener('click', function() {
+    toggleContainer.addEventListener('click', function(e) {
+        const clickedSegment = e.target.closest('.toggle-segment');
+        if (clickedSegment) {
             toggleSegments.forEach(s => s.classList.remove('toggle-segment--active'));
-            this.classList.add('toggle-segment--active');
+            clickedSegment.classList.add('toggle-segment--active');
             
-            const type = this.getAttribute('data-type');
+            const type = clickedSegment.getAttribute('data-type');
             searchInput.placeholder = type === 'movie' ? 'Search movies...' : 'Search TV shows...';
             searchInput.name = type === 'movie' ? 's' : 'tv';
-        });
+        }
     });
 });
 </script>

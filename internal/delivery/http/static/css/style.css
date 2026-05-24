@@ -86,7 +86,7 @@ body:has(.search-form) .search-wrapper {
     outline: none;
 }
 
-.toggle-segment:hover {
+.toggle-segment:hover:not(.toggle-segment--active) {
     background: #353535;
     color: #ffffff;
 }
