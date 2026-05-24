@@ -37,14 +37,21 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		p, err := strconv.Atoi(pageStr)
 		if err != nil {
 			h.render500(w, r)
+			return
 		}
 		page = p
 	}
 
+	result, err := h.search.SearchMovie(r.Context(), query, page)
+	if err != nil {
+		h.render500(w, r)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	data := SearchPageData{SearchString: query, Page: page}
-	err := h.tmpl.ExecuteTemplate(w, "search", data)
+	data := SearchPageData{SearchString: query, CurrentPage: page, TotalPages: result.TotalPages, Movies: result.Movies}
+	err = h.tmpl.ExecuteTemplate(w, "search", data)
 	if err != nil {
 		h.render500(w, r)
 	}

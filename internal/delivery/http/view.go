@@ -1,5 +1,7 @@
 package http
 
+import "github.com/nikitagrgv/movies/internal/domain"
+
 type ErrorPageData struct {
 	ErrorCode        int
 	ErrorDescription string
@@ -7,5 +9,7 @@ type ErrorPageData struct {
 
 type SearchPageData struct {
 	SearchString string
-	Page         int
+	CurrentPage  int
+	TotalPages   int
+	Movies       []domain.Movie
 }
