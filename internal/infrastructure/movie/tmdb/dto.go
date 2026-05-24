@@ -11,3 +11,11 @@ type SearchMovieResponse struct {
 		PosterPath   string `json:"poster_path"`
 	} `json:"results"`
 }
+
+type GetMovieResponse struct {
+	ID          int    `json:"id"`
+	Title       string `json:"title"`
+	Overview    string `json:"overview"`
+	ReleaseDate string `json:"release_date"`
+	PosterPath  string `json:"poster_path"`
+}
