@@ -25,28 +25,32 @@
         const searchInput = document.querySelector('.search-input');
         const typeInput = document.querySelector('input[name="type"]');
 
-        const savedType = localStorage.getItem('searchType') || 'movie';
-        const activeSegment = document.querySelector(`.toggle-segment[data-type="${savedType}"]`);
+        function applyType(type) {
+            toggleSegments.forEach(segment => {
+                segment.classList.toggle(
+                    'toggle-segment--active',
+                    segment.dataset.type === type
+                );
+            });
 
-        if (activeSegment) {
-            toggleSegments.forEach(s => s.classList.remove('toggle-segment--active'));
-            activeSegment.classList.add('toggle-segment--active');
-            searchInput.placeholder = savedType === 'movie' ? 'Search movies...' : 'Search TV shows...';
-            typeInput.value = savedType;
+            searchInput.placeholder =
+                type === 'movie'
+                    ? 'Search movies...'
+                    : 'Search TV shows...';
+
+            typeInput.value = type;
+            localStorage.setItem('searchType', type);
         }
+
+        applyType(localStorage.getItem('searchType') || 'movie');
 
         toggleContainer.addEventListener('click', function (e) {
             const clickedSegment = e.target.closest('.toggle-segment');
-            if (clickedSegment) {
-                toggleSegments.forEach(s => s.classList.remove('toggle-segment--active'));
-                clickedSegment.classList.add('toggle-segment--active');
-
-                const type = clickedSegment.getAttribute('data-type');
-                searchInput.placeholder = type === 'movie' ? 'Search movies...' : 'Search TV shows...';
-                typeInput.value = type;
-
-                localStorage.setItem('searchType', type);
+            if (!clickedSegment) {
+                return;
             }
+
+            applyType(clickedSegment.dataset.type);
         });
     });
 </script>
