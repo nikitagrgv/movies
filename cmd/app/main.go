@@ -69,20 +69,11 @@ func main() {
 		handler.HandleMovie(id, w, r)
 	})
 
-	notFound := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		handler.ShowNotFound(w, r)
-	})
+	mux.HandleFunc("/", handler.ShowNotFound)
 
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%d", cfg.ListenPort),
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			h, pattern := mux.Handler(r)
-			if pattern == "" {
-				notFound.ServeHTTP(w, r)
-				return
-			}
-			h.ServeHTTP(w, r)
-		}),
+		Addr:         fmt.Sprintf(":%d", cfg.ListenPort),
+		Handler:      mux,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
