@@ -36,11 +36,12 @@
     <div class="movies-grid">
         {{range .Movies}}
         <article class="movie-card">
-            <a class="movie-poster" href="/movie/{{.ID}}">
-                <img src="{{.PosterURL}}" alt="{{.Title}}" loading="lazy">
-            </a>
+            <a class="movie-card-link" href="/movie/{{.ID}}" aria-label="{{.Title}}"></a>
+            <img class="movie-poster" src="{{.PosterURL}}" alt="{{.Title}}" loading="lazy">
             <div class="movie-info">
-                <h2 class="movie-title"><a href="/movie/{{.ID}}">{{.Title}}</a></h2>
+                <h2 class="movie-title">
+                    <a href="/movie/{{.ID}}">{{.Title}}</a>
+                </h2>
                 {{if .Overview}}
                 <p class="movie-overview">{{.Overview}}</p>
                 {{end}}

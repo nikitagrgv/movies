@@ -60,18 +60,16 @@ body:has(.search-form) .search-wrapper {
     border: 1px solid #2f2f2f;
     border-radius: 22px;
     padding: 12px 14px;
-    box-shadow:
-        0 0 0 1px rgba(255,255,255,0.02),
-        0 8px 30px rgba(0,0,0,0.45);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02),
+    0 8px 30px rgba(0, 0, 0, 0.45);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
 }
 
 .search-form:focus-within {
     border-color: #4a4a4a;
-    box-shadow:
-        0 0 0 1px rgba(255,255,255,0.04),
-        0 10px 35px rgba(0,0,0,0.55);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 10px 35px rgba(0, 0, 0, 0.55);
 }
 
 .search-input {
@@ -133,6 +131,7 @@ body:has(.search-form) .search-wrapper {
 }
 
 .movie-card {
+    position: relative;
     display: flex;
     gap: 16px;
     background: #1e1e1e;
@@ -141,6 +140,18 @@ body:has(.search-form) .search-wrapper {
     padding: 16px;
     transition: border-color 0.2s ease, transform 0.15s ease;
     overflow: hidden;
+}
+
+.movie-card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: 16px;
+}
+
+.movie-card a:not(.movie-card-link) {
+    position: relative;
+    z-index: 2;
 }
 
 .movie-card:hover {
@@ -285,9 +296,8 @@ body:has(.error-container) {
     background: #1e1e1e;
     border: 1px solid #2f2f2f;
     border-radius: 22px;
-    box-shadow:
-        0 0 0 1px rgba(255,255,255,0.02),
-        0 8px 30px rgba(0,0,0,0.45);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02),
+    0 8px 30px rgba(0, 0, 0, 0.45);
     max-width: 520px;
     width: 90%;
     box-sizing: border-box;
