@@ -74,6 +74,10 @@ func (c *Client) get(ctx context.Context, path string, query url.Values, out any
 }
 
 func (c *Client) getImageURL(path string) string {
+	if path == "" {
+		return ""
+	}
+
 	// TODO: hardcoded size 200
 	path = strings.TrimPrefix(path, "/")
 	full := c.imageURL.JoinPath("w200", path)
