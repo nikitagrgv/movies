@@ -5,15 +5,19 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
+
+	"github.com/nikitagrgv/movies/internal/usecase"
 )
 
 type Handler struct {
-	tmpl *template.Template
+	tmpl   *template.Template
+	search *usecase.SearchMovieUsecase
 }
 
-func NewHandler(tmpl *template.Template) *Handler {
-	return &Handler{tmpl: tmpl}
+func NewHandler(tmpl *template.Template, search *usecase.SearchMovieUsecase) *Handler {
+	return &Handler{tmpl: tmpl, search: search}
 }
 
 func (h *Handler) ShowMain(w http.ResponseWriter, r *http.Request) {
@@ -26,10 +30,20 @@ func (h *Handler) ShowMain(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("s")
+	pageStr := r.URL.Query().Get("p")
+
+	var page int = 0
+	if pageStr != "" {
+		p, err := strconv.Atoi(pageStr)
+		if err != nil {
+			h.render500(w, r)
+		}
+		page = p
+	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	data := SearchPageData{SearchString: query}
+	data := SearchPageData{SearchString: query, Page: page}
 	err := h.tmpl.ExecuteTemplate(w, "search", data)
 	if err != nil {
 		h.render500(w, r)

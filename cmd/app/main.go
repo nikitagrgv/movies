@@ -15,6 +15,8 @@ import (
 
 	"github.com/nikitagrgv/movies/internal/config"
 	deliveryHttp "github.com/nikitagrgv/movies/internal/delivery/http"
+	"github.com/nikitagrgv/movies/internal/infrastructure/tmdb"
+	"github.com/nikitagrgv/movies/internal/usecase"
 )
 
 func main() {
@@ -42,7 +44,9 @@ func main() {
 		log.Fatalf("Error loading templates: %v", err)
 	}
 
-	handler := deliveryHttp.NewHandler(tmpl)
+	searcher := tmdb.NewTMDBMovieSearcher()
+	search := usecase.NewSearchMovieUsecase(searcher)
+	handler := deliveryHttp.NewHandler(tmpl, search)
 
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		handler.ShowMain(w, r)

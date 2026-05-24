@@ -7,4 +7,5 @@ type ErrorPageData struct {
 
 type SearchPageData struct {
 	SearchString string
+	Page         int
 }
