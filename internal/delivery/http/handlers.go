@@ -18,7 +18,7 @@ type Handler struct {
 }
 
 func NewHandler(tmpl *template.Template, search *usecase.SearchMoviesUsecase, get *usecase.GetMovieUsecase) *Handler {
-	return &Handler{tmpl: tmpl, search: search}
+	return &Handler{tmpl: tmpl, search: search, get: get}
 }
 
 func (h *Handler) ShowMain(w http.ResponseWriter, r *http.Request) {
