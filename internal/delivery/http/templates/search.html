@@ -3,11 +3,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Movies: {{.SearchString}}</title>
+    <title>Search results: {{.SearchString}}</title>
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
+
+<h1>Results</h1>
+
+<div>
+    {{range .Movies}}
+    <div class="movie">
+        <img src="{{.PosterURL}}" alt="{{.Title}}" width="120">
+        <h2>{{.Title}}</h2>
+        <p>{{.Overview}}</p>
+        <small>Release: {{.ReleaseDate}}</small>
+    </div>
+    <hr>
+    {{end}}
+</div>
+
+<div class="pagination">
+    <p>Page {{.CurrentPage}} / {{.TotalPages}}</p>
+</div>
 
 </body>
 </html>
