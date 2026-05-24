@@ -30,7 +30,18 @@ func NewClient(baseURL string, imageURL string, token string) (*Client, error) {
 		return nil, err
 	}
 
-	c := &http.Client{Timeout: 5 * time.Second}
+	tr := &http.Transport{
+		MaxIdleConns:        100,
+		MaxIdleConnsPerHost: 10,
+		IdleConnTimeout:     30 * time.Second,
+		DisableCompression:  false,
+		ForceAttemptHTTP2:   true,
+	}
+
+	c := &http.Client{
+		Transport: tr,
+		Timeout:   5 * time.Second,
+	}
 	return &Client{
 		baseURL:    base,
 		imageURL:   image,
@@ -51,10 +62,19 @@ func (c *Client) get(ctx context.Context, path string, query url.Values, out any
 	req.Header.Set("Authorization", "Bearer "+c.token)
 	req.Header.Set("Accept", "application/json")
 
-	resp, err := c.httpClient.Do(req)
+	var resp *http.Response
+	for i := 0; i < 3; i++ {
+		resp, err = c.httpClient.Do(req)
+		if err == nil {
+			break
+		}
+		time.Sleep(time.Duration(i+1) * 200 * time.Millisecond)
+	}
+
 	if err != nil {
 		return err
 	}
+
 	defer func(body io.ReadCloser) {
 		err := body.Close()
 		if err != nil {
