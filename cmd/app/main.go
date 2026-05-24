@@ -16,8 +16,8 @@ import (
 	"github.com/nikitagrgv/movies/internal/config"
 	deliveryHttp "github.com/nikitagrgv/movies/internal/delivery/http"
 	"github.com/nikitagrgv/movies/internal/domain"
-	"github.com/nikitagrgv/movies/internal/infrastructure/movie_searcher/stub"
-	"github.com/nikitagrgv/movies/internal/infrastructure/movie_searcher/tmdb"
+	"github.com/nikitagrgv/movies/internal/infrastructure/movie/stub"
+	"github.com/nikitagrgv/movies/internal/infrastructure/movie/tmdb"
 	"github.com/nikitagrgv/movies/internal/usecase"
 )
 
