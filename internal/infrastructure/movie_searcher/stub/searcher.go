@@ -43,8 +43,8 @@ func genMovie(query string, index int) domain.Movie {
 	name := query + " " + strconv.Itoa(index)
 	movie := domain.Movie{
 		ID:          index,
-		Title:       "title " + name,
-		Overview:    "overview " + name,
+		Title:       name,
+		Overview:    name + " is a beautiful movie about love... I cried!",
 		PosterURL:   "",
 		ReleaseDate: "01-01-2021",
 	}
