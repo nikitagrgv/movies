@@ -80,8 +80,11 @@ func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Reque
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	data := MovieView{
-		MovieID: id,
-		Title:   movie.Title,
+		MovieID:     id,
+		Title:       movie.Title,
+		Overview:    movie.Overview,
+		PosterURL:   movie.PosterURL,
+		ReleaseDate: movie.ReleaseDate,
 	}
 	err = h.tmpl.ExecuteTemplate(w, "movie", data)
 	if err != nil {

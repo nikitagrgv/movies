@@ -3,13 +3,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}}</title>
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
 
+<div class="container">
+    <a href="javascript:history.back()" class="back-link">← Back</a>
 
+    <div class="movie-detail">
+        <div class="movie-detail__main">
+            <div class="movie-detail__poster">
+                <img src="{{.PosterURL}}" alt="{{.Title}}">
+            </div>
+
+            <div class="movie-detail__info">
+                <h1 class="movie-detail__title">{{.Title}}</h1>
+
+                {{if .ReleaseDate}}
+                <div class="movie-detail__meta">
+                    <span class="movie-detail__date">{{.ReleaseDate}}</span>
+                </div>
+                {{end}}
+
+                {{if .Overview}}
+                <div class="movie-detail__section">
+                    <h2 class="movie-detail__section-title">Overview</h2>
+                    <p class="movie-detail__overview">{{.Overview}}</p>
+                </div>
+                {{end}}
+            </div>
+        </div>
+
+        <div class="movie-detail__player">
+            <iframe
+                    src="https://vidnest.fun/movie/{{.MovieID}}"
+                    title="{{.Title}} player"
+                    allowfullscreen
+                    loading="lazy"
+            ></iframe>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

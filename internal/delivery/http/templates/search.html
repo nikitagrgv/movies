@@ -37,11 +37,7 @@
         {{range .Movies}}
         <article class="movie-card">
             <a class="movie-poster" href="/movie/{{.ID}}">
-                {{if .PosterURL}}
                 <img src="{{.PosterURL}}" alt="{{.Title}}" loading="lazy">
-                {{else}}
-                <img src="/static/img/noimage.png" alt="{{.Title}}" loading="lazy">
-                {{end}}
             </a>
             <div class="movie-info">
                 <h2 class="movie-title"><a href="/movie/{{.ID}}">{{.Title}}</a></h2>

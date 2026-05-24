@@ -17,6 +17,9 @@ type SearchPageData struct {
 }
 
 type MovieView struct {
-	MovieID int
-	Title   string
+	MovieID     int
+	Title       string
+	Overview    string
+	PosterURL   string
+	ReleaseDate string
 }
