@@ -2,8 +2,8 @@
 <div class="search-wrapper">
     <form class="search-form" action="/search" method="GET">
         <div class="search-type-toggle">
-            <button type="button" class="toggle-segment toggle-segment--active" data-type="movie">Movie</button>
-            <button type="button" class="toggle-segment" data-type="tv">TV Show</button>
+            <button type="button" class="toggle-segment toggle-segment--active" data-type="movie">Movies</button>
+            <button type="button" class="toggle-segment" data-type="tv">TV Shows</button>
         </div>
         <input
                 type="text"
@@ -18,22 +18,22 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const toggleContainer = document.querySelector('.search-type-toggle');
-    const toggleSegments = document.querySelectorAll('.toggle-segment');
-    const searchInput = document.querySelector('.search-input');
-    
-    toggleContainer.addEventListener('click', function(e) {
-        const clickedSegment = e.target.closest('.toggle-segment');
-        if (clickedSegment) {
-            toggleSegments.forEach(s => s.classList.remove('toggle-segment--active'));
-            clickedSegment.classList.add('toggle-segment--active');
-            
-            const type = clickedSegment.getAttribute('data-type');
-            searchInput.placeholder = type === 'movie' ? 'Search movies...' : 'Search TV shows...';
-            searchInput.name = type === 'movie' ? 's' : 'tv';
-        }
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleContainer = document.querySelector('.search-type-toggle');
+        const toggleSegments = document.querySelectorAll('.toggle-segment');
+        const searchInput = document.querySelector('.search-input');
+
+        toggleContainer.addEventListener('click', function (e) {
+            const clickedSegment = e.target.closest('.toggle-segment');
+            if (clickedSegment) {
+                toggleSegments.forEach(s => s.classList.remove('toggle-segment--active'));
+                clickedSegment.classList.add('toggle-segment--active');
+
+                const type = clickedSegment.getAttribute('data-type');
+                searchInput.placeholder = type === 'movie' ? 'Search movies...' : 'Search TV shows...';
+                searchInput.name = type === 'movie' ? 's' : 'tv';
+            }
+        });
     });
-});
 </script>
 {{end}}
