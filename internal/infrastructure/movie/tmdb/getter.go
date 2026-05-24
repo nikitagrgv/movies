@@ -19,7 +19,7 @@ func (g MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error)
 	var raw GetMovieResponse
 	err := g.client.get(
 		ctx,
-		"/search/movie/"+strconv.Itoa(id),
+		"/movie/"+strconv.Itoa(id),
 		nil,
 		&raw,
 	)
