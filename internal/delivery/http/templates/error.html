@@ -9,10 +9,11 @@
 </head>
 <body>
 
-<div class="container">
-    <h1>Error {{.ErrorCode}}</h1>
-    <p>{{.ErrorDescription}}</p>
-    <a href="/">Go to homepage</a>
+<div class="error-container">
+    <div class="error-code">{{.ErrorCode}}</div>
+    <div class="error-divider"></div>
+    <p class="error-description">{{.ErrorDescription}}</p>
+    <a class="error-link" href="/">Go to homepage</a>
 </div>
 
 </body>

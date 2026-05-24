@@ -9,22 +9,77 @@
 </head>
 <body>
 
-<h1>Results</h1>
-
-<div>
-    {{range .Movies}}
-    <div class="movie">
-        <img src="{{.PosterURL}}" alt="{{.Title}}" width="120">
-        <h2>{{.Title}}</h2>
-        <p>{{.Overview}}</p>
-        <small>Release: {{.ReleaseDate}}</small>
+<div class="container">
+    <div class="search-header">
+        <a href="/" class="back-link" aria-label="Back to homepage">← Home</a>
+        <div class="search-wrapper">
+            <form class="search-form" action="/search" method="GET">
+                <input
+                        type="text"
+                        name="s"
+                        class="search-input"
+                        placeholder="Search movies..."
+                        value="{{.SearchString}}"
+                        autocomplete="off"
+                >
+                <button type="submit" class="search-button">Search</button>
+            </form>
+        </div>
     </div>
-    <hr>
-    {{end}}
-</div>
 
-<div class="pagination">
-    <p>Page {{.CurrentPage}} / {{.TotalPages}}</p>
+    <h1 class="results-heading">
+        Results for "{{.SearchString}}"
+        <span class="results-range">{{.CurrentPage}} of {{.TotalPages}}</span>
+    </h1>
+
+    {{if .Movies}}
+    <div class="movies-grid">
+        {{range .Movies}}
+        <article class="movie-card">
+            <div class="movie-poster">
+                {{if .PosterURL}}
+                <img src="{{.PosterURL}}" alt="{{.Title}}" loading="lazy">
+                {{else}}
+                <img src="/static/img/noimage.png" alt="{{.Title}}" loading="lazy">
+                {{end}}
+            </div>
+            <div class="movie-info">
+                <h2 class="movie-title">{{.Title}}</h2>
+                {{if .Overview}}
+                <p class="movie-overview">{{.Overview}}</p>
+                {{end}}
+                {{if .ReleaseDate}}
+                <div class="movie-meta">
+                    <span class="movie-date">{{.ReleaseDate}}</span>
+                </div>
+                {{end}}
+            </div>
+        </article>
+        {{end}}
+    </div>
+    {{else}}
+    <div class="empty-state">
+        <p class="empty-text">No movies found.</p>
+    </div>
+    {{end}}
+
+    {{if gt .TotalPages 1}}
+    <nav class="pagination" aria-label="Pagination">
+        {{if gt .CurrentPage 1}}
+        <a class="page-btn page-btn--prev" href="/search?s={{.SearchString}}&p={{.PrevPage}}">← Prev</a>
+        {{else}}
+        <span class="page-btn page-btn--disabled">← Prev</span>
+        {{end}}
+
+        <span class="page-indicator">Page {{.CurrentPage}} of {{.TotalPages}}</span>
+
+        {{if lt .CurrentPage .TotalPages}}
+        <a class="page-btn page-btn--next" href="/search?s={{.SearchString}}&p={{.NextPage}}">Next →</a>
+        {{else}}
+        <span class="page-btn page-btn--disabled">Next →</span>
+        {{end}}
+    </nav>
+    {{end}}
 </div>
 
 </body>

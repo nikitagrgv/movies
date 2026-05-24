@@ -11,5 +11,7 @@ type SearchPageData struct {
 	SearchString string
 	CurrentPage  int
 	TotalPages   int
+	PrevPage     int
+	NextPage     int
 	Movies       []domain.Movie
 }
