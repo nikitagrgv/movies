@@ -17,18 +17,7 @@ func NewMovieSearcher(client *Client) *MovieSearcher {
 }
 
 func (s *MovieSearcher) SearchMovies(ctx context.Context, query string, page int) (domain.SearchMoviesResult, error) {
-	var raw struct {
-		Page       int `json:"page"`
-		TotalPages int `json:"total_pages"`
-		Results    []struct {
-			ID           int    `json:"id"`
-			Name         string `json:"name"`
-			Overview     string `json:"overview"`
-			FirstAirDate string `json:"first_air_date"`
-			PosterPath   string `json:"poster_path"`
-		} `json:"results"`
-	}
-
+	var raw SearchMovieResponse
 	err := s.client.get(
 		ctx,
 		"/search/movie",
@@ -51,7 +40,7 @@ func (s *MovieSearcher) SearchMovies(ctx context.Context, query string, page int
 		poster := s.client.getImageURL(m.PosterPath)
 		res.Movies = append(res.Movies, domain.Movie{
 			ID:          m.ID,
-			Title:       m.Name,
+			Title:       m.Title,
 			Overview:    m.Overview,
 			PosterURL:   poster,
 			ReleaseDate: m.FirstAirDate,
