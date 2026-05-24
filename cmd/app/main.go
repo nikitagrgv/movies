@@ -47,7 +47,9 @@ func main() {
 	}
 
 	noImageURL := "/static/noimage.png"
-	tmdbClient, err := tmdb.NewClient("https://api.themoviedb.org/3", cfg.TmdbToken)
+	tmdbApiURL := "https://api.themoviedb.org/3"
+	tmdbImageURL := "https://image.tmdb.org/t/p"
+	tmdbClient, err := tmdb.NewClient(tmdbApiURL, tmdbImageURL, cfg.TmdbToken)
 	if err != nil {
 		log.Fatalf("Error loading tmdb client: %v", err)
 	}

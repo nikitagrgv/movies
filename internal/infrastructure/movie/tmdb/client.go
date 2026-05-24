@@ -5,19 +5,27 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
 type Client struct {
 	baseURL    *url.URL
+	imageURL   *url.URL
 	token      string
 	httpClient *http.Client
 }
 
-func NewClient(baseURL string, token string) (*Client, error) {
+func NewClient(baseURL string, imageURL string, token string) (*Client, error) {
 	base, err := url.Parse(baseURL)
+	if err != nil {
+		return nil, err
+	}
+
+	image, err := url.Parse(imageURL)
 	if err != nil {
 		return nil, err
 	}
@@ -25,12 +33,13 @@ func NewClient(baseURL string, token string) (*Client, error) {
 	c := &http.Client{Timeout: 5 * time.Second}
 	return &Client{
 		baseURL:    base,
+		imageURL:   image,
 		token:      token,
 		httpClient: c,
 	}, nil
 }
 
-func (c *Client) Get(ctx context.Context, path string, query url.Values, out any) error {
+func (c *Client) get(ctx context.Context, path string, query url.Values, out any) error {
 	rel, err := url.Parse(path)
 	if err != nil {
 		return err
@@ -51,7 +60,12 @@ func (c *Client) Get(ctx context.Context, path string, query url.Values, out any
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func(body io.ReadCloser) {
+		err := body.Close()
+		if err != nil {
+			log.Printf("failed to close response body: %s", err)
+		}
+	}(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
@@ -62,4 +76,11 @@ func (c *Client) Get(ctx context.Context, path string, query url.Values, out any
 		return fmt.Errorf("decode tmdb response: %w", err)
 	}
 	return nil
+}
+
+func (c *Client) getImageURL(path string) string {
+	// TODO: hardcoded size 200
+	path = strings.TrimPrefix(path, "/")
+	full := c.imageURL.JoinPath("w200", path)
+	return full.String()
 }
