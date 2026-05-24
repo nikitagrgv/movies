@@ -323,6 +323,13 @@ body:has(.error-container) {
 .error-title {
     font-size: 18px;
     color: #b0b0b0;
+    margin: 0 0 16px 0;
+    line-height: 1.5;
+}
+
+.error-description {
+    font-size: 14px;
+    color: #6b6b6b;
     margin: 0 0 32px 0;
     line-height: 1.5;
 }

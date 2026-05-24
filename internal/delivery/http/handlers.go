@@ -25,7 +25,7 @@ func (h *Handler) ShowMain(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	err := h.tmpl.ExecuteTemplate(w, "main", nil)
 	if err != nil {
-		h.render500(w, r)
+		h.render500(w, r, err.Error())
 	}
 }
 
@@ -37,7 +37,7 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	if pageStr != "" {
 		p, err := strconv.Atoi(pageStr)
 		if err != nil {
-			h.render500(w, r)
+			h.render500(w, r, err.Error())
 			return
 		}
 		page = p
@@ -45,7 +45,7 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 
 	result, err := h.search.SearchMovies(r.Context(), query, page)
 	if err != nil {
-		h.render500(w, r)
+		h.render500(w, r, err.Error())
 		return
 	}
 
@@ -61,7 +61,7 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 	err = h.tmpl.ExecuteTemplate(w, "search", data)
 	if err != nil {
-		h.render500(w, r)
+		h.render500(w, r, err.Error())
 	}
 }
 
@@ -69,11 +69,12 @@ func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Reque
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		h.render400(w, r)
+		return
 	}
 
 	movie, err := h.get.GetMovie(r.Context(), id)
 	if err != nil {
-		h.render500(w, r)
+		h.render500(w, r, err.Error())
 		return
 	}
 
@@ -88,7 +89,7 @@ func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Reque
 	}
 	err = h.tmpl.ExecuteTemplate(w, "movie", data)
 	if err != nil {
-		h.render500(w, r)
+		h.render500(w, r, err.Error())
 	}
 }
 
@@ -106,8 +107,12 @@ func (h *Handler) render404(w http.ResponseWriter, r *http.Request) {
 	h.renderError(w, r, data)
 }
 
-func (h *Handler) render500(w http.ResponseWriter, r *http.Request) {
-	data := ErrorPageData{ErrorCode: http.StatusInternalServerError, ErrorTitle: "Internal Error"}
+func (h *Handler) render500(w http.ResponseWriter, r *http.Request, description string) {
+	data := ErrorPageData{
+		ErrorCode:        http.StatusInternalServerError,
+		ErrorTitle:       "Internal Error",
+		ErrorDescription: description,
+	}
 	h.renderError(w, r, data)
 }
 

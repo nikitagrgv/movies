@@ -13,6 +13,9 @@
     <div class="error-code">{{.ErrorCode}}</div>
     <div class="error-divider"></div>
     <p class="error-title">{{.ErrorTitle}}</p>
+    {{if .ErrorDescription}}
+    <p class="error-description">{{.ErrorDescription}}</p>
+    {{end}}
     <a class="error-link" href="/">Go to homepage</a>
 </div>
 
