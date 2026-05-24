@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -54,43 +53,48 @@ func (c *Client) get(ctx context.Context, path string, query url.Values, out any
 	full := c.baseURL.JoinPath(path)
 	full.RawQuery = query.Encode()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, full.String(), nil)
-	if err != nil {
-		return err
-	}
-
-	req.Header.Set("Authorization", "Bearer "+c.token)
-	req.Header.Set("Accept", "application/json")
-
-	var resp *http.Response
+	var lastErr error
 	for i := 0; i < 3; i++ {
-		resp, err = c.httpClient.Do(req)
-		if err == nil {
-			break
-		}
-		time.Sleep(time.Duration(i+1) * 200 * time.Millisecond)
-	}
-
-	if err != nil {
-		return err
-	}
-
-	defer func(body io.ReadCloser) {
-		err := body.Close()
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, full.String(), nil)
 		if err != nil {
-			log.Printf("failed to close response body: %s", err)
+			return err
 		}
-	}(resp.Body)
 
-	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("tmdb error: status=%d body=%s", resp.StatusCode, string(body))
+		req.Header.Set("Authorization", "Bearer "+c.token)
+		req.Header.Set("Accept", "application/json")
+
+		resp, err := c.httpClient.Do(req)
+		if err != nil {
+			lastErr = err
+			time.Sleep(time.Duration(i+1) * 200 * time.Millisecond)
+			continue
+		}
+
+		func() {
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				body, _ := io.ReadAll(resp.Body)
+				lastErr = fmt.Errorf("tmdb error: status=%d body=%s", resp.StatusCode, string(body))
+				return
+			}
+
+			lastErr = json.NewDecoder(resp.Body).Decode(out)
+		}()
+
+		if lastErr == nil {
+			return nil
+		}
+
+		if resp.StatusCode >= http.StatusInternalServerError || resp.StatusCode == http.StatusTooManyRequests {
+			time.Sleep(time.Duration(i+1) * 200 * time.Millisecond)
+			continue
+		}
+
+		return lastErr
 	}
 
-	if err := json.NewDecoder(resp.Body).Decode(out); err != nil {
-		return fmt.Errorf("decode tmdb response: %w", err)
-	}
-	return nil
+	return lastErr
 }
 
 func (c *Client) getImageURL(path string) string {
