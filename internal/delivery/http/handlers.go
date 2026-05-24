@@ -32,7 +32,7 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("s")
 	pageStr := r.URL.Query().Get("p")
 
-	var page int = 0
+	var page int = 1
 	if pageStr != "" {
 		p, err := strconv.Atoi(pageStr)
 		if err != nil {
