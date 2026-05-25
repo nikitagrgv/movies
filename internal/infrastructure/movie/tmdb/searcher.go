@@ -75,7 +75,7 @@ func (s *MovieSearcher) SearchTvShows(ctx context.Context, query string, page in
 		poster := s.client.getImageURL(m.PosterPath)
 		base := domain.MediaBase{
 			ID:          m.ID,
-			Title:       m.Title,
+			Title:       m.Name,
 			Overview:    m.Overview,
 			PosterURL:   poster,
 			ReleaseDate: m.FirstAirDate,

@@ -55,7 +55,7 @@ func (g MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, erro
 	poster := g.client.getImageURL(raw.PosterPath)
 	base := domain.MediaBase{
 		ID:          raw.ID,
-		Title:       raw.Title,
+		Title:       raw.Name,
 		Overview:    raw.Overview,
 		PosterURL:   poster,
 		ReleaseDate: raw.FirstAirDate,
