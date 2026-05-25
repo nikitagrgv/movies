@@ -76,8 +76,6 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
 	data := SearchPageData{
 		SearchString: query,
 		MediaType:    string(mtype),
@@ -104,8 +102,6 @@ func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
 	data := MovieView{
 		ID:          movie.Base.ID,
 		Title:       movie.Base.Title,
@@ -129,8 +125,6 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		h.render500(w, r, err.Error())
 		return
 	}
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	data := TvShowView{
 		ID:          tvShow.Base.ID,
@@ -169,15 +163,14 @@ func (h *Handler) render500(w http.ResponseWriter, r *http.Request, description 
 func (h *Handler) renderTemplate(w http.ResponseWriter, r *http.Request, name string, data any) {
 	var buf bytes.Buffer
 
-	err := h.tmpl.ExecuteTemplate(&buf, name, data)
-	if err != nil {
+	if err := h.tmpl.ExecuteTemplate(&buf, name, data); err != nil {
 		h.render500(w, r, err.Error())
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	_, err = buf.WriteTo(w)
+	_, err := buf.WriteTo(w)
 	if err != nil {
 		log.Printf("write error: %v", err)
 	}
