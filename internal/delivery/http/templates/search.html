@@ -24,11 +24,11 @@
     <div class="movies-grid">
         {{range .Medias}}
         <article class="movie-card">
-            <a class="movie-card-link" href="/{{.MediaType}}/{{.ID}}" aria-label="{{.Title}}"></a>
+            <a class="movie-card-link" href="/{{$.MediaType}}/{{.ID}}" aria-label="{{.Title}}"></a>
             <img class="movie-poster" src="{{.PosterURL}}" alt="{{.Title}}" loading="lazy">
             <div class="movie-info">
                 <h2 class="movie-title">
-                    <a href="/movie/{{.ID}}">{{.Title}}</a>
+                    <a href="/{{$.MediaType}}/{{.ID}}">{{.Title}}</a>
                 </h2>
                 {{if .Overview}}
                 <p class="movie-overview">{{.Overview}}</p>
@@ -51,7 +51,7 @@
     {{if gt .TotalPages 1}}
     <nav class="pagination" aria-label="Pagination">
         {{if gt .CurrentPage 1}}
-        <a class="page-btn page-btn--prev" href="/search?s={{.SearchString}}&p={{.PrevPage}}">← Prev</a>
+        <a class="page-btn page-btn--prev" href="/search?s={{.SearchString}}&type={{.MediaType}}&p={{.PrevPage}}">← Prev</a>
         {{else}}
         <span class="page-btn page-btn--disabled">← Prev</span>
         {{end}}
@@ -59,7 +59,7 @@
         <span class="page-indicator">Page {{.CurrentPage}} of {{.TotalPages}}</span>
 
         {{if lt .CurrentPage .TotalPages}}
-        <a class="page-btn page-btn--next" href="/search?s={{.SearchString}}&p={{.NextPage}}">Next →</a>
+        <a class="page-btn page-btn--next" href="/search?s={{.SearchString}}&type={{.MediaType}}&p={{.PrevPage}}">Next →</a>
         {{else}}
         <span class="page-btn page-btn--disabled">Next →</span>
         {{end}}
