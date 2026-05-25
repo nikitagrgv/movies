@@ -68,6 +68,7 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 			h.render500(w, r, err.Error())
 			return
 		}
+		totalPages = sr.TotalPages
 		for _, m := range sr.TvShows {
 			result = append(result, m.Base)
 		}
