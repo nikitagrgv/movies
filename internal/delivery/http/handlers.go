@@ -1,6 +1,7 @@
 package http
 
 import (
+	"bytes"
 	"encoding/json"
 	"html/template"
 	"log"
@@ -23,11 +24,7 @@ func NewHandler(tmpl *template.Template, search *usecase.SearchMediaUsecase, get
 }
 
 func (h *Handler) ShowMain(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	err := h.tmpl.ExecuteTemplate(w, "main", nil)
-	if err != nil {
-		h.render500(w, r, err.Error())
-	}
+	h.renderTemplate(w, r, "main", nil)
 }
 
 func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
@@ -90,10 +87,8 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		NextPage:     page + 1,
 		Medias:       result,
 	}
-	err = h.tmpl.ExecuteTemplate(w, "search", data)
-	if err != nil {
-		h.render500(w, r, err.Error())
-	}
+
+	h.renderTemplate(w, r, "search", data)
 }
 
 func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Request) {
@@ -118,10 +113,8 @@ func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Reque
 		PosterURL:   movie.Base.PosterURL,
 		ReleaseDate: movie.Base.ReleaseDate,
 	}
-	err = h.tmpl.ExecuteTemplate(w, "movie", data)
-	if err != nil {
-		h.render500(w, r, err.Error())
-	}
+
+	h.renderTemplate(w, r, "movie", data)
 }
 
 func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Request) {
@@ -146,10 +139,8 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		PosterURL:   tvShow.Base.PosterURL,
 		ReleaseDate: tvShow.Base.ReleaseDate,
 	}
-	err = h.tmpl.ExecuteTemplate(w, "tvshow", data)
-	if err != nil {
-		h.render500(w, r, err.Error())
-	}
+
+	h.renderTemplate(w, r, "tv", data)
 }
 
 func (h *Handler) ShowNotFound(w http.ResponseWriter, r *http.Request) {
@@ -175,6 +166,23 @@ func (h *Handler) render500(w http.ResponseWriter, r *http.Request, description 
 	h.renderError(w, r, data)
 }
 
+func (h *Handler) renderTemplate(w http.ResponseWriter, r *http.Request, name string, data any) {
+	var buf bytes.Buffer
+
+	err := h.tmpl.ExecuteTemplate(&buf, name, data)
+	if err != nil {
+		h.render500(w, r, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	_, err = buf.WriteTo(w)
+	if err != nil {
+		log.Printf("write error: %v", err)
+	}
+}
+
 func (h *Handler) renderError(w http.ResponseWriter, r *http.Request, data ErrorPageData) {
 	isHtml := strings.Contains(r.Header.Get("Accept"), "text/html")
 	if isHtml {
@@ -186,9 +194,14 @@ func (h *Handler) renderError(w http.ResponseWriter, r *http.Request, data Error
 	w.WriteHeader(data.ErrorCode)
 
 	if isHtml {
-		err := h.tmpl.ExecuteTemplate(w, "error", data)
+		var buf bytes.Buffer
+		err := h.tmpl.ExecuteTemplate(&buf, "error", data)
 		if err != nil {
 			log.Printf("Error executing template: %v", err)
+		}
+		_, err = buf.WriteTo(w)
+		if err != nil {
+			log.Printf("error writing response: %s", err)
 		}
 		return
 	}
