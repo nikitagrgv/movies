@@ -85,6 +85,11 @@ func main() {
 		handler.HandleMovie(id, w, r)
 	})
 
+	mux.HandleFunc("GET /tv/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		handler.HandleTvShow(id, w, r)
+	})
+
 	mux.HandleFunc("/", handler.ShowNotFound)
 
 	srv := &http.Server{

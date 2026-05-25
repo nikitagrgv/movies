@@ -41,6 +41,26 @@ func (g MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error)
 }
 
 func (g MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, error) {
-	//TODO implement me
-	panic("implement me")
+	var raw GetTvShowResponse
+	err := g.client.get(
+		ctx,
+		"/tv/"+strconv.Itoa(id),
+		nil,
+		&raw,
+	)
+	if err != nil {
+		return domain.TvShow{}, err
+	}
+
+	poster := g.client.getImageURL(raw.PosterPath)
+	base := domain.MediaBase{
+		ID:          raw.ID,
+		Title:       raw.Title,
+		Overview:    raw.Overview,
+		PosterURL:   poster,
+		ReleaseDate: raw.ReleaseDate,
+	}
+	res := domain.TvShow{Base: base}
+
+	return res, nil
 }

@@ -31,3 +31,11 @@ type GetMovieResponse struct {
 	ReleaseDate string `json:"release_date"`
 	PosterPath  string `json:"poster_path"`
 }
+
+type GetTvShowResponse struct {
+	ID          int    `json:"id"`
+	Title       string `json:"name"`
+	Overview    string `json:"overview"`
+	ReleaseDate string `json:"first_air_date"`
+	PosterPath  string `json:"poster_path"`
+}
