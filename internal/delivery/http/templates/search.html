@@ -59,7 +59,7 @@
         <span class="page-indicator">Page {{.CurrentPage}} of {{.TotalPages}}</span>
 
         {{if lt .CurrentPage .TotalPages}}
-        <a class="page-btn page-btn--next" href="/search?s={{.SearchString}}&type={{.MediaType}}&p={{.PrevPage}}">Next →</a>
+        <a class="page-btn page-btn--next" href="/search?s={{.SearchString}}&type={{.MediaType}}&p={{.NextPage}}">Next →</a>
         {{else}}
         <span class="page-btn page-btn--disabled">Next →</span>
         {{end}}
