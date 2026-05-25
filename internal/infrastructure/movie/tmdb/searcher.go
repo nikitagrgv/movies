@@ -43,7 +43,7 @@ func (s *MovieSearcher) SearchMovies(ctx context.Context, query string, page int
 			Title:       m.Title,
 			Overview:    m.Overview,
 			PosterURL:   poster,
-			ReleaseDate: m.FirstAirDate,
+			ReleaseDate: m.ReleaseDate,
 		}
 		res.Movies = append(res.Movies, domain.Movie{Base: base})
 	}
