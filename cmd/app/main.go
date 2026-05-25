@@ -54,21 +54,21 @@ func main() {
 		log.Fatalf("Error loading tmdb client: %v", err)
 	}
 
-	var searcher domain.MoviesSearcher
+	var searcher domain.MediaSearcher
 	if cfg.IsStubUsed(config.SearchStub) {
 		searcher = stub.NewMovieSearcher()
 	} else {
 		searcher = tmdb.NewMovieSearcher(tmdbClient)
 	}
-	search := usecase.NewSearchMoviesUsecase(searcher, noImageURL)
+	search := usecase.NewSearchMediaUsecase(searcher, noImageURL)
 
-	var getter domain.MovieGetter
+	var getter domain.MediaGetter
 	if cfg.IsStubUsed(config.SearchStub) {
 		getter = stub.NewMovieGetter()
 	} else {
 		getter = tmdb.NewMovieGetter(tmdbClient)
 	}
-	get := usecase.NewGetMovieUsecase(getter, noImageURL)
+	get := usecase.NewGetMediaUsecase(getter, noImageURL)
 
 	handler := deliveryHttp.NewHandler(tmpl, search, get)
 

@@ -39,14 +39,20 @@ func (MovieSearcher) SearchMovies(ctx context.Context, query string, page int) (
 	return domain.SearchMoviesResult{Movies: movies, CurrentPage: page, TotalPages: 3}, nil
 }
 
+func (s MovieSearcher) SearchTvShows(ctx context.Context, query string, page int) (domain.SearchTvShowsResult, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func genMovie(query string, index int) domain.Movie {
 	name := query + " " + strconv.Itoa(index)
-	movie := domain.Movie{
+	base := domain.MediaBase{
 		ID:          index,
 		Title:       name,
 		Overview:    name + " is a beautiful movie about love... I cried!",
 		PosterURL:   "",
 		ReleaseDate: "01-01-2021",
 	}
+	movie := domain.Movie{Base: base}
 	return movie
 }

@@ -8,16 +8,17 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/nikitagrgv/movies/internal/domain"
 	"github.com/nikitagrgv/movies/internal/usecase"
 )
 
 type Handler struct {
 	tmpl   *template.Template
-	search *usecase.SearchMoviesUsecase
-	get    *usecase.GetMovieUsecase
+	search *usecase.SearchMediaUsecase
+	get    *usecase.GetMediaUsecase
 }
 
-func NewHandler(tmpl *template.Template, search *usecase.SearchMoviesUsecase, get *usecase.GetMovieUsecase) *Handler {
+func NewHandler(tmpl *template.Template, search *usecase.SearchMediaUsecase, get *usecase.GetMediaUsecase) *Handler {
 	return &Handler{tmpl: tmpl, search: search, get: get}
 }
 
@@ -31,21 +32,50 @@ func (h *Handler) ShowMain(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("s")
+	searchType := r.URL.Query().Get("type")
 	pageStr := r.URL.Query().Get("p")
+
+	mtype, err := domain.ParseMediaType(searchType)
+	if err != nil {
+		h.render400(w, r)
+		return
+	}
 
 	var page int = 1
 	if pageStr != "" {
 		p, err := strconv.Atoi(pageStr)
 		if err != nil {
-			h.render500(w, r, err.Error())
+			h.render400(w, r)
 			return
 		}
 		page = p
 	}
 
-	result, err := h.search.SearchMovies(r.Context(), query, page)
-	if err != nil {
-		h.render500(w, r, err.Error())
+	var totalPages int
+	var result []domain.MediaBase
+
+	switch mtype {
+	case domain.MovieType:
+		sr, err := h.search.SearchMovies(r.Context(), query, page)
+		if err != nil {
+			h.render500(w, r, err.Error())
+			return
+		}
+		totalPages = sr.TotalPages
+		for _, m := range sr.Movies {
+			result = append(result, m.Base)
+		}
+	case domain.TvShowType:
+		sr, err := h.search.SearchTvShows(r.Context(), query, page)
+		if err != nil {
+			h.render500(w, r, err.Error())
+			return
+		}
+		for _, m := range sr.TvShows {
+			result = append(result, m.Base)
+		}
+	default:
+		h.render400(w, r)
 		return
 	}
 
@@ -53,11 +83,12 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 
 	data := SearchPageData{
 		SearchString: query,
+		MediaType:    string(mtype),
 		CurrentPage:  page,
-		TotalPages:   result.TotalPages,
+		TotalPages:   totalPages,
 		PrevPage:     page - 1,
 		NextPage:     page + 1,
-		Movies:       result.Movies,
+		Medias:       result,
 	}
 	err = h.tmpl.ExecuteTemplate(w, "search", data)
 	if err != nil {
@@ -81,13 +112,41 @@ func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Reque
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	data := MovieView{
-		MovieID:     id,
-		Title:       movie.Title,
-		Overview:    movie.Overview,
-		PosterURL:   movie.PosterURL,
-		ReleaseDate: movie.ReleaseDate,
+		ID:          movie.Base.ID,
+		Title:       movie.Base.Title,
+		Overview:    movie.Base.Overview,
+		PosterURL:   movie.Base.PosterURL,
+		ReleaseDate: movie.Base.ReleaseDate,
 	}
 	err = h.tmpl.ExecuteTemplate(w, "movie", data)
+	if err != nil {
+		h.render500(w, r, err.Error())
+	}
+}
+
+func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		h.render400(w, r)
+		return
+	}
+
+	tvShow, err := h.get.GetTvShow(r.Context(), id)
+	if err != nil {
+		h.render500(w, r, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	data := TvShowView{
+		ID:          tvShow.Base.ID,
+		Title:       tvShow.Base.Title,
+		Overview:    tvShow.Base.Overview,
+		PosterURL:   tvShow.Base.PosterURL,
+		ReleaseDate: tvShow.Base.ReleaseDate,
+	}
+	err = h.tmpl.ExecuteTemplate(w, "tvshow", data)
 	if err != nil {
 		h.render500(w, r, err.Error())
 	}

@@ -28,13 +28,19 @@ func (g MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error)
 	}
 
 	poster := g.client.getImageURL(raw.PosterPath)
-	res := domain.Movie{
+	base := domain.MediaBase{
 		ID:          raw.ID,
 		Title:       raw.Title,
 		Overview:    raw.Overview,
 		PosterURL:   poster,
 		ReleaseDate: raw.ReleaseDate,
 	}
+	res := domain.Movie{Base: base}
 
 	return res, nil
+}
+
+func (g MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, error) {
+	//TODO implement me
+	panic("implement me")
 }

@@ -10,15 +10,24 @@ type ErrorPageData struct {
 
 type SearchPageData struct {
 	SearchString string
+	MediaType    string
 	CurrentPage  int
 	TotalPages   int
 	PrevPage     int
 	NextPage     int
-	Movies       []domain.Movie
+	Medias       []domain.MediaBase
 }
 
 type MovieView struct {
-	MovieID     int
+	ID          int
+	Title       string
+	Overview    string
+	PosterURL   string
+	ReleaseDate string
+}
+
+type TvShowView struct {
+	ID          int
 	Title       string
 	Overview    string
 	PosterURL   string

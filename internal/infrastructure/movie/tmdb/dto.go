@@ -12,6 +12,18 @@ type SearchMovieResponse struct {
 	} `json:"results"`
 }
 
+type SearchTvShowResponse struct {
+	Page       int `json:"page"`
+	TotalPages int `json:"total_pages"`
+	Results    []struct {
+		ID           int    `json:"id"`
+		Title        string `json:"name"`
+		Overview     string `json:"overview"`
+		FirstAirDate string `json:"first_air_date"`
+		PosterPath   string `json:"poster_path"`
+	} `json:"results"`
+}
+
 type GetMovieResponse struct {
 	ID          int    `json:"id"`
 	Title       string `json:"title"`

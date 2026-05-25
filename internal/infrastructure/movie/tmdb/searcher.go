@@ -38,13 +38,49 @@ func (s *MovieSearcher) SearchMovies(ctx context.Context, query string, page int
 
 	for _, m := range raw.Results {
 		poster := s.client.getImageURL(m.PosterPath)
-		res.Movies = append(res.Movies, domain.Movie{
+		base := domain.MediaBase{
 			ID:          m.ID,
 			Title:       m.Title,
 			Overview:    m.Overview,
 			PosterURL:   poster,
 			ReleaseDate: m.FirstAirDate,
-		})
+		}
+		res.Movies = append(res.Movies, domain.Movie{Base: base})
+	}
+
+	return res, nil
+}
+
+func (s *MovieSearcher) SearchTvShows(ctx context.Context, query string, page int) (domain.SearchTvShowsResult, error) {
+	var raw SearchTvShowResponse
+	err := s.client.get(
+		ctx,
+		"/search/tv",
+		url.Values{
+			"query": {query},
+			"page":  {strconv.Itoa(page)},
+		},
+		&raw,
+	)
+	if err != nil {
+		return domain.SearchTvShowsResult{}, err
+	}
+
+	res := domain.SearchTvShowsResult{
+		CurrentPage: raw.Page,
+		TotalPages:  raw.TotalPages,
+	}
+
+	for _, m := range raw.Results {
+		poster := s.client.getImageURL(m.PosterPath)
+		base := domain.MediaBase{
+			ID:          m.ID,
+			Title:       m.Title,
+			Overview:    m.Overview,
+			PosterURL:   poster,
+			ReleaseDate: m.FirstAirDate,
+		}
+		res.TvShows = append(res.TvShows, domain.TvShow{Base: base})
 	}
 
 	return res, nil
