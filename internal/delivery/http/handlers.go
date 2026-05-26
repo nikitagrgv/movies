@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/nikitagrgv/movies/internal/domain"
 	"github.com/nikitagrgv/movies/internal/usecase"
@@ -108,7 +109,7 @@ func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Reque
 		Title:       movie.Base.Title,
 		Overview:    movie.Base.Overview,
 		PosterURL:   movie.Base.PosterURL,
-		ReleaseDate: movie.Base.ReleaseDate,
+		ReleaseYear: parseYear(movie.Base.ReleaseDate),
 	}
 
 	h.renderTemplate(w, r, "movie", data)
@@ -132,7 +133,7 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		Title:       tvShow.Base.Title,
 		Overview:    tvShow.Base.Overview,
 		PosterURL:   tvShow.Base.PosterURL,
-		ReleaseDate: tvShow.Base.ReleaseDate,
+		ReleaseYear: parseYear(tvShow.Base.ReleaseDate),
 	}
 
 	h.renderTemplate(w, r, "tv", data)
@@ -207,4 +208,12 @@ func (h *Handler) renderError(w http.ResponseWriter, r *http.Request, data Error
 	if err != nil {
 		log.Printf("Error writing response: %v", err)
 	}
+}
+
+func parseYear(fullDate string) string {
+	t, err := time.Parse("2006-01-02", fullDate)
+	if err != nil {
+		return "-"
+	}
+	return t.Format("2006")
 }

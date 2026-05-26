@@ -23,7 +23,7 @@ type MovieView struct {
 	Title       string
 	Overview    string
 	PosterURL   string
-	ReleaseDate string
+	ReleaseYear string
 }
 
 type TvShowView struct {
@@ -31,5 +31,5 @@ type TvShowView struct {
 	Title       string
 	Overview    string
 	PosterURL   string
-	ReleaseDate string
+	ReleaseYear string
 }
