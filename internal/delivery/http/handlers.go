@@ -50,7 +50,7 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var totalPages int
-	var result []domain.MediaBase
+	var result []SearchItemView
 
 	switch mtype {
 	case domain.MovieType:
@@ -61,7 +61,14 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		}
 		totalPages = sr.TotalPages
 		for _, m := range sr.Movies {
-			result = append(result, m.Base)
+			item := SearchItemView{
+				ID:          m.Base.ID,
+				Title:       m.Base.Title,
+				Overview:    m.Base.Overview,
+				PosterURL:   m.Base.PosterURL,
+				ReleaseYear: parseYear(m.Base.ReleaseDate),
+			}
+			result = append(result, item)
 		}
 	case domain.TvShowType:
 		sr, err := h.search.SearchTvShows(r.Context(), query, page)
@@ -71,21 +78,28 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		}
 		totalPages = sr.TotalPages
 		for _, m := range sr.TvShows {
-			result = append(result, m.Base)
+			item := SearchItemView{
+				ID:          m.Base.ID,
+				Title:       m.Base.Title,
+				Overview:    m.Base.Overview,
+				PosterURL:   m.Base.PosterURL,
+				ReleaseYear: parseYear(m.Base.ReleaseDate),
+			}
+			result = append(result, item)
 		}
 	default:
 		h.render400(w, r)
 		return
 	}
 
-	data := SearchPageData{
+	data := SearchView{
 		SearchString: query,
 		MediaType:    string(mtype),
 		CurrentPage:  page,
 		TotalPages:   totalPages,
 		PrevPage:     page - 1,
 		NextPage:     page + 1,
-		Medias:       result,
+		Items:        result,
 	}
 
 	h.renderTemplate(w, r, "search", data)
@@ -144,17 +158,17 @@ func (h *Handler) ShowNotFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) render400(w http.ResponseWriter, r *http.Request) {
-	data := ErrorPageData{ErrorCode: http.StatusBadRequest, ErrorTitle: "Bad Request"}
+	data := ErrorPageView{ErrorCode: http.StatusBadRequest, ErrorTitle: "Bad Request"}
 	h.renderError(w, r, data)
 }
 
 func (h *Handler) render404(w http.ResponseWriter, r *http.Request) {
-	data := ErrorPageData{ErrorCode: http.StatusNotFound, ErrorTitle: "Not Found"}
+	data := ErrorPageView{ErrorCode: http.StatusNotFound, ErrorTitle: "Not Found"}
 	h.renderError(w, r, data)
 }
 
 func (h *Handler) render500(w http.ResponseWriter, r *http.Request, description string) {
-	data := ErrorPageData{
+	data := ErrorPageView{
 		ErrorCode:        http.StatusInternalServerError,
 		ErrorTitle:       "Internal Error",
 		ErrorDescription: description,
@@ -178,7 +192,7 @@ func (h *Handler) renderTemplate(w http.ResponseWriter, r *http.Request, name st
 	}
 }
 
-func (h *Handler) renderError(w http.ResponseWriter, r *http.Request, data ErrorPageData) {
+func (h *Handler) renderError(w http.ResponseWriter, r *http.Request, data ErrorPageView) {
 	isHtml := strings.Contains(r.Header.Get("Accept"), "text/html")
 	if isHtml {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
