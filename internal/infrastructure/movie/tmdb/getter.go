@@ -81,7 +81,7 @@ func (g *MovieGetter) getSeason(ctx context.Context, id int, seasonNumber int) (
 	var raw GetSeasonResponse
 	err := g.client.get(
 		ctx,
-		"/tv/"+strconv.Itoa(id)+"/"+strconv.Itoa(seasonNumber),
+		"/tv/"+strconv.Itoa(id)+"/season/"+strconv.Itoa(seasonNumber),
 		nil,
 		&raw,
 	)
