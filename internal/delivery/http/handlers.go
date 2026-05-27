@@ -48,57 +48,46 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		page = p
 	}
 
-	var totalPages int
-	var result []SearchItemView
+	var result domain.SearchResult
 
 	switch mtype {
 	case domain.MovieType:
-		sr, err := h.search.SearchMovies(r.Context(), query, page)
+		result, err = h.search.SearchMovies(r.Context(), query, page)
 		if err != nil {
 			h.render500(w, r, err.Error())
 			return
-		}
-		totalPages = sr.TotalPages
-		for _, m := range sr.Items {
-			item := SearchItemView{
-				ID:          m.ID,
-				Title:       m.Title,
-				Overview:    m.Overview,
-				PosterURL:   m.PosterURL,
-				ReleaseYear: m.ReleaseYear,
-			}
-			result = append(result, item)
 		}
 	case domain.TvShowType:
-		sr, err := h.search.SearchTvShows(r.Context(), query, page)
+		result, err = h.search.SearchTvShows(r.Context(), query, page)
 		if err != nil {
 			h.render500(w, r, err.Error())
 			return
-		}
-		totalPages = sr.TotalPages
-		for _, m := range sr.Items {
-			item := SearchItemView{
-				ID:          m.ID,
-				Title:       m.Title,
-				Overview:    m.Overview,
-				PosterURL:   m.PosterURL,
-				ReleaseYear: m.ReleaseYear,
-			}
-			result = append(result, item)
 		}
 	default:
 		h.render400(w, r)
 		return
 	}
 
+	var view []SearchItemView
+	for _, m := range result.Items {
+		item := SearchItemView{
+			ID:          m.ID,
+			Title:       m.Title,
+			Overview:    m.Overview,
+			PosterURL:   m.PosterURL,
+			ReleaseYear: m.ReleaseYear,
+		}
+		view = append(view, item)
+	}
+
 	data := SearchView{
 		SearchString: query,
 		MediaType:    string(mtype),
 		CurrentPage:  page,
-		TotalPages:   totalPages,
+		TotalPages:   result.TotalPages,
 		PrevPage:     page - 1,
 		NextPage:     page + 1,
-		Items:        result,
+		Items:        view,
 	}
 
 	h.renderTemplate(w, r, "search", data)
