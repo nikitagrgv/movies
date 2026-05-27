@@ -59,7 +59,7 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		totalPages = sr.TotalPages
-		for _, m := range sr.Movies {
+		for _, m := range sr.Items {
 			item := SearchItemView{
 				ID:          m.ID,
 				Title:       m.Title,
@@ -76,7 +76,7 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		totalPages = sr.TotalPages
-		for _, m := range sr.TvShows {
+		for _, m := range sr.Items {
 			item := SearchItemView{
 				ID:          m.ID,
 				Title:       m.Title,

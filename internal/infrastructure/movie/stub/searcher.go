@@ -14,9 +14,9 @@ func NewMovieSearcher() *MovieSearcher {
 	return &MovieSearcher{}
 }
 
-func (MovieSearcher) SearchMovies(ctx context.Context, query string, page int) (domain.SearchMoviesResult, error) {
+func (MovieSearcher) SearchMovies(ctx context.Context, query string, page int) (domain.SearchResult, error) {
 	if page < 1 || page > 3 {
-		return domain.SearchMoviesResult{}, errors.New("invalid page")
+		return domain.SearchResult{}, errors.New("invalid page")
 	}
 
 	var movies []domain.Movie = make([]domain.Movie, 0, 3)
@@ -36,23 +36,23 @@ func (MovieSearcher) SearchMovies(ctx context.Context, query string, page int) (
 		movies = append(movies, genMovie(query, 9))
 	}
 
-	return domain.SearchMoviesResult{Movies: movies, CurrentPage: page, TotalPages: 3}, nil
+	return domain.SearchResult{Items: movies, CurrentPage: page, TotalPages: 3}, nil
 }
 
-func (s MovieSearcher) SearchTvShows(ctx context.Context, query string, page int) (domain.SearchTvShowsResult, error) {
+func (s MovieSearcher) SearchTvShows(ctx context.Context, query string, page int) (domain.SearchResult, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
 func genMovie(query string, index int) domain.Movie {
 	name := query + " " + strconv.Itoa(index)
-	base := domain.Media{
+	media := domain.Media{
 		ID:          index,
 		Title:       name,
 		Overview:    name + " is a beautiful movie about love... I cried!",
 		PosterURL:   "",
 		ReleaseYear: 2021,
 	}
-	movie := domain.Movie{Media: base}
+	movie := domain.Movie{media}
 	return movie
 }

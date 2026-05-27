@@ -16,7 +16,7 @@ func NewMovieSearcher(client *Client) *MovieSearcher {
 	return &MovieSearcher{client: client}
 }
 
-func (s *MovieSearcher) SearchMovies(ctx context.Context, query string, page int) (domain.SearchMoviesResult, error) {
+func (s *MovieSearcher) SearchMovies(ctx context.Context, query string, page int) (domain.SearchResult, error) {
 	var raw SearchMovieResponse
 	err := s.client.get(
 		ctx,
@@ -28,30 +28,30 @@ func (s *MovieSearcher) SearchMovies(ctx context.Context, query string, page int
 		&raw,
 	)
 	if err != nil {
-		return domain.SearchMoviesResult{}, err
+		return domain.SearchResult{}, err
 	}
 
-	res := domain.SearchMoviesResult{
+	res := domain.SearchResult{
 		CurrentPage: raw.Page,
 		TotalPages:  raw.TotalPages,
 	}
 
 	for _, m := range raw.Results {
 		poster := s.client.getImageURL(m.PosterPath)
-		base := domain.Media{
+		media := domain.Media{
 			ID:          m.ID,
 			Title:       m.Title,
 			Overview:    m.Overview,
 			PosterURL:   poster,
 			ReleaseYear: parseYear(m.ReleaseDate),
 		}
-		res.Movies = append(res.Movies, domain.Movie{Media: base})
+		res.Items = append(res.Items, media)
 	}
 
 	return res, nil
 }
 
-func (s *MovieSearcher) SearchTvShows(ctx context.Context, query string, page int) (domain.SearchTvShowsResult, error) {
+func (s *MovieSearcher) SearchTvShows(ctx context.Context, query string, page int) (domain.SearchResult, error) {
 	var raw SearchTvShowResponse
 	err := s.client.get(
 		ctx,
@@ -63,24 +63,24 @@ func (s *MovieSearcher) SearchTvShows(ctx context.Context, query string, page in
 		&raw,
 	)
 	if err != nil {
-		return domain.SearchTvShowsResult{}, err
+		return domain.SearchResult{}, err
 	}
 
-	res := domain.SearchTvShowsResult{
+	res := domain.SearchResult{
 		CurrentPage: raw.Page,
 		TotalPages:  raw.TotalPages,
 	}
 
 	for _, m := range raw.Results {
 		poster := s.client.getImageURL(m.PosterPath)
-		base := domain.Media{
+		media := domain.Media{
 			ID:          m.ID,
 			Title:       m.Name,
 			Overview:    m.Overview,
 			PosterURL:   poster,
 			ReleaseYear: parseYear(m.FirstAirDate),
 		}
-		res.TvShows = append(res.TvShows, domain.TvShow{Media: base})
+		res.Items = append(res.Items, media)
 	}
 
 	return res, nil
