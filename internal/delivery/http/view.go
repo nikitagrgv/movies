@@ -32,10 +32,23 @@ type MovieView struct {
 	ReleaseYear int
 }
 
+type EpisodeView struct {
+	EpisodeNumber int
+	SeasonNumber  int
+	Name          string
+}
+
+type SeasonView struct {
+	SeasonNumber int
+	Name         string
+	Episodes     []EpisodeView
+}
+
 type TvShowView struct {
 	ID          int
 	Title       string
 	Overview    string
 	PosterURL   string
 	ReleaseYear int
+	Seasons     []SeasonView
 }

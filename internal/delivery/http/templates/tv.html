@@ -37,16 +37,74 @@
             </div>
         </div>
 
+        {{if .Seasons}}
+        <div class="player-controls">
+            <select id="season-select">
+                {{range $i, $s := .Seasons}}
+                <option value="{{$s.SeasonNumber}}" {{if eq $i 0}}selected{{end}}>{{$s.Name}}</option>
+                {{end}}
+            </select>
+            <select id="episode-select"></select>
+        </div>
+
         <div class="movie-detail__player">
             <iframe
-                    src="https://vidnest.fun/tv/{{.ID}}/1/1"
+                    id="player"
+                    src=""
                     title="{{.Title}} player"
                     allowfullscreen
                     loading="lazy"
             ></iframe>
         </div>
+        {{end}}
     </div>
 </div>
+
+{{if .Seasons}}
+<script id="seasons-data" type="application/json">
+[{{range $i, $s := .Seasons}}{{if $i}},{{end}}{"sn":{{$s.SeasonNumber}},"eps":[{{range $j, $e := $s.Episodes}}{{if $j}},{{end}}{"en":{{$e.EpisodeNumber}},"n":"{{$e.Name}}"}{{end}}]}{{end}}]
+</script>
+<script>
+var seasons = JSON.parse(document.getElementById('seasons-data').textContent);
+var showId = {{.ID}};
+var seasonEl = document.getElementById('season-select');
+var episodeEl = document.getElementById('episode-select');
+var player = document.getElementById('player');
+
+function findSeason(sn) {
+    for (var i = 0; i < seasons.length; i++) {
+        if (seasons[i].sn === sn) return seasons[i];
+    }
+    return null;
+}
+
+function onSeasonChange() {
+    var s = findSeason(parseInt(seasonEl.value, 10));
+    episodeEl.innerHTML = '';
+    if (!s) return;
+    for (var i = 0; i < s.eps.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = s.eps[i].en;
+        opt.textContent = 'E' + s.eps[i].en + ' — ' + s.eps[i].n;
+        episodeEl.appendChild(opt);
+    }
+    updatePlayer();
+}
+
+function updatePlayer() {
+    var sn = seasonEl.value;
+    var en = episodeEl.value;
+    if (sn && en) {
+        player.src = 'https://vidnest.fun/tv/' + showId + '/' + sn + '/' + en;
+    }
+}
+
+seasonEl.addEventListener('change', function () { onSeasonChange(); updatePlayer(); });
+episodeEl.addEventListener('change', updatePlayer);
+
+onSeasonChange();
+</script>
+{{end}}
 
 </body>
 </html>

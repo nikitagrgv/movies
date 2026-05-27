@@ -130,12 +130,30 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	var seasonViews []SeasonView
+	for _, s := range tvShow.Seasons {
+		var epViews []EpisodeView
+		for _, e := range s.Episodes {
+			epViews = append(epViews, EpisodeView{
+				EpisodeNumber: e.EpisodeNumber,
+				SeasonNumber:  e.SeasonNumber,
+				Name:          e.Name,
+			})
+		}
+		seasonViews = append(seasonViews, SeasonView{
+			SeasonNumber: s.SeasonNumber,
+			Name:         s.Name,
+			Episodes:     epViews,
+		})
+	}
+
 	data := TvShowView{
 		ID:          tvShow.ID,
 		Title:       tvShow.Title,
 		Overview:    tvShow.Overview,
 		PosterURL:   tvShow.PosterURL,
 		ReleaseYear: tvShow.ReleaseYear,
+		Seasons:     seasonViews,
 	}
 
 	h.renderTemplate(w, r, "tv", data)
