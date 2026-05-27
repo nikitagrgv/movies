@@ -28,14 +28,14 @@ func (g MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error)
 	}
 
 	poster := g.client.getImageURL(raw.PosterPath)
-	base := domain.MediaBase{
+	base := domain.Media{
 		ID:          raw.ID,
 		Title:       raw.Title,
 		Overview:    raw.Overview,
 		PosterURL:   poster,
 		ReleaseYear: parseYear(raw.ReleaseDate),
 	}
-	res := domain.Movie{MediaBase: base}
+	res := domain.Movie{Media: base}
 
 	return res, nil
 }
@@ -53,14 +53,14 @@ func (g MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, erro
 	}
 
 	poster := g.client.getImageURL(raw.PosterPath)
-	base := domain.MediaBase{
+	base := domain.Media{
 		ID:          raw.ID,
 		Title:       raw.Name,
 		Overview:    raw.Overview,
 		PosterURL:   poster,
 		ReleaseYear: parseYear(raw.FirstAirDate),
 	}
-	res := domain.TvShow{MediaBase: base}
+	res := domain.TvShow{Media: base}
 
 	return res, nil
 }

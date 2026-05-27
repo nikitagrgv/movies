@@ -46,13 +46,13 @@ func (s MovieSearcher) SearchTvShows(ctx context.Context, query string, page int
 
 func genMovie(query string, index int) domain.Movie {
 	name := query + " " + strconv.Itoa(index)
-	base := domain.MediaBase{
+	base := domain.Media{
 		ID:          index,
 		Title:       name,
 		Overview:    name + " is a beautiful movie about love... I cried!",
 		PosterURL:   "",
 		ReleaseYear: 2021,
 	}
-	movie := domain.Movie{MediaBase: base}
+	movie := domain.Movie{Media: base}
 	return movie
 }

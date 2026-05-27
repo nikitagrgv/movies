@@ -15,14 +15,14 @@ func NewMovieGetter() *MovieGetter {
 
 func (MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error) {
 	name := "Movie " + strconv.Itoa(id)
-	base := domain.MediaBase{
+	base := domain.Media{
 		ID:          id,
 		Title:       name,
 		Overview:    name + " is a beautiful movie about love... I cried!",
 		PosterURL:   "",
 		ReleaseYear: 2021,
 	}
-	movie := domain.Movie{MediaBase: base}
+	movie := domain.Movie{Media: base}
 	return movie, nil
 }
 

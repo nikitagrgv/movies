@@ -22,7 +22,7 @@ func (u *SearchMediaUsecase) SearchMovies(ctx context.Context, query string, pag
 	}
 
 	for i := range result.Movies {
-		result.Movies[i].MediaBase = normalizeMedia(result.Movies[i].MediaBase, u.noImageURL)
+		result.Movies[i].Media = normalizeMedia(result.Movies[i].Media, u.noImageURL)
 	}
 
 	return result, nil
@@ -35,7 +35,7 @@ func (u *SearchMediaUsecase) SearchTvShows(ctx context.Context, query string, pa
 	}
 
 	for i := range result.TvShows {
-		result.TvShows[i].MediaBase = normalizeMedia(result.TvShows[i].MediaBase, u.noImageURL)
+		result.TvShows[i].Media = normalizeMedia(result.TvShows[i].Media, u.noImageURL)
 	}
 
 	return result, nil

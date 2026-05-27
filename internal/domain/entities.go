@@ -22,7 +22,7 @@ func ParseMediaType(s string) (MediaType, error) {
 	}
 }
 
-type MediaBase struct {
+type Media struct {
 	ID          int
 	Title       string
 	Overview    string
@@ -31,7 +31,7 @@ type MediaBase struct {
 }
 
 type Movie struct {
-	MediaBase
+	Media
 }
 
 type Episode struct {
@@ -47,6 +47,6 @@ type Season struct {
 }
 
 type TvShow struct {
-	MediaBase
+	Media
 	Seasons []Season
 }

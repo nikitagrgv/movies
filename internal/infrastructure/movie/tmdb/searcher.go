@@ -38,14 +38,14 @@ func (s *MovieSearcher) SearchMovies(ctx context.Context, query string, page int
 
 	for _, m := range raw.Results {
 		poster := s.client.getImageURL(m.PosterPath)
-		base := domain.MediaBase{
+		base := domain.Media{
 			ID:          m.ID,
 			Title:       m.Title,
 			Overview:    m.Overview,
 			PosterURL:   poster,
 			ReleaseYear: parseYear(m.ReleaseDate),
 		}
-		res.Movies = append(res.Movies, domain.Movie{MediaBase: base})
+		res.Movies = append(res.Movies, domain.Movie{Media: base})
 	}
 
 	return res, nil
@@ -73,14 +73,14 @@ func (s *MovieSearcher) SearchTvShows(ctx context.Context, query string, page in
 
 	for _, m := range raw.Results {
 		poster := s.client.getImageURL(m.PosterPath)
-		base := domain.MediaBase{
+		base := domain.Media{
 			ID:          m.ID,
 			Title:       m.Name,
 			Overview:    m.Overview,
 			PosterURL:   poster,
 			ReleaseYear: parseYear(m.FirstAirDate),
 		}
-		res.TvShows = append(res.TvShows, domain.TvShow{MediaBase: base})
+		res.TvShows = append(res.TvShows, domain.TvShow{Media: base})
 	}
 
 	return res, nil
