@@ -2,6 +2,7 @@ package tmdb
 
 import (
 	"context"
+	"log"
 	"strconv"
 
 	"github.com/nikitagrgv/movies/internal/domain"
@@ -15,7 +16,7 @@ func NewMovieGetter(client *Client) *MovieGetter {
 	return &MovieGetter{client: client}
 }
 
-func (g MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error) {
+func (g *MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error) {
 	var raw GetMovieResponse
 	err := g.client.get(
 		ctx,
@@ -40,7 +41,7 @@ func (g MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error)
 	return res, nil
 }
 
-func (g MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, error) {
+func (g *MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, error) {
 	var raw GetTvShowResponse
 	err := g.client.get(
 		ctx,
@@ -61,19 +62,47 @@ func (g MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, erro
 		ReleaseYear: parseYear(raw.FirstAirDate),
 	}
 
-	// TODO#
-	episodes := []domain.Episode{
-		{EpisodeNumber: 1, SeasonNumber: 1, Name: "First Episode"},
-		{EpisodeNumber: 1, SeasonNumber: 1, Name: "Second Episode"},
-		{EpisodeNumber: 1, SeasonNumber: 1, Name: "Third Episode"},
-	}
-	seasons := []domain.Season{
-		{SeasonNumber: 1, Name: "First Season", Episodes: episodes},
-		{SeasonNumber: 1, Name: "Second Season", Episodes: episodes},
-		{SeasonNumber: 1, Name: "Third Season", Episodes: episodes},
+	var seasons []domain.Season
+	for _, rawSeason := range raw.Seasons {
+		season, err := g.getSeason(ctx, id, rawSeason.SeasonNumber)
+		if err != nil {
+			log.Printf("Error getting season %d for TV %d: %v", rawSeason.SeasonNumber, id, err)
+			continue
+		}
+		seasons = append(seasons, season)
 	}
 
 	res := domain.TvShow{Media: media, Seasons: seasons}
 
 	return res, nil
+}
+
+func (g *MovieGetter) getSeason(ctx context.Context, id int, seasonNumber int) (domain.Season, error) {
+	var raw GetSeasonResponse
+	err := g.client.get(
+		ctx,
+		"/tv/"+strconv.Itoa(id)+"/"+strconv.Itoa(seasonNumber),
+		nil,
+		&raw,
+	)
+	if err != nil {
+		return domain.Season{}, err
+	}
+
+	var episodes []domain.Episode
+	for _, rawEpisode := range raw.Episodes {
+		episode := domain.Episode{
+			EpisodeNumber: rawEpisode.EpisodeNumber,
+			SeasonNumber:  seasonNumber,
+			Name:          rawEpisode.Name,
+		}
+		episodes = append(episodes, episode)
+	}
+
+	season := domain.Season{
+		SeasonNumber: seasonNumber,
+		Name:         raw.Name,
+		Episodes:     episodes,
+	}
+	return season, nil
 }
