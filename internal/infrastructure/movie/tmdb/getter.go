@@ -64,9 +64,13 @@ func (g MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, erro
 	// TODO#
 	episodes := []domain.Episode{
 		{EpisodeNumber: 1, SeasonNumber: 1, Name: "First Episode"},
+		{EpisodeNumber: 1, SeasonNumber: 1, Name: "Second Episode"},
+		{EpisodeNumber: 1, SeasonNumber: 1, Name: "Third Episode"},
 	}
 	seasons := []domain.Season{
 		{SeasonNumber: 1, Name: "First Season", Episodes: episodes},
+		{SeasonNumber: 1, Name: "Second Season", Episodes: episodes},
+		{SeasonNumber: 1, Name: "Third Season", Episodes: episodes},
 	}
 
 	res := domain.TvShow{Media: media, Seasons: seasons}
