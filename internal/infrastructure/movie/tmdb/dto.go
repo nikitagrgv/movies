@@ -38,9 +38,7 @@ type GetTvShowResponse struct {
 	Overview     string `json:"overview"`
 	FirstAirDate string `json:"first_air_date"`
 	PosterPath   string `json:"poster_path"`
-	Seasons      []struct {
-		SeasonNumber int `json:"season_number"`
-	} `json:"seasons"`
+	NumSeasons   int    `json:"number_of_seasons"`
 }
 
 type GetSeasonResponse struct {
