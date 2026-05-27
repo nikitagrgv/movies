@@ -35,7 +35,7 @@ func (g MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error)
 		PosterURL:   poster,
 		ReleaseYear: parseYear(raw.ReleaseDate),
 	}
-	res := domain.Movie{media}
+	res := domain.Movie{Media: media}
 
 	return res, nil
 }
@@ -60,7 +60,16 @@ func (g MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, erro
 		PosterURL:   poster,
 		ReleaseYear: parseYear(raw.FirstAirDate),
 	}
-	res := domain.TvShow{media}
+
+	// TODO#
+	episodes := []domain.Episode{
+		{EpisodeNumber: 1, SeasonNumber: 1, Name: "First Episode"},
+	}
+	seasons := []domain.Season{
+		{SeasonNumber: 1, Name: "First Season", Episodes: episodes},
+	}
+
+	res := domain.TvShow{Media: media, Seasons: seasons}
 
 	return res, nil
 }
