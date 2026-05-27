@@ -43,9 +43,9 @@ func (s *MovieSearcher) SearchMovies(ctx context.Context, query string, page int
 			Title:       m.Title,
 			Overview:    m.Overview,
 			PosterURL:   poster,
-			ReleaseDate: m.ReleaseDate,
+			ReleaseYear: parseYear(m.ReleaseDate),
 		}
-		res.Movies = append(res.Movies, domain.Movie{Base: base})
+		res.Movies = append(res.Movies, domain.Movie{MediaBase: base})
 	}
 
 	return res, nil
@@ -78,9 +78,9 @@ func (s *MovieSearcher) SearchTvShows(ctx context.Context, query string, page in
 			Title:       m.Name,
 			Overview:    m.Overview,
 			PosterURL:   poster,
-			ReleaseDate: m.FirstAirDate,
+			ReleaseYear: parseYear(m.FirstAirDate),
 		}
-		res.TvShows = append(res.TvShows, domain.TvShow{Base: base})
+		res.TvShows = append(res.TvShows, domain.TvShow{MediaBase: base})
 	}
 
 	return res, nil

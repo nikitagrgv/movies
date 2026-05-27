@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/nikitagrgv/movies/internal/domain"
 	"github.com/nikitagrgv/movies/internal/usecase"
@@ -62,11 +61,11 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		totalPages = sr.TotalPages
 		for _, m := range sr.Movies {
 			item := SearchItemView{
-				ID:          m.Base.ID,
-				Title:       m.Base.Title,
-				Overview:    m.Base.Overview,
-				PosterURL:   m.Base.PosterURL,
-				ReleaseYear: parseYear(m.Base.ReleaseDate),
+				ID:          m.MediaBase.ID,
+				Title:       m.MediaBase.Title,
+				Overview:    m.MediaBase.Overview,
+				PosterURL:   m.MediaBase.PosterURL,
+				ReleaseYear: m.MediaBase.ReleaseYear,
 			}
 			result = append(result, item)
 		}
@@ -79,11 +78,11 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		totalPages = sr.TotalPages
 		for _, m := range sr.TvShows {
 			item := SearchItemView{
-				ID:          m.Base.ID,
-				Title:       m.Base.Title,
-				Overview:    m.Base.Overview,
-				PosterURL:   m.Base.PosterURL,
-				ReleaseYear: parseYear(m.Base.ReleaseDate),
+				ID:          m.MediaBase.ID,
+				Title:       m.MediaBase.Title,
+				Overview:    m.MediaBase.Overview,
+				PosterURL:   m.MediaBase.PosterURL,
+				ReleaseYear: m.MediaBase.ReleaseYear,
 			}
 			result = append(result, item)
 		}
@@ -119,11 +118,11 @@ func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Reque
 	}
 
 	data := MovieView{
-		ID:          movie.Base.ID,
-		Title:       movie.Base.Title,
-		Overview:    movie.Base.Overview,
-		PosterURL:   movie.Base.PosterURL,
-		ReleaseYear: parseYear(movie.Base.ReleaseDate),
+		ID:          movie.MediaBase.ID,
+		Title:       movie.MediaBase.Title,
+		Overview:    movie.MediaBase.Overview,
+		PosterURL:   movie.MediaBase.PosterURL,
+		ReleaseYear: movie.MediaBase.ReleaseYear,
 	}
 
 	h.renderTemplate(w, r, "movie", data)
@@ -143,11 +142,11 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 	}
 
 	data := TvShowView{
-		ID:          tvShow.Base.ID,
-		Title:       tvShow.Base.Title,
-		Overview:    tvShow.Base.Overview,
-		PosterURL:   tvShow.Base.PosterURL,
-		ReleaseYear: parseYear(tvShow.Base.ReleaseDate),
+		ID:          tvShow.MediaBase.ID,
+		Title:       tvShow.MediaBase.Title,
+		Overview:    tvShow.MediaBase.Overview,
+		PosterURL:   tvShow.MediaBase.PosterURL,
+		ReleaseYear: tvShow.MediaBase.ReleaseYear,
 	}
 
 	h.renderTemplate(w, r, "tv", data)
@@ -222,12 +221,4 @@ func (h *Handler) renderError(w http.ResponseWriter, r *http.Request, data Error
 	if err != nil {
 		log.Printf("Error writing response: %v", err)
 	}
-}
-
-func parseYear(fullDate string) string {
-	t, err := time.Parse("2006-01-02", fullDate)
-	if err != nil {
-		return "-"
-	}
-	return t.Format("2006")
 }

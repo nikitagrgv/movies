@@ -33,9 +33,9 @@ func (g MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error)
 		Title:       raw.Title,
 		Overview:    raw.Overview,
 		PosterURL:   poster,
-		ReleaseDate: raw.ReleaseDate,
+		ReleaseYear: parseYear(raw.ReleaseDate),
 	}
-	res := domain.Movie{Base: base}
+	res := domain.Movie{MediaBase: base}
 
 	return res, nil
 }
@@ -58,9 +58,9 @@ func (g MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, erro
 		Title:       raw.Name,
 		Overview:    raw.Overview,
 		PosterURL:   poster,
-		ReleaseDate: raw.FirstAirDate,
+		ReleaseYear: parseYear(raw.FirstAirDate),
 	}
-	res := domain.TvShow{Base: base}
+	res := domain.TvShow{MediaBase: base}
 
 	return res, nil
 }

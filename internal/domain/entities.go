@@ -1,6 +1,10 @@
 package domain
 
-import "errors"
+import (
+	"errors"
+)
+
+var ErrInvalidMediaType = errors.New("invalid media type")
 
 type MediaType string
 
@@ -10,13 +14,11 @@ const (
 )
 
 func ParseMediaType(s string) (MediaType, error) {
-	switch s {
-	case "movie":
-		return MovieType, nil
-	case "tv":
-		return TvShowType, nil
+	switch MediaType(s) {
+	case MovieType, TvShowType:
+		return MediaType(s), nil
 	default:
-		return "", errors.New("invalid media type")
+		return "", ErrInvalidMediaType
 	}
 }
 
@@ -25,13 +27,26 @@ type MediaBase struct {
 	Title       string
 	Overview    string
 	PosterURL   string
-	ReleaseDate string
+	ReleaseYear int
 }
 
 type Movie struct {
-	Base MediaBase
+	MediaBase
+}
+
+type Episode struct {
+	EpisodeNumber int
+	SeasonNumber  int
+	Name          string
+}
+
+type Season struct {
+	SeasonNumber int
+	Name         string
+	Episodes     []Episode
 }
 
 type TvShow struct {
-	Base MediaBase
+	MediaBase
+	Seasons []Season
 }

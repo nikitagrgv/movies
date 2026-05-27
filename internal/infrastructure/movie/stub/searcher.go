@@ -51,8 +51,8 @@ func genMovie(query string, index int) domain.Movie {
 		Title:       name,
 		Overview:    name + " is a beautiful movie about love... I cried!",
 		PosterURL:   "",
-		ReleaseDate: "01-01-2021",
+		ReleaseYear: 2021,
 	}
-	movie := domain.Movie{Base: base}
+	movie := domain.Movie{MediaBase: base}
 	return movie
 }

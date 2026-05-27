@@ -21,7 +21,7 @@ func (u *GetMediaUsecase) GetMovie(ctx context.Context, id int) (domain.Movie, e
 		return domain.Movie{}, err
 	}
 
-	media.Base = normalizeMedia(media.Base, u.noImageURL)
+	media.MediaBase = normalizeMedia(media.MediaBase, u.noImageURL)
 	return media, nil
 }
 
@@ -31,7 +31,7 @@ func (u *GetMediaUsecase) GetTvShow(ctx context.Context, id int) (domain.TvShow,
 		return domain.TvShow{}, err
 	}
 
-	media.Base = normalizeMedia(media.Base, u.noImageURL)
+	media.MediaBase = normalizeMedia(media.MediaBase, u.noImageURL)
 	return media, nil
 }
 
