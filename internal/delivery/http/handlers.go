@@ -61,11 +61,11 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		totalPages = sr.TotalPages
 		for _, m := range sr.Movies {
 			item := SearchItemView{
-				ID:          m.MediaBase.ID,
-				Title:       m.MediaBase.Title,
-				Overview:    m.MediaBase.Overview,
-				PosterURL:   m.MediaBase.PosterURL,
-				ReleaseYear: m.MediaBase.ReleaseYear,
+				ID:          m.ID,
+				Title:       m.Title,
+				Overview:    m.Overview,
+				PosterURL:   m.PosterURL,
+				ReleaseYear: m.ReleaseYear,
 			}
 			result = append(result, item)
 		}
@@ -78,11 +78,11 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		totalPages = sr.TotalPages
 		for _, m := range sr.TvShows {
 			item := SearchItemView{
-				ID:          m.MediaBase.ID,
-				Title:       m.MediaBase.Title,
-				Overview:    m.MediaBase.Overview,
-				PosterURL:   m.MediaBase.PosterURL,
-				ReleaseYear: m.MediaBase.ReleaseYear,
+				ID:          m.ID,
+				Title:       m.Title,
+				Overview:    m.Overview,
+				PosterURL:   m.PosterURL,
+				ReleaseYear: m.ReleaseYear,
 			}
 			result = append(result, item)
 		}
@@ -118,11 +118,11 @@ func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Reque
 	}
 
 	data := MovieView{
-		ID:          movie.MediaBase.ID,
-		Title:       movie.MediaBase.Title,
-		Overview:    movie.MediaBase.Overview,
-		PosterURL:   movie.MediaBase.PosterURL,
-		ReleaseYear: movie.MediaBase.ReleaseYear,
+		ID:          movie.ID,
+		Title:       movie.Title,
+		Overview:    movie.Overview,
+		PosterURL:   movie.PosterURL,
+		ReleaseYear: movie.ReleaseYear,
 	}
 
 	h.renderTemplate(w, r, "movie", data)
@@ -142,11 +142,11 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 	}
 
 	data := TvShowView{
-		ID:          tvShow.MediaBase.ID,
-		Title:       tvShow.MediaBase.Title,
-		Overview:    tvShow.MediaBase.Overview,
-		PosterURL:   tvShow.MediaBase.PosterURL,
-		ReleaseYear: tvShow.MediaBase.ReleaseYear,
+		ID:          tvShow.ID,
+		Title:       tvShow.Title,
+		Overview:    tvShow.Overview,
+		PosterURL:   tvShow.PosterURL,
+		ReleaseYear: tvShow.ReleaseYear,
 	}
 
 	h.renderTemplate(w, r, "tv", data)
