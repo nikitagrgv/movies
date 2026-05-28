@@ -167,7 +167,7 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		episodeNumber := i + 1
 		episodeViews = append(episodeViews, EpisodeView{
 			EpisodeNumber: episodeNumber,
-			Name:          "E" + strconv.Itoa(episodeNumber) + ": " + season.Episodes[i].Name,
+			Name:          season.Episodes[i].Name,
 			IsAvailable:   true, // TODO# implement
 		})
 	}
