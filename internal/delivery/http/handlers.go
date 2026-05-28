@@ -124,36 +124,64 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	var seasonNum = 1
+	var episodeNum = 1
+	if r.URL.Query().Has("s") {
+		s, err := strconv.Atoi(r.URL.Query().Get("s"))
+		if err != nil {
+			h.render400(w, r)
+		}
+		seasonNum = s
+	}
+	if r.URL.Query().Has("e") {
+		e, err := strconv.Atoi(r.URL.Query().Get("e"))
+		if err != nil {
+			h.render400(w, r)
+		}
+		episodeNum = e
+	}
+
 	tvShow, err := h.get.GetTvShow(r.Context(), id)
 	if err != nil {
 		h.render500(w, r, err.Error())
 		return
 	}
 
+	season, err := h.get.GetTvShowSeason(r.Context(), id, seasonNum)
+	if err != nil {
+		h.render500(w, r, err.Error())
+		return
+	}
+
 	var seasonViews []SeasonView
-	for _, s := range tvShow.Seasons {
-		var epViews []EpisodeView
-		for _, e := range s.Episodes {
-			epViews = append(epViews, EpisodeView{
-				EpisodeNumber: e.EpisodeNumber,
-				SeasonNumber:  e.SeasonNumber,
-				Name:          e.Name,
-			})
-		}
+	for i := range tvShow.TotalSeasons {
+		seasonNumber := i + 1
 		seasonViews = append(seasonViews, SeasonView{
-			SeasonNumber: s.SeasonNumber,
-			Name:         s.Name,
-			Episodes:     epViews,
+			SeasonNumber: seasonNumber,
+			Name:         "S" + strconv.Itoa(seasonNumber),
+			EpisodeCount: episodeNum})
+	}
+
+	var episodeViews []EpisodeView
+	for i := range len(season.Episodes) {
+		episodeNumber := i + 1
+		episodeViews = append(episodeViews, EpisodeView{
+			EpisodeNumber: episodeNumber,
+			Name:          "E" + strconv.Itoa(episodeNumber) + ": " + season.Episodes[i].Name,
+			IsAvailable:   true, // TODO# implement
 		})
 	}
 
 	data := TvShowView{
-		ID:          tvShow.ID,
-		Title:       tvShow.Title,
-		Overview:    tvShow.Overview,
-		PosterURL:   tvShow.PosterURL,
-		ReleaseYear: tvShow.ReleaseYear,
-		Seasons:     seasonViews,
+		ID:             tvShow.ID,
+		Title:          tvShow.Title,
+		Overview:       tvShow.Overview,
+		PosterURL:      tvShow.PosterURL,
+		ReleaseYear:    tvShow.ReleaseYear,
+		CurrentSeason:  seasonNum,
+		CurrentEpisode: episodeNum,
+		Seasons:        seasonViews,
+		Episodes:       episodeViews,
 	}
 
 	h.renderTemplate(w, r, "tv", data)

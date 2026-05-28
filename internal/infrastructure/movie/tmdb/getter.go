@@ -3,7 +3,6 @@ package tmdb
 import (
 	"context"
 	"strconv"
-	"sync"
 
 	"github.com/nikitagrgv/movies/internal/domain"
 )
@@ -62,31 +61,12 @@ func (g *MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, err
 		ReleaseYear: parseYear(raw.FirstAirDate),
 	}
 
-	var seasons = make([]domain.Season, raw.NumSeasons)
-	var wg sync.WaitGroup
-	wg.Add(raw.NumSeasons)
-	for seasonNumber := 1; seasonNumber <= raw.NumSeasons; seasonNumber++ {
-		go func(id int, s int) {
-			defer wg.Done()
-			season, err := g.getSeason(ctx, id, s)
-			if err != nil {
-				season = domain.Season{
-					SeasonNumber: s,
-					Name:         "Invalid Season",
-				}
-			}
-			seasons[s-1] = season
-		}(id, seasonNumber)
-	}
-
-	wg.Wait()
-
-	res := domain.TvShow{Media: media, Seasons: seasons}
+	res := domain.TvShow{Media: media, TotalSeasons: raw.NumSeasons}
 
 	return res, nil
 }
 
-func (g *MovieGetter) getSeason(ctx context.Context, id int, seasonNumber int) (domain.Season, error) {
+func (g *MovieGetter) GetTvShowSeason(ctx context.Context, id int, seasonNumber int) (domain.Season, error) {
 	var raw GetSeasonResponse
 	err := g.client.get(
 		ctx,
@@ -109,6 +89,7 @@ func (g *MovieGetter) getSeason(ctx context.Context, id int, seasonNumber int) (
 	}
 
 	season := domain.Season{
+		ShowID:       id,
 		SeasonNumber: seasonNumber,
 		Name:         raw.Name,
 		Episodes:     episodes,

@@ -2,6 +2,7 @@ package stub
 
 import (
 	"context"
+	"errors"
 	"strconv"
 
 	"github.com/nikitagrgv/movies/internal/domain"
@@ -35,13 +36,26 @@ func (g MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, erro
 		PosterURL:   "",
 		ReleaseYear: 2021,
 	}
-	episodes := []domain.Episode{
-		{EpisodeNumber: 1, SeasonNumber: 1, Name: "First Episode"},
-	}
-	seasons := []domain.Season{
-		{SeasonNumber: 1, Name: "First Season", Episodes: episodes},
+
+	movie := domain.TvShow{Media: media, TotalSeasons: 2}
+	return movie, nil
+}
+
+func (g MovieGetter) GetTvShowSeason(ctx context.Context, id, season int) (domain.Season, error) {
+	if season < 0 || season > 2 {
+		return domain.Season{}, errors.New("season number must be between 0 and 1")
 	}
 
-	movie := domain.TvShow{Media: media, Seasons: seasons}
-	return movie, nil
+	episodes := []domain.Episode{
+		{EpisodeNumber: 1, SeasonNumber: season, Name: "First Episode"},
+		{EpisodeNumber: 2, SeasonNumber: season, Name: "Second Episode"},
+		{EpisodeNumber: 3, SeasonNumber: season, Name: "Third Episode"},
+	}
+
+	return domain.Season{
+		ShowID:       id,
+		SeasonNumber: 1,
+		Name:         "Season " + strconv.Itoa(season),
+		Episodes:     episodes,
+	}, nil
 }

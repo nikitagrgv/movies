@@ -35,6 +35,16 @@ func (u *GetMediaUsecase) GetTvShow(ctx context.Context, id int) (domain.TvShow,
 	return media, nil
 }
 
+func (u *GetMediaUsecase) GetTvShowSeason(ctx context.Context, id, season int) (domain.Season, error) {
+	s, err := u.getter.GetTvShowSeason(ctx, id, season)
+	if err != nil {
+		return domain.Season{}, err
+	}
+
+	return s, nil
+}
+
+// TODO: Move out of here
 func normalizeMedia(media domain.Media, noImageURL string) domain.Media {
 	if media.PosterURL == "" {
 		media.PosterURL = noImageURL

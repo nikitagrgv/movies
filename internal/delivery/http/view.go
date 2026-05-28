@@ -34,14 +34,14 @@ type MovieView struct {
 
 type EpisodeView struct {
 	EpisodeNumber int
-	SeasonNumber  int
 	Name          string
+	IsAvailable   bool
 }
 
 type SeasonView struct {
 	SeasonNumber int
 	Name         string
-	Episodes     []EpisodeView
+	EpisodeCount int
 }
 
 type TvShowView struct {
@@ -50,5 +50,10 @@ type TvShowView struct {
 	Overview    string
 	PosterURL   string
 	ReleaseYear int
-	Seasons     []SeasonView
+
+	CurrentSeason  int
+	CurrentEpisode int
+
+	Seasons  []SeasonView
+	Episodes []EpisodeView
 }

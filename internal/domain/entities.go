@@ -34,6 +34,11 @@ type Movie struct {
 	Media
 }
 
+type TvShow struct {
+	Media
+	TotalSeasons int
+}
+
 type Episode struct {
 	EpisodeNumber int
 	SeasonNumber  int
@@ -41,12 +46,8 @@ type Episode struct {
 }
 
 type Season struct {
+	ShowID       int
 	SeasonNumber int
 	Name         string
 	Episodes     []Episode
-}
-
-type TvShow struct {
-	Media
-	Seasons []Season
 }
