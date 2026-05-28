@@ -478,36 +478,62 @@ body:has(.error-container) {
     border-color: #1e88e5;
 }
 
-.ep-head {
-    font-size: 14px;
+.ep-rail {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.ep-rail__label {
+    font-size: 13px;
     font-weight: 600;
-    color: #b0b0b0;
-    margin-bottom: 14px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #2f2f2f;
+    color: #8b8b8b;
+    flex-shrink: 0;
+}
+
+.ep-rail__sub {
+    font-size: 12px;
+    font-weight: 600;
+    color: #5b9bd5;
 }
 
 .ep-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
     gap: 8px;
     margin-bottom: 20px;
 }
 
 .ep-tile {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 10px 4px;
+    gap: 2px;
+    padding: 10px 6px;
     border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
     text-decoration: none;
     background: #1a2e1e;
     color: #66bb6a;
     border: 1px solid #2e5e3e;
     transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.ep-tile__num {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.ep-tile__name {
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .ep-tile:hover {
@@ -591,7 +617,7 @@ body:has(.error-container) {
     }
 
     .ep-grid {
-        grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
         gap: 6px;
     }
 }
@@ -807,13 +833,20 @@ body:has(.error-container) {
     }
 
     .ep-grid {
-        grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
         gap: 5px;
     }
 
     .ep-tile {
-        padding: 8px 2px;
+        padding: 8px 4px;
+    }
+
+    .ep-tile__num {
         font-size: 13px;
+    }
+
+    .ep-tile__name {
+        font-size: 10px;
     }
 
     .season-pill {
