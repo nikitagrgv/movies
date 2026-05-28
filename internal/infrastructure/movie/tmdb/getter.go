@@ -75,7 +75,7 @@ func (g *MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, err
 					Name:         "Invalid Season",
 				}
 			}
-			seasons[seasonNumber-1] = season
+			seasons[s-1] = season
 		}(id, seasonNumber)
 	}
 
