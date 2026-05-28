@@ -405,10 +405,194 @@ body:has(.error-container) {
     transform: scale(0.98);
 }
 
+/* -- TV Episodes panel -- */
+.eps-panel {
+    background: #1e1e1e;
+    border: 1px solid #2f2f2f;
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.eps-panel__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.eps-panel__head h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+.eps-count {
+    font-size: 13px;
+    color: #8b8b8b;
+    font-weight: 600;
+}
+
+.season-rail {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.season-rail__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #8b8b8b;
+    flex-shrink: 0;
+}
+
+.season-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.season-pill {
+    display: inline-block;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    background: #162440;
+    color: #5b9bd5;
+    border: 1px solid #1e3a5f;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.season-pill:hover {
+    background: #1e3a5f;
+    color: #a8d4f0;
+    border-color: #2a5a8a;
+}
+
+.season-pill.is-active {
+    background: #1e88e5;
+    color: #ffffff;
+    border-color: #1e88e5;
+}
+
+.ep-head {
+    font-size: 14px;
+    font-weight: 600;
+    color: #b0b0b0;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #2f2f2f;
+}
+
+.ep-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.ep-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 4px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    background: #1a2e1e;
+    color: #66bb6a;
+    border: 1px solid #2e5e3e;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.ep-tile:hover {
+    background: #2e5e3e;
+    color: #a5d6a7;
+    border-color: #43a047;
+}
+
+.ep-tile.is-current {
+    background: #43a047;
+    color: #ffffff;
+    border-color: #43a047;
+    box-shadow: 0 0 0 2px rgba(67, 160, 71, 0.35);
+}
+
+.ep-tile.coming {
+    background: #1e1e1e;
+    color: #4a4a4a;
+    border-color: #2f2f2f;
+}
+
+.ep-tile.coming:hover {
+    background: #2b2b2b;
+    color: #6b6b6b;
+    border-color: #3a3a3a;
+}
+
+.ep-tile__chk {
+    font-size: 11px;
+    color: #a5d6a7;
+}
+
+.ep-tile.is-current .ep-tile__chk {
+    color: #ffffff;
+}
+
+.eps-legend {
+    display: flex;
+    gap: 20px;
+    font-size: 12px;
+    color: #8b8b8b;
+    align-items: center;
+}
+
+.eps-legend span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.lg-now,
+.lg-chk,
+.lg-coming {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.lg-now {
+    background: #43a047;
+    box-shadow: 0 0 0 2px rgba(67, 160, 71, 0.35);
+}
+
+.lg-chk {
+    background: #66bb6a;
+}
+
+.lg-coming {
+    background: #4a4a4a;
+}
+
 /* -- Responsive -- */
 @media (max-width: 768px) {
     .movies-grid {
         grid-template-columns: 1fr;
+    }
+
+    .eps-panel {
+        padding: 18px;
+    }
+
+    .ep-grid {
+        grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+        gap: 6px;
     }
 }
 
@@ -616,5 +800,29 @@ body:has(.error-container) {
     .player-controls {
         flex-direction: column;
         gap: 8px;
+    }
+
+    .eps-panel {
+        padding: 14px;
+    }
+
+    .ep-grid {
+        grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
+        gap: 5px;
+    }
+
+    .ep-tile {
+        padding: 8px 2px;
+        font-size: 13px;
+    }
+
+    .season-pill {
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+
+    .eps-legend {
+        flex-wrap: wrap;
+        gap: 12px;
     }
 }
