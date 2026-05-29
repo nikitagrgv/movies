@@ -9,63 +9,63 @@ import (
 	"github.com/nikitagrgv/movies/internal/domain"
 )
 
-// WatchService
+// WatchServer
 // Template placeholders:
 // {id} - Movie/TV Show ID
 // {s} - TV show season
 // {e} - TV show episode
-type WatchService struct {
+type WatchServer struct {
 	ID                int
 	Name              string
 	MovieURLTemplate  string
 	TvShowURLTemplate string
 }
 
-type WatchServiceProvider struct {
-	services    []domain.WatchService
-	servicesMap map[int]WatchService
+type WatchServerProvider struct {
+	servers    []domain.WatchServer
+	serversMap map[int]WatchServer
 }
 
-func NewWatchServiceProvider(services []WatchService) (*WatchServiceProvider, error) {
-	p := &WatchServiceProvider{}
-	p.servicesMap = make(map[int]WatchService)
-	for _, service := range services {
-		if _, ok := p.servicesMap[service.ID]; ok {
-			return nil, fmt.Errorf("duplicate service %d", service.ID)
+func NewWatchServerProvider(servers []WatchServer) (*WatchServerProvider, error) {
+	p := &WatchServerProvider{}
+	p.serversMap = make(map[int]WatchServer)
+	for _, server := range servers {
+		if _, ok := p.serversMap[server.ID]; ok {
+			return nil, fmt.Errorf("duplicate server %d", server.ID)
 		}
-		p.servicesMap[service.ID] = service
+		p.serversMap[server.ID] = server
 
-		p.services = append(p.services, domain.WatchService{
-			ID:   service.ID,
-			Name: service.Name,
+		p.servers = append(p.servers, domain.WatchServer{
+			ID:   server.ID,
+			Name: server.Name,
 		})
 	}
 
 	return p, nil
 }
 
-func (p *WatchServiceProvider) GetServices(ctx context.Context) ([]domain.WatchService, error) {
-	return p.services, nil
+func (p *WatchServerProvider) GetServers(ctx context.Context) ([]domain.WatchServer, error) {
+	return p.servers, nil
 }
 
-func (p *WatchServiceProvider) GetMovieWatchLink(ctx context.Context, serviceID, movieID int) (string, error) {
-	service, ok := p.servicesMap[serviceID]
+func (p *WatchServerProvider) GetMovieWatchLink(ctx context.Context, serverID, movieID int) (string, error) {
+	server, ok := p.serversMap[serverID]
 	if !ok {
-		return "", fmt.Errorf("service %d not found", serviceID)
+		return "", fmt.Errorf("server %d not found", serverID)
 	}
 
-	cooked := service.MovieURLTemplate
+	cooked := server.MovieURLTemplate
 	cooked = strings.ReplaceAll(cooked, "{id}", strconv.Itoa(movieID))
 	return cooked, nil
 }
 
-func (p *WatchServiceProvider) GetTvShowWatchLink(ctx context.Context, serviceID, tvID, season, episode int) (string, error) {
-	service, ok := p.servicesMap[serviceID]
+func (p *WatchServerProvider) GetTvShowWatchLink(ctx context.Context, serverID, tvID, season, episode int) (string, error) {
+	server, ok := p.serversMap[serverID]
 	if !ok {
-		return "", fmt.Errorf("service %d not found", serviceID)
+		return "", fmt.Errorf("server %d not found", serverID)
 	}
 
-	cooked := service.TvShowURLTemplate
+	cooked := server.TvShowURLTemplate
 	cooked = strings.ReplaceAll(cooked, "{id}", strconv.Itoa(tvID))
 	cooked = strings.ReplaceAll(cooked, "{s}", strconv.Itoa(season))
 	cooked = strings.ReplaceAll(cooked, "{e}", strconv.Itoa(episode))

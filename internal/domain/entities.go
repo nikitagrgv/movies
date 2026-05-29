@@ -52,7 +52,7 @@ type Season struct {
 	Episodes     []Episode
 }
 
-type WatchService struct {
+type WatchServer struct {
 	ID   int
 	Name string
 }

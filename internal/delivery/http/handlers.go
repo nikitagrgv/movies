@@ -17,10 +17,10 @@ type Handler struct {
 	tmpl   *template.Template
 	search *usecase.SearchMediaUsecase
 	get    *usecase.GetMediaUsecase
-	watch  *usecase.WatchServiceUsecase
+	watch  *usecase.WatchServerUsecase
 }
 
-func NewHandler(tmpl *template.Template, search *usecase.SearchMediaUsecase, get *usecase.GetMediaUsecase, watch *usecase.WatchServiceUsecase) *Handler {
+func NewHandler(tmpl *template.Template, search *usecase.SearchMediaUsecase, get *usecase.GetMediaUsecase, watch *usecase.WatchServerUsecase) *Handler {
 	return &Handler{tmpl: tmpl, search: search, get: get, watch: watch}
 }
 
@@ -162,7 +162,7 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	services, err := h.watch.GetServices(r.Context())
+	servers, err := h.watch.GetServers(r.Context())
 	if err != nil {
 		h.render500(w, r, err.Error())
 		return
@@ -194,7 +194,7 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 	}
 
 	var serverViews []WatchServerView
-	for _, s := range services {
+	for _, s := range servers {
 		serverViews = append(serverViews, WatchServerView{
 			Name: s.Name,
 			Id:   s.ID,

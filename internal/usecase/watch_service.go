@@ -6,22 +6,22 @@ import (
 	"github.com/nikitagrgv/movies/internal/domain"
 )
 
-type WatchServiceUsecase struct {
-	provider domain.WatchServiceProvider
+type WatchServerUsecase struct {
+	provider domain.WatchServerProvider
 }
 
-func NewWatchServiceUsecase(provider domain.WatchServiceProvider) *WatchServiceUsecase {
-	return &WatchServiceUsecase{provider: provider}
+func NewWatchServerUsecase(provider domain.WatchServerProvider) *WatchServerUsecase {
+	return &WatchServerUsecase{provider: provider}
 }
 
-func (u *WatchServiceUsecase) GetServices(ctx context.Context) ([]domain.WatchService, error) {
-	return u.provider.GetServices(ctx)
+func (u *WatchServerUsecase) GetServers(ctx context.Context) ([]domain.WatchServer, error) {
+	return u.provider.GetServers(ctx)
 }
 
-func (u *WatchServiceUsecase) GetMovieWatchLink(ctx context.Context, serviceID, movieID int) (string, error) {
-	return u.provider.GetMovieWatchLink(ctx, serviceID, movieID)
+func (u *WatchServerUsecase) GetMovieWatchLink(ctx context.Context, serverID, movieID int) (string, error) {
+	return u.provider.GetMovieWatchLink(ctx, serverID, movieID)
 }
 
-func (u *WatchServiceUsecase) GetTvShowWatchLink(ctx context.Context, serviceID, tvID, season, episode int) (string, error) {
-	return u.provider.GetTvShowWatchLink(ctx, serviceID, tvID, season, episode)
+func (u *WatchServerUsecase) GetTvShowWatchLink(ctx context.Context, serverID, tvID, season, episode int) (string, error) {
+	return u.provider.GetTvShowWatchLink(ctx, serverID, tvID, season, episode)
 }

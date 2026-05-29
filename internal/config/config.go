@@ -11,17 +11,17 @@ import (
 )
 
 type Config struct {
-	ListenPort    int
-	TmdbToken     string
-	Stubs         []stubType
-	WatchServices []WatchServiceConfig
+	ListenPort   int
+	TmdbToken    string
+	Stubs        []stubType
+	WatchServers []WatchServerConfig
 }
 
-type WatchServicesConfig struct {
-	Services []WatchServiceConfig `yaml:"services"`
+type WatchServersConfig struct {
+	Servers []WatchServerConfig `yaml:"servers"`
 }
 
-type WatchServiceConfig struct {
+type WatchServerConfig struct {
 	ID                int `yaml:"id"`
 	Name              int `yaml:"name"`
 	MovieURLTemplate  int `yaml:"movie_url_template"`
@@ -54,16 +54,16 @@ func Load() (Config, error) {
 		stubs = s
 	}
 
-	services, err := loadWatchServicesConfig()
+	servers, err := loadWatchServersConfig()
 	if err != nil {
 		return Config{}, err
 	}
 
 	return Config{
-		ListenPort:    port,
-		TmdbToken:     tmdbToken,
-		Stubs:         stubs,
-		WatchServices: services,
+		ListenPort:   port,
+		TmdbToken:    tmdbToken,
+		Stubs:        stubs,
+		WatchServers: servers,
 	}, nil
 }
 
@@ -80,11 +80,11 @@ func (c *Config) IsStubUsed(stub stubType) bool {
 	return false
 }
 
-func loadWatchServicesConfig() ([]WatchServiceConfig, error) {
-	var cfg WatchServicesConfig
-	err := yaml.Unmarshal(configs.WatchServicesRawConfig, &cfg)
+func loadWatchServersConfig() ([]WatchServerConfig, error) {
+	var cfg WatchServersConfig
+	err := yaml.Unmarshal(configs.WatchServersRawConfig, &cfg)
 	if err != nil {
-		return []WatchServiceConfig{}, fmt.Errorf("error parsing watch services config: %s", err)
+		return []WatchServerConfig{}, fmt.Errorf("error parsing watch servers config: %s", err)
 	}
-	return cfg.Services, nil
+	return cfg.Servers, nil
 }

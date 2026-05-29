@@ -1,4 +1,4 @@
-services:
+servers:
   - id: 0
     name: "Vidnest"
     movie_url_template: "https://vidnest.fun/movie/{id}"
