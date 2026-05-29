@@ -70,6 +70,24 @@
                 </a>
                 {{end}}
             </div>
+            {{if .Servers}}
+            <div class="ep-rail">
+                <span class="ep-rail__label">Servers</span>
+            </div>
+            <div class="server-rail">
+                <div class="server-pills">
+                    {{range .Servers}}
+                    <a
+                            class="server-pill {{if eq .Id $.CurrentServer}}is-active{{end}}"
+                            href="/tv/{{$.ID}}?s={{$.CurrentSeason}}&e={{$.CurrentEpisode}}&srv={{.Id}}"
+                            title="{{.Name}}"
+                    >
+                        {{.Name}}
+                    </a>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
         </div>
         <div class="movie-detail__player">
             <iframe

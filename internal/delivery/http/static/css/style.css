@@ -478,6 +478,52 @@ body:has(.error-container) {
     border-color: #1e88e5;
 }
 
+/* -- Server rail -- */
+.server-rail {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 0;
+}
+
+.server-rail__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #8b8b8b;
+    flex-shrink: 0;
+}
+
+.server-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.server-pill {
+    display: inline-block;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    background: #401616;
+    color: #d55b5b;
+    border: 1px solid #5f1e1e;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.server-pill:hover {
+    background: #5f1e1e;
+    color: #f0a8a8;
+    border-color: #8a2a2a;
+}
+
+.server-pill.is-active {
+    background: #e53935;
+    color: #ffffff;
+    border-color: #e53935;
+}
+
 .ep-rail {
     display: flex;
     align-items: center;
@@ -502,7 +548,7 @@ body:has(.error-container) {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 8px;
-    margin-bottom: 0;
+    margin-bottom: 20px;
 }
 
 .ep-tile {
@@ -849,7 +895,8 @@ body:has(.error-container) {
         font-size: 10px;
     }
 
-    .season-pill {
+    .season-pill,
+    .server-pill {
         padding: 5px 12px;
         font-size: 12px;
     }
