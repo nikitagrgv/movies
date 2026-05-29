@@ -7,15 +7,15 @@ import (
 	"github.com/nikitagrgv/movies/internal/domain"
 )
 
-type MovieGetter struct {
+type MediaGetter struct {
 	client *Client
 }
 
-func NewMovieGetter(client *Client) *MovieGetter {
-	return &MovieGetter{client: client}
+func NewMediaGetter(client *Client) *MediaGetter {
+	return &MediaGetter{client: client}
 }
 
-func (g *MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error) {
+func (g *MediaGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error) {
 	var raw GetMovieResponse
 	err := g.client.get(
 		ctx,
@@ -40,7 +40,7 @@ func (g *MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error
 	return res, nil
 }
 
-func (g *MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, error) {
+func (g *MediaGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, error) {
 	var raw GetTvShowResponse
 	err := g.client.get(
 		ctx,
@@ -66,7 +66,7 @@ func (g *MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, err
 	return res, nil
 }
 
-func (g *MovieGetter) GetTvShowSeason(ctx context.Context, id int, seasonNumber int) (domain.Season, error) {
+func (g *MediaGetter) GetTvShowSeason(ctx context.Context, id int, seasonNumber int) (domain.Season, error) {
 	var raw GetSeasonResponse
 	err := g.client.get(
 		ctx,

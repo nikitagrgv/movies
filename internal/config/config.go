@@ -2,17 +2,33 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
+
+	configs "github.com/nikitagrgv/movies/config"
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	ListenPort int
-	TmdbToken  string
-	Stubs      []stubType
+	ListenPort    int
+	TmdbToken     string
+	Stubs         []stubType
+	WatchServices []WatchServiceConfig
 }
 
-func LoadFromEnv() (Config, error) {
+type WatchServicesConfig struct {
+	Services []WatchServiceConfig `yaml:"services"`
+}
+
+type WatchServiceConfig struct {
+	ID                int `yaml:"id"`
+	Name              int `yaml:"name"`
+	MovieURLTemplate  int `yaml:"movie_url_template"`
+	TvShowURLTemplate int `yaml:"tv_show_url_template"`
+}
+
+func Load() (Config, error) {
 	portStr, ok := os.LookupEnv("MOVIES_LISTEN_PORT")
 	if !ok {
 		return Config{}, errors.New("MOVIES_LISTEN_PORT must be set")
@@ -38,10 +54,16 @@ func LoadFromEnv() (Config, error) {
 		stubs = s
 	}
 
+	services, err := loadWatchServicesConfig()
+	if err != nil {
+		return Config{}, err
+	}
+
 	return Config{
-		ListenPort: port,
-		TmdbToken:  tmdbToken,
-		Stubs:      stubs,
+		ListenPort:    port,
+		TmdbToken:     tmdbToken,
+		Stubs:         stubs,
+		WatchServices: services,
 	}, nil
 }
 
@@ -56,4 +78,13 @@ func (c *Config) IsStubUsed(stub stubType) bool {
 		}
 	}
 	return false
+}
+
+func loadWatchServicesConfig() ([]WatchServiceConfig, error) {
+	var cfg WatchServicesConfig
+	err := yaml.Unmarshal(configs.WatchServicesRawConfig, &cfg)
+	if err != nil {
+		return []WatchServiceConfig{}, fmt.Errorf("error parsing watch services config: %s", err)
+	}
+	return cfg.Services, nil
 }

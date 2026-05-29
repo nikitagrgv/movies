@@ -8,13 +8,13 @@ import (
 	"github.com/nikitagrgv/movies/internal/domain"
 )
 
-type MovieGetter struct{}
+type MediaGetter struct{}
 
-func NewMovieGetter() *MovieGetter {
-	return &MovieGetter{}
+func NewMediaGetter() *MediaGetter {
+	return &MediaGetter{}
 }
 
-func (MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error) {
+func (MediaGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error) {
 	name := "Movie " + strconv.Itoa(id)
 	media := domain.Media{
 		ID:          id,
@@ -27,7 +27,7 @@ func (MovieGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error) {
 	return movie, nil
 }
 
-func (g MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, error) {
+func (g MediaGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, error) {
 	name := "Movie " + strconv.Itoa(id)
 	media := domain.Media{
 		ID:          id,
@@ -41,7 +41,7 @@ func (g MovieGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, erro
 	return movie, nil
 }
 
-func (g MovieGetter) GetTvShowSeason(ctx context.Context, id, season int) (domain.Season, error) {
+func (g MediaGetter) GetTvShowSeason(ctx context.Context, id, season int) (domain.Season, error) {
 	if season < 0 || season > 2 {
 		return domain.Season{}, errors.New("season number must be between 0 and 1")
 	}

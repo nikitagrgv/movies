@@ -17,10 +17,11 @@ type Handler struct {
 	tmpl   *template.Template
 	search *usecase.SearchMediaUsecase
 	get    *usecase.GetMediaUsecase
+	watch  *usecase.WatchServiceUsecase
 }
 
-func NewHandler(tmpl *template.Template, search *usecase.SearchMediaUsecase, get *usecase.GetMediaUsecase) *Handler {
-	return &Handler{tmpl: tmpl, search: search, get: get}
+func NewHandler(tmpl *template.Template, search *usecase.SearchMediaUsecase, get *usecase.GetMediaUsecase, watch *usecase.WatchServiceUsecase) *Handler {
+	return &Handler{tmpl: tmpl, search: search, get: get, watch: watch}
 }
 
 func (h *Handler) ShowMain(w http.ResponseWriter, r *http.Request) {
@@ -126,6 +127,7 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 
 	var seasonNum = 1
 	var episodeNum = 1
+	var serverId = 0
 	if r.URL.Query().Has("s") {
 		s, err := strconv.Atoi(r.URL.Query().Get("s"))
 		if err != nil {
@@ -140,6 +142,13 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		}
 		episodeNum = e
 	}
+	if r.URL.Query().Has("srv") {
+		srv, err := strconv.Atoi(r.URL.Query().Get("srv"))
+		if err != nil {
+			h.render400(w, r)
+		}
+		serverId = srv
+	}
 
 	tvShow, err := h.get.GetTvShow(r.Context(), id)
 	if err != nil {
@@ -148,6 +157,18 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 	}
 
 	season, err := h.get.GetTvShowSeason(r.Context(), id, seasonNum)
+	if err != nil {
+		h.render500(w, r, err.Error())
+		return
+	}
+
+	services, err := h.watch.GetServices(r.Context())
+	if err != nil {
+		h.render500(w, r, err.Error())
+		return
+	}
+
+	watchURL, err := h.watch.GetTvShowWatchLink(r.Context(), serverId, id, seasonNum, episodeNum)
 	if err != nil {
 		h.render500(w, r, err.Error())
 		return
@@ -172,6 +193,14 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		})
 	}
 
+	var serverViews []WatchServerView
+	for _, s := range services {
+		serverViews = append(serverViews, WatchServerView{
+			Name: s.Name,
+			Id:   s.ID,
+		})
+	}
+
 	data := TvShowView{
 		ID:             tvShow.ID,
 		Title:          tvShow.Title,
@@ -180,8 +209,11 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		ReleaseYear:    tvShow.ReleaseYear,
 		CurrentSeason:  seasonNum,
 		CurrentEpisode: episodeNum,
+		CurrentServer:  serverId,
+		WatchURL:       watchURL,
 		Seasons:        seasonViews,
 		Episodes:       episodeViews,
+		Servers:        serverViews,
 	}
 
 	h.renderTemplate(w, r, "tv", data)

@@ -75,7 +75,7 @@ func (c *Client) get(ctx context.Context, path string, query url.Values, out any
 
 			if resp.StatusCode != http.StatusOK {
 				body, _ := io.ReadAll(resp.Body)
-				lastErr = fmt.Errorf("tmdb error: status=%d body=%s", resp.StatusCode, string(body))
+				lastErr = fmt.Errorf("aggregator error: status=%d body=%s", resp.StatusCode, string(body))
 				return
 			}
 

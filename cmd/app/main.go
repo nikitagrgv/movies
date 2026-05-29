@@ -25,7 +25,7 @@ func main() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 
-	cfg, err := config.LoadFromEnv()
+	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
 	}
@@ -51,22 +51,22 @@ func main() {
 	tmdbImageURL := "https://image.tmdb.org/t/p"
 	tmdbClient, err := tmdb.NewClient(tmdbApiURL, tmdbImageURL, cfg.TmdbToken)
 	if err != nil {
-		log.Fatalf("Error loading tmdb client: %v", err)
+		log.Fatalf("Error loading aggregator client: %v", err)
 	}
 
 	var searcher domain.MediaSearcher
 	if cfg.IsStubUsed(config.SearchStub) {
-		searcher = stub.NewMovieSearcher()
+		searcher = stub.NewMediaSearcher()
 	} else {
-		searcher = tmdb.NewMovieSearcher(tmdbClient)
+		searcher = tmdb.NewMediaSearcher(tmdbClient)
 	}
 	search := usecase.NewSearchMediaUsecase(searcher, noImageURL)
 
 	var getter domain.MediaGetter
 	if cfg.IsStubUsed(config.SearchStub) {
-		getter = stub.NewMovieGetter()
+		getter = stub.NewMediaGetter()
 	} else {
-		getter = tmdb.NewMovieGetter(tmdbClient)
+		getter = tmdb.NewMediaGetter(tmdbClient)
 	}
 	get := usecase.NewGetMediaUsecase(getter, noImageURL)
 

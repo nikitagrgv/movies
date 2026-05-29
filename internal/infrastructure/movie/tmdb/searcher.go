@@ -8,15 +8,15 @@ import (
 	"github.com/nikitagrgv/movies/internal/domain"
 )
 
-type MovieSearcher struct {
+type MediaSearcher struct {
 	client *Client
 }
 
-func NewMovieSearcher(client *Client) *MovieSearcher {
-	return &MovieSearcher{client: client}
+func NewMediaSearcher(client *Client) *MediaSearcher {
+	return &MediaSearcher{client: client}
 }
 
-func (s *MovieSearcher) SearchMovies(ctx context.Context, query string, page int) (domain.SearchResult, error) {
+func (s *MediaSearcher) SearchMovies(ctx context.Context, query string, page int) (domain.SearchResult, error) {
 	var raw SearchMovieResponse
 	err := s.client.get(
 		ctx,
@@ -51,7 +51,7 @@ func (s *MovieSearcher) SearchMovies(ctx context.Context, query string, page int
 	return res, nil
 }
 
-func (s *MovieSearcher) SearchTvShows(ctx context.Context, query string, page int) (domain.SearchResult, error) {
+func (s *MediaSearcher) SearchTvShows(ctx context.Context, query string, page int) (domain.SearchResult, error) {
 	var raw SearchTvShowResponse
 	err := s.client.get(
 		ctx,

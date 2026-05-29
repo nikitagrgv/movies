@@ -1,0 +1,9 @@
+services:
+  - id: 0
+    name: "Vidnest"
+    movie_url_template: "https://vidnest.fun/movie/{id}"
+    tv_show_url_template: "https://vidnest.fun/tv/{id}/{s}/{e}"
+  - id: 99
+    name: "Test"
+    movie_url_template: "https://example.com/movie/{id}"
+    tv_show_url_template: "https://example.com/tv/{id}/{s}/{e}"

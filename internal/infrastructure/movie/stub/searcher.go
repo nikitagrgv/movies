@@ -8,17 +8,17 @@ import (
 	"github.com/nikitagrgv/movies/internal/domain"
 )
 
-type MovieSearcher struct{}
+type MediaSearcher struct{}
 
-func NewMovieSearcher() *MovieSearcher {
-	return &MovieSearcher{}
+func NewMediaSearcher() *MediaSearcher {
+	return &MediaSearcher{}
 }
 
-func (MovieSearcher) SearchMovies(_ context.Context, query string, page int) (domain.SearchResult, error) {
+func (MediaSearcher) SearchMovies(_ context.Context, query string, page int) (domain.SearchResult, error) {
 	return getMedias(query, page)
 }
 
-func (s MovieSearcher) SearchTvShows(_ context.Context, query string, page int) (domain.SearchResult, error) {
+func (s MediaSearcher) SearchTvShows(_ context.Context, query string, page int) (domain.SearchResult, error) {
 	return getMedias(query, page)
 }
 
