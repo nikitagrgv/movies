@@ -15,7 +15,7 @@ import (
 // {s} - TV show season
 // {e} - TV show episode
 type WatchServer struct {
-	ID                int
+	ID                string
 	Name              string
 	MovieURLTemplate  string
 	TvShowURLTemplate string
@@ -23,12 +23,12 @@ type WatchServer struct {
 
 type WatchServerProvider struct {
 	servers    []domain.WatchServer
-	serversMap map[int]WatchServer
+	serversMap map[string]WatchServer
 }
 
 func NewWatchServerProvider(servers []WatchServer) (*WatchServerProvider, error) {
 	p := &WatchServerProvider{}
-	p.serversMap = make(map[int]WatchServer)
+	p.serversMap = make(map[string]WatchServer)
 	for _, server := range servers {
 		if _, ok := p.serversMap[server.ID]; ok {
 			return nil, fmt.Errorf("duplicate server %d", server.ID)
@@ -48,10 +48,10 @@ func (p *WatchServerProvider) GetServers(ctx context.Context) ([]domain.WatchSer
 	return p.servers, nil
 }
 
-func (p *WatchServerProvider) GetMovieWatchLink(ctx context.Context, serverID, movieID int) (string, error) {
+func (p *WatchServerProvider) GetMovieWatchLink(ctx context.Context, serverID string, movieID int) (string, error) {
 	server, ok := p.serversMap[serverID]
 	if !ok {
-		return "", fmt.Errorf("server %d not found", serverID)
+		return "", fmt.Errorf("server %s not found", serverID)
 	}
 
 	cooked := server.MovieURLTemplate
@@ -59,10 +59,10 @@ func (p *WatchServerProvider) GetMovieWatchLink(ctx context.Context, serverID, m
 	return cooked, nil
 }
 
-func (p *WatchServerProvider) GetTvShowWatchLink(ctx context.Context, serverID, tvID, season, episode int) (string, error) {
+func (p *WatchServerProvider) GetTvShowWatchLink(ctx context.Context, serverID string, tvID, season, episode int) (string, error) {
 	server, ok := p.serversMap[serverID]
 	if !ok {
-		return "", fmt.Errorf("server %d not found", serverID)
+		return "", fmt.Errorf("server %s not found", serverID)
 	}
 
 	cooked := server.TvShowURLTemplate

@@ -18,10 +18,10 @@ func (u *WatchServerUsecase) GetServers(ctx context.Context) ([]domain.WatchServ
 	return u.provider.GetServers(ctx)
 }
 
-func (u *WatchServerUsecase) GetMovieWatchLink(ctx context.Context, serverID, movieID int) (string, error) {
+func (u *WatchServerUsecase) GetMovieWatchLink(ctx context.Context, serverID string, movieID int) (string, error) {
 	return u.provider.GetMovieWatchLink(ctx, serverID, movieID)
 }
 
-func (u *WatchServerUsecase) GetTvShowWatchLink(ctx context.Context, serverID, tvID, season, episode int) (string, error) {
+func (u *WatchServerUsecase) GetTvShowWatchLink(ctx context.Context, serverID string, tvID, season, episode int) (string, error) {
 	return u.provider.GetTvShowWatchLink(ctx, serverID, tvID, season, episode)
 }

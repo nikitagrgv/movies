@@ -45,7 +45,7 @@ type SeasonView struct {
 }
 
 type WatchServerView struct {
-	Id   int
+	ID   string
 	Name string
 }
 
@@ -58,7 +58,7 @@ type TvShowView struct {
 
 	CurrentSeason  int
 	CurrentEpisode int
-	CurrentServer  int
+	CurrentServer  string
 
 	WatchURL string
 

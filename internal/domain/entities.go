@@ -53,6 +53,6 @@ type Season struct {
 }
 
 type WatchServer struct {
-	ID   int
+	ID   string
 	Name string
 }

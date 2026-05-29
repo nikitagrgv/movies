@@ -78,8 +78,8 @@
                 <div class="server-pills">
                     {{range .Servers}}
                     <a
-                            class="server-pill {{if eq .Id $.CurrentServer}}is-active{{end}}"
-                            href="/tv/{{$.ID}}?s={{$.CurrentSeason}}&e={{$.CurrentEpisode}}&srv={{.Id}}"
+                            class="server-pill {{if eq .ID $.CurrentServer}}is-active{{end}}"
+                            href="/tv/{{$.ID}}?s={{$.CurrentSeason}}&e={{$.CurrentEpisode}}&srv={{.ID}}"
                             title="{{.Name}}"
                     >
                         {{.Name}}

@@ -127,7 +127,7 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 
 	var seasonNum = 1
 	var episodeNum = 1
-	var serverId = 0
+	var serverId = ""
 	if r.URL.Query().Has("s") {
 		s, err := strconv.Atoi(r.URL.Query().Get("s"))
 		if err != nil {
@@ -143,10 +143,7 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		episodeNum = e
 	}
 	if r.URL.Query().Has("srv") {
-		srv, err := strconv.Atoi(r.URL.Query().Get("srv"))
-		if err != nil {
-			h.render400(w, r)
-		}
+		srv := r.URL.Query().Get("srv")
 		serverId = srv
 	}
 
@@ -166,6 +163,15 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		h.render500(w, r, err.Error())
 		return
+	}
+
+	if len(servers) == 0 {
+		h.render500(w, r, "no servers found")
+		return
+	}
+
+	if serverId == "" {
+		serverId = servers[0].ID
 	}
 
 	watchURL, err := h.watch.GetTvShowWatchLink(r.Context(), serverId, id, seasonNum, episodeNum)
@@ -197,7 +203,7 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 	for _, s := range servers {
 		serverViews = append(serverViews, WatchServerView{
 			Name: s.Name,
-			Id:   s.ID,
+			ID:   s.ID,
 		})
 	}
 
