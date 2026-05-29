@@ -5,15 +5,15 @@ servers:
     tv_show_url_template: "https://vidnest.fun/tv/{id}/{s}/{e}"
   - id: "vidsrcmov"
     name: "VidSrc.mov"
-    movie_url_template: "https://vidsrc.mov/embed/movie/{id}"#
+    movie_url_template: "https://vidsrc.mov/embed/movie/{id}"
     tv_show_url_template: "https://vidsrc.mov/embed/tv/{id}/{s}/{e}"
   - id: "vidsrcfyi"
     name: "VidSrc.fyi"
-    movie_url_template: "https://vidsrc.fyi/embed/movie/{id}"#
+    movie_url_template: "https://vidsrc.fyi/embed/movie/{id}"
     tv_show_url_template: "https://vidsrc.fyi/embed/tv/{id}/{s}/{e}"
   - id: "vidrock"
     name: "VidRock"
-    movie_url_template: "https://vidrock.net/movie/{id}"#
+    movie_url_template: "https://vidrock.net/movie/{id}"
     tv_show_url_template: "https://vidrock.net/tv/{id}/{s}/{e}"
   - id: "vidking"
     name: "VidKing"
@@ -41,15 +41,15 @@ servers:
     tv_show_url_template: "https://111movies.com/tv/{id}/{s}/{e}"
   - id: "2embed"
     name: "2embed"
-    movie_url_template: "https://www.2embed.cc/embed/{id}"#
+    movie_url_template: "https://www.2embed.cc/embed/{id}"
     tv_show_url_template: "https://www.2embed.cc/embedtv/{id}&s={s}&e={e}"
   - id: "multiembed"
     name: "Multiembed"
-    movie_url_template: ""#
+    movie_url_template: "https://multiembed.mov/?video_id={id}&tmdb=1"
     tv_show_url_template: "https://multiembed.mov/?video_id={id}&tmdb=1&s={s}&e={e}"
   - id: "superflixapi"
     name: "SuperFlixAPI"
-    movie_url_template: "https://superflixapi.co/movie/{id}"#
+    movie_url_template: "https://superflixapi.co/filme/{id}"
     tv_show_url_template: "https://superflixapi.co/serie/{id}/{s}/{e}"
   - id: "peachify"
     name: "Peachify"
