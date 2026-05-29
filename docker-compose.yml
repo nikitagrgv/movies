@@ -1,0 +1,12 @@
+﻿services:
+  movies:
+    build: .
+    container_name: movies_app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MOVIES_LISTEN_PORT: ${MOVIES_LISTEN_PORT}
+      MOVIES_TMDB_TOKEN: ${MOVIES_TMDB_TOKEN}
+    ports:
+      - "${MOVIES_LISTEN_PORT}:${MOVIES_LISTEN_PORT}"
