@@ -24,12 +24,20 @@ type SearchView struct {
 	Items        []SearchItemView
 }
 
+type WatchServerView struct {
+	ID   string
+	Name string
+}
+
 type MovieView struct {
 	ID          int
 	Title       string
 	Overview    string
 	PosterURL   string
 	ReleaseYear int
+
+	CurrentServer string
+	Servers       []WatchServerView
 }
 
 type EpisodeView struct {
@@ -42,11 +50,6 @@ type SeasonView struct {
 	SeasonNumber int
 	Name         string
 	EpisodeCount int
-}
-
-type WatchServerView struct {
-	ID   string
-	Name string
 }
 
 type TvShowView struct {
