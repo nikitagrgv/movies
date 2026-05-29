@@ -101,18 +101,56 @@ func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	var serverId = ""
+	if r.URL.Query().Has("srv") {
+		srv := r.URL.Query().Get("srv")
+		serverId = srv
+	}
+
 	movie, err := h.get.GetMovie(r.Context(), id)
 	if err != nil {
 		h.render500(w, r, err.Error())
 		return
 	}
 
+	servers, err := h.watch.GetServers(r.Context())
+	if err != nil {
+		h.render500(w, r, err.Error())
+		return
+	}
+
+	if len(servers) == 0 {
+		h.render500(w, r, "no servers found")
+		return
+	}
+
+	if serverId == "" {
+		serverId = servers[0].ID
+	}
+
+	watchURL, err := h.watch.GetMovieWatchLink(r.Context(), serverId, id)
+	if err != nil {
+		h.render500(w, r, err.Error())
+		return
+	}
+
+	var serverViews []WatchServerView
+	for _, s := range servers {
+		serverViews = append(serverViews, WatchServerView{
+			Name: s.Name,
+			ID:   s.ID,
+		})
+	}
+
 	data := MovieView{
-		ID:          movie.ID,
-		Title:       movie.Title,
-		Overview:    movie.Overview,
-		PosterURL:   movie.PosterURL,
-		ReleaseYear: movie.ReleaseYear,
+		ID:            movie.ID,
+		Title:         movie.Title,
+		Overview:      movie.Overview,
+		PosterURL:     movie.PosterURL,
+		ReleaseYear:   movie.ReleaseYear,
+		CurrentServer: serverId,
+		WatchURL:      watchURL,
+		Servers:       serverViews,
 	}
 
 	h.renderTemplate(w, r, "movie", data)

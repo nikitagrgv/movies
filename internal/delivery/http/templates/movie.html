@@ -37,9 +37,29 @@
             </div>
         </div>
 
+        {{if .Servers}}
+        <div class="eps-panel">
+            <div class="ep-rail">
+                <span class="season-rail__label">Servers</span>
+            </div>
+            <div class="server-rail">
+                <div class="server-pills">
+                    {{range .Servers}}
+                    <a
+                            class="server-pill {{if eq .ID $.CurrentServer}}is-active{{end}}"
+                            href="/movie/{{$.ID}}?srv={{.ID}}"
+                            title="{{.Name}}"
+                    >
+                        {{.Name}}
+                    </a>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+        {{end}}
         <div class="movie-detail__player">
             <iframe
-                    src="https://vidnest.fun/movie/{{.ID}}"
+                    src="{{.WatchURL}}"
                     title="{{.Title}} player"
                     allowfullscreen
                     loading="lazy"

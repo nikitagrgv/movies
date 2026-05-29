@@ -37,7 +37,10 @@ type MovieView struct {
 	ReleaseYear int
 
 	CurrentServer string
-	Servers       []WatchServerView
+
+	WatchURL string
+
+	Servers []WatchServerView
 }
 
 type EpisodeView struct {
