@@ -18,6 +18,7 @@ import (
 	"github.com/nikitagrgv/movies/internal/domain"
 	"github.com/nikitagrgv/movies/internal/infrastructure/movie/stub"
 	"github.com/nikitagrgv/movies/internal/infrastructure/movie/tmdb"
+	"github.com/nikitagrgv/movies/internal/infrastructure/watch/static"
 	"github.com/nikitagrgv/movies/internal/usecase"
 )
 
@@ -70,7 +71,23 @@ func main() {
 	}
 	get := usecase.NewGetMediaUsecase(getter, noImageURL)
 
-	handler := deliveryHttp.NewHandler(tmpl, search, get)
+	var servers []static.WatchServer
+	for _, s := range cfg.WatchServers {
+		servers = append(servers, static.WatchServer{
+			ID:                s.ID,
+			Name:              s.Name,
+			MovieURLTemplate:  s.MovieURLTemplate,
+			TvShowURLTemplate: s.TvShowURLTemplate,
+		})
+	}
+
+	watchProvider, err := static.NewWatchServerProvider(servers)
+	if err != nil {
+		log.Fatalf("Error loading watch servers: %v", err)
+	}
+	watch := usecase.NewWatchServerUsecase(watchProvider)
+
+	handler := deliveryHttp.NewHandler(tmpl, search, get, watch)
 
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		handler.ShowMain(w, r)

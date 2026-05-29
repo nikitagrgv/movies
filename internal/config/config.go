@@ -22,10 +22,10 @@ type WatchServersConfig struct {
 }
 
 type WatchServerConfig struct {
-	ID                int `yaml:"id"`
-	Name              int `yaml:"name"`
-	MovieURLTemplate  int `yaml:"movie_url_template"`
-	TvShowURLTemplate int `yaml:"tv_show_url_template"`
+	ID                int    `yaml:"id"`
+	Name              string `yaml:"name"`
+	MovieURLTemplate  string `yaml:"movie_url_template"`
+	TvShowURLTemplate string `yaml:"tv_show_url_template"`
 }
 
 func Load() (Config, error) {
