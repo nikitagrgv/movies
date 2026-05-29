@@ -45,7 +45,7 @@
                     {{range .Seasons}}
                     <a
                             class="season-pill {{if eq .SeasonNumber $.CurrentSeason}}is-active{{end}}"
-                            href="/tv/{{$.ID}}?s={{.SeasonNumber}}&e=1"
+                            href="/tv/{{$.ID}}?s={{.SeasonNumber}}&e=1&srv={{$.CurrentServer}}"
                             title="{{.Name}}"
                     >
                         S{{.SeasonNumber}}
@@ -59,7 +59,7 @@
             <div class="ep-grid">
                 {{range .Episodes}}
                 <a
-                        href="/tv/{{$.ID}}?s={{$.CurrentSeason}}&e={{.EpisodeNumber}}"
+                        href="/tv/{{$.ID}}?s={{$.CurrentSeason}}&e={{.EpisodeNumber}}&srv={{$.CurrentServer}}"
                         class="ep-tile
                             {{if eq .EpisodeNumber $.CurrentEpisode}}is-current{{end}}
                             {{if .IsAvailable}}is-available{{else}}coming{{end}}"
