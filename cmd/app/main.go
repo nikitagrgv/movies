@@ -39,8 +39,12 @@ func main() {
 	}
 
 	staticHandler := http.FileServer(http.FS(staticFs))
-	mux.Handle("/static/", http.StripPrefix("/static/", staticHandler))
-	mux.Handle("/favicon.ico", staticHandler)
+	mux.Handle("/static/",
+		http.StripPrefix("/static/",
+			deliveryHttp.GzipMiddleware(staticHandler)))
+	mux.Handle("/favicon.ico",
+		deliveryHttp.GzipMiddleware(staticHandler),
+	)
 
 	tmpl, err := template.ParseFS(deliveryHttp.Assets, "templates/*.html", "templates/partials/*.html")
 	if err != nil {
@@ -111,7 +115,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.ListenPort),
-		Handler:      mux,
+		Handler:      deliveryHttp.GzipMiddleware(mux),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
@@ -119,7 +123,7 @@ func main() {
 
 	go func() {
 		fmt.Printf("Listening on port %d\n", cfg.ListenPort)
-		if err := srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
