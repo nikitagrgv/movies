@@ -27,7 +27,6 @@ body:has(.search-form):not(:has(.container)) .search-wrapper {
     box-sizing: border-box;
 }
 
-/* -- Homepage -- */
 body:has(.search-form) {
     display: flex;
     justify-content: center;
@@ -39,7 +38,6 @@ body:has(.search-form) .search-wrapper {
     padding: 0;
 }
 
-/* -- Search header on results page -- */
 .search-header {
     margin-bottom: 32px;
 }
@@ -156,7 +154,6 @@ body:has(.search-form) .search-wrapper {
     transform: scale(0.98);
 }
 
-/* -- Results heading -- */
 .results-heading {
     font-size: 24px;
     font-weight: 700;
@@ -171,7 +168,6 @@ body:has(.search-form) .search-wrapper {
     margin-left: 12px;
 }
 
-/* -- Movies grid -- */
 .movies-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -270,7 +266,6 @@ body:has(.search-form) .search-wrapper {
     color: #6b6b6b;
 }
 
-/* -- Empty state -- */
 .empty-state {
     text-align: center;
     padding: 80px 20px;
@@ -281,7 +276,6 @@ body:has(.search-form) .search-wrapper {
     color: #8b8b8b;
 }
 
-/* -- Pagination -- */
 .pagination {
     display: flex;
     align-items: center;
@@ -331,7 +325,6 @@ a.page-btn:hover {
     white-space: nowrap;
 }
 
-/* -- Error page -- */
 body:has(.error-container) {
     display: flex;
     justify-content: center;
@@ -405,7 +398,6 @@ body:has(.error-container) {
     transform: scale(0.98);
 }
 
-/* -- TV Episodes panel -- */
 .eps-panel {
     background: #1e1e1e;
     border: 1px solid #2f2f2f;
@@ -478,7 +470,6 @@ body:has(.error-container) {
     border-color: #1e88e5;
 }
 
-/* -- Server rail -- */
 .server-rail {
     display: flex;
     align-items: center;
@@ -652,7 +643,6 @@ body:has(.error-container) {
     background: #4a4a4a;
 }
 
-/* -- Responsive -- */
 @media (max-width: 768px) {
     .movies-grid {
         grid-template-columns: 1fr;
@@ -708,7 +698,6 @@ body:has(.error-container) {
     }
 }
 
-/* -- Movie detail page -- */
 .movie-detail {
     display: flex;
     flex-direction: column;
@@ -781,7 +770,6 @@ body:has(.error-container) {
     margin: 0;
 }
 
-/* Player controls */
 .player-controls {
     display: flex;
     gap: 12px;
@@ -806,7 +794,6 @@ body:has(.error-container) {
     border-color: #4a4a4a;
 }
 
-/* Player */
 .movie-detail__player {
     position: relative;
     width: 100%;
