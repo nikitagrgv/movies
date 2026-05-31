@@ -106,6 +106,8 @@ func (c *LRUCache[K, V]) pushFront(n *node[K, V]) {
 	if c.front != nil {
 		c.front.prev = n
 	}
+	n.next = c.front
+	n.prev = nil
 	c.front = n
 	if c.back == nil {
 		c.back = n
@@ -116,23 +118,6 @@ func (c *LRUCache[K, V]) moveFront(n *node[K, V]) {
 	if n == c.front {
 		return
 	}
-
-	if n.prev != nil {
-		n.prev.next = n.next
-	}
-	if n.next != nil {
-		n.next.prev = n.prev
-	}
-
-	if c.back == n {
-		c.back = n.prev
-	}
-
-	if c.front != nil {
-		c.front.prev = n
-	}
-
-	n.next = c.front
-	n.prev = nil
-	c.front = n
+	c.removeNode(n)
+	c.pushFront(n)
 }
