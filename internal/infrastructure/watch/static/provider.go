@@ -31,7 +31,7 @@ func NewWatchServerProvider(servers []WatchServer) (*WatchServerProvider, error)
 	p.serversMap = make(map[string]WatchServer)
 	for _, server := range servers {
 		if _, ok := p.serversMap[server.ID]; ok {
-			return nil, fmt.Errorf("duplicate server %d", server.ID)
+			return nil, fmt.Errorf("duplicate server %s", server.ID)
 		}
 		p.serversMap[server.ID] = server
 
