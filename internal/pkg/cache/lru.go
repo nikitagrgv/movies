@@ -48,7 +48,7 @@ func (c *LRUCache[K, V]) Put(k K, v V) {
 		return
 	}
 
-	if c.Size() >= c.maxSize {
+	if len(c.m) >= c.maxSize {
 		// reuse back node
 		n = c.back
 		delete(c.m, n.key)
