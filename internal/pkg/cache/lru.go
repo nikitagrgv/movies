@@ -40,7 +40,42 @@ func (c *LRUCache[K, V]) MaxSize() int {
 func (c *LRUCache[K, V]) Put(k K, v V) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	c.put(k, v)
+}
 
+func (c *LRUCache[K, V]) Get(k K) (v V, ok bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.get(k)
+}
+
+// GetOrPut
+// TODO: Use double locking. `put` can be slow or it may use this instance, leading to deadlock!
+func (c *LRUCache[K, V]) GetOrPut(k K, put func() V) (v V, existed bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	v, existed = c.get(k)
+	if !existed {
+		v = put()
+		c.put(k, v)
+	}
+
+	return v, existed
+}
+
+func (c *LRUCache[K, V]) get(k K) (v V, ok bool) {
+	n, ok := c.m[k]
+	if !ok {
+		var empty V
+		return empty, false
+	}
+
+	c.moveFront(n)
+	return n.value, true
+}
+
+func (c *LRUCache[K, V]) put(k K, v V) {
 	n, ok := c.m[k]
 	if ok {
 		n.value = v
@@ -67,20 +102,6 @@ func (c *LRUCache[K, V]) Put(k K, v V) {
 
 	c.pushFront(n)
 	c.m[k] = n
-}
-
-func (c *LRUCache[K, V]) Get(k K) (v V, ok bool) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	n, ok := c.m[k]
-	if !ok {
-		var empty V
-		return empty, false
-	}
-
-	c.moveFront(n)
-	return n.value, true
 }
 
 func (c *LRUCache[K, V]) removeNode(n *node[K, V]) {
