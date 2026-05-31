@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestLRUCache_PutWorks(t *testing.T) {
+func TestLRUCache_PutAndGetWorks(t *testing.T) {
 	lru := NewLRUCache[string, int](1)
 	lru.Put("test", 111)
 
@@ -13,6 +13,14 @@ func TestLRUCache_PutWorks(t *testing.T) {
 		t.Fatal("size should be 1")
 	}
 	AssertExists(t, lru, "test", 111)
+}
+
+func TestLRUCache_GetNonExisting(t *testing.T) {
+	lru := NewLRUCache[string, int](1)
+	if lru.Size() != 0 {
+		t.Fatal("size should be 0")
+	}
+	AssertNotExists(t, lru, "test")
 }
 
 func TestLRUCache_DoesntEvictIfHaveSpace(t *testing.T) {
@@ -78,6 +86,25 @@ func TestLRUCache_UpdateExistingKey(t *testing.T) {
 	lru.Put("test 1", 1111)
 
 	AssertExists(t, lru, "test 1", 1111)
+}
+
+func TestLRUCache_UpdateExistingKeyDoesntChangeSize(t *testing.T) {
+	lru := NewLRUCache[string, int](1)
+	lru.Put("test 1", 111)
+	lru.Put("test 1", 1111)
+
+	if lru.Size() != 1 {
+		t.Fatal("size should be 1")
+	}
+}
+
+func TestLRUCache_PanicIfSizeZero(t *testing.T) {
+	defer func() {
+		if recover() == nil {
+			t.Fatal("should have panicked")
+		}
+	}()
+	_ = NewLRUCache[string, int](0)
 }
 
 func TestLRUCache_Concurrent(t *testing.T) {
