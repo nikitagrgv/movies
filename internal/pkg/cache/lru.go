@@ -5,7 +5,6 @@ import "sync"
 type LRUCache[K comparable, V any] struct {
 	mu      sync.RWMutex
 	m       map[K]*node[K, V]
-	size    int
 	maxSize int
 	back    *node[K, V]
 	front   *node[K, V]
@@ -31,7 +30,7 @@ func NewLRUCache[K comparable, V any](maxSize int) *LRUCache[K, V] {
 func (c *LRUCache[K, V]) Size() int {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.size
+	return len(c.m)
 }
 
 func (c *LRUCache[K, V]) MaxSize() int {
@@ -49,7 +48,7 @@ func (c *LRUCache[K, V]) Put(k K, v V) {
 		return
 	}
 
-	if c.size >= c.maxSize {
+	if c.Size() >= c.maxSize {
 		// reuse back node
 		n = c.back
 		delete(c.m, n.key)
@@ -65,14 +64,13 @@ func (c *LRUCache[K, V]) Put(k K, v V) {
 		value: v,
 	}
 
-	if c.size == 0 {
+	if c.Size() == 0 {
 		c.back = n
 		c.front = n
 	} else {
 		c.moveToFront(n)
 	}
 	c.m[k] = n
-	c.size++
 }
 
 func (c *LRUCache[K, V]) Get(k K) (v V, ok bool) {
