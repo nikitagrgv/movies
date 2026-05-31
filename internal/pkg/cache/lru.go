@@ -44,7 +44,7 @@ func (c *LRUCache[K, V]) Put(k K, v V) {
 	n, ok := c.m[k]
 	if ok {
 		n.value = v
-		c.moveToFront(n)
+		c.moveFront(n)
 		return
 	}
 
@@ -52,10 +52,11 @@ func (c *LRUCache[K, V]) Put(k K, v V) {
 		// reuse back node
 		n = c.back
 		delete(c.m, n.key)
-		c.moveToFront(n)
 		c.m[k] = n
 		n.key = k
 		n.value = v
+		c.removeNode(n)
+		c.pushFront(n)
 		return
 	}
 
@@ -64,12 +65,7 @@ func (c *LRUCache[K, V]) Put(k K, v V) {
 		value: v,
 	}
 
-	if c.Size() == 0 {
-		c.back = n
-		c.front = n
-	} else {
-		c.moveToFront(n)
-	}
+	c.pushFront(n)
 	c.m[k] = n
 }
 
@@ -83,11 +79,40 @@ func (c *LRUCache[K, V]) Get(k K) (v V, ok bool) {
 		return empty, false
 	}
 
-	c.moveToFront(n)
+	c.moveFront(n)
 	return n.value, true
 }
 
-func (c *LRUCache[K, V]) moveToFront(n *node[K, V]) {
+func (c *LRUCache[K, V]) removeNode(n *node[K, V]) {
+	if c.front == n {
+		c.front = n.next
+	}
+	if c.back == n {
+		c.back = n.prev
+	}
+
+	if n.prev != nil {
+		n.prev.next = n.next
+	}
+	if n.next != nil {
+		n.next.prev = n.prev
+	}
+
+	n.prev = nil
+	n.next = nil
+}
+
+func (c *LRUCache[K, V]) pushFront(n *node[K, V]) {
+	if c.front != nil {
+		c.front.prev = n
+	}
+	c.front = n
+	if c.back == nil {
+		c.back = n
+	}
+}
+
+func (c *LRUCache[K, V]) moveFront(n *node[K, V]) {
 	if n == c.front {
 		return
 	}

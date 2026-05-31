@@ -13,7 +13,7 @@ func TestLRUCache_PutGet(t *testing.T) {
 
 	v, ok := lru.Get("test")
 	AssertTrue(t, ok, "get should return true")
-	AssertEq(t, v, 111, "value should be 111")
+	AssertEq(t, v, 111, "must be 111")
 }
 
 func TestLRUCache_NoPutGet(t *testing.T) {
@@ -30,12 +30,12 @@ func TestLRUCache_DoesntEvictIfHaveSpace(t *testing.T) {
 	lru.Put("test 2", 222)
 
 	v, ok := lru.Get("test 1")
-	AssertTrue(t, ok, "key not found")
-	AssertEq(t, v, 111, "value should be 111")
+	AssertTrue(t, ok, "not found")
+	AssertEq(t, v, 111, "must be 111")
 
 	v, ok = lru.Get("test 2")
-	AssertTrue(t, ok, "key not found")
-	AssertEq(t, v, 222, "value should be 222")
+	AssertTrue(t, ok, "not found")
+	AssertEq(t, v, 222, "must be 222")
 
 }
 
@@ -46,15 +46,28 @@ func TestLRUCache_EvictIfMaxSizeExceeds(t *testing.T) {
 	lru.Put("test 3", 333)
 
 	v, ok := lru.Get("test 2")
-	AssertTrue(t, ok, "key not found")
-	AssertEq(t, v, 222, "value should be 222")
+	AssertTrue(t, ok, "not found")
+	AssertEq(t, v, 222, "must be 222")
 
 	v, ok = lru.Get("test 3")
-	AssertTrue(t, ok, "key not found")
-	AssertEq(t, v, 333, "value should be 333")
+	AssertTrue(t, ok, "not found")
+	AssertEq(t, v, 333, "must be 333")
 
 	v, ok = lru.Get("test 1")
-	AssertFalse(t, ok, "key not evicted")
+	AssertFalse(t, ok, "not evicted")
+}
+
+func TestLRUCache_EvictNormallyIfSize1(t *testing.T) {
+	lru := NewLRUCache[string, int](1)
+	lru.Put("test 1", 111)
+	lru.Put("test 2", 222)
+
+	v, ok := lru.Get("test 1")
+	AssertFalse(t, ok, "not evicted")
+
+	v, ok = lru.Get("test 2")
+	AssertTrue(t, ok, "not found")
+	AssertEq(t, v, 222, "must be 222")
 }
 
 func TestLRUCache_GetMovesToFront(t *testing.T) {
@@ -65,15 +78,15 @@ func TestLRUCache_GetMovesToFront(t *testing.T) {
 	lru.Put("test 3", 333)
 
 	v, ok := lru.Get("test 1")
-	AssertTrue(t, ok, "key not found")
-	AssertEq(t, v, 111, "value should be 111")
+	AssertTrue(t, ok, "not found")
+	AssertEq(t, v, 111, "must be 111")
 
 	v, ok = lru.Get("test 3")
-	AssertTrue(t, ok, "key not found")
-	AssertEq(t, v, 333, "value should be 333")
+	AssertTrue(t, ok, "not found")
+	AssertEq(t, v, 333, "must be 333")
 
 	v, ok = lru.Get("test 2")
-	AssertFalse(t, ok, "key not evicted")
+	AssertFalse(t, ok, "not evicted")
 }
 
 func TestLRUCache_UpdateExistingKey(t *testing.T) {
@@ -82,8 +95,8 @@ func TestLRUCache_UpdateExistingKey(t *testing.T) {
 	lru.Put("test 1", 1111)
 
 	v, ok := lru.Get("test 1")
-	AssertTrue(t, ok, "key not found")
-	AssertEq(t, v, 1111, "value should be updated")
+	AssertTrue(t, ok, "not found")
+	AssertEq(t, v, 1111, "not updated")
 }
 
 func TestLRUCache_Concurrent(t *testing.T) {
@@ -98,7 +111,7 @@ func TestLRUCache_Concurrent(t *testing.T) {
 
 			lru.Put(i, i)
 			v, ok := lru.Get(i)
-			AssertTrue(t, ok, "key not found")
+			AssertTrue(t, ok, "not found")
 			AssertEq(t, v, i, "invalid value")
 		}(i)
 	}
@@ -106,7 +119,7 @@ func TestLRUCache_Concurrent(t *testing.T) {
 	wg.Wait()
 	for i := 0; i < N; i++ {
 		v, ok := lru.Get(i)
-		AssertTrue(t, ok, "key not found")
+		AssertTrue(t, ok, "not found")
 		AssertEq(t, v, i, "invalid value")
 	}
 }
