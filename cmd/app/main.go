@@ -31,6 +31,9 @@ func main() {
 		log.Fatalf("Error loading config: %v", err)
 	}
 
+	const LoggerBuf = 200
+	logger := deliveryHttp.NewLoggerMiddleware(LoggerBuf)
+
 	mux := http.NewServeMux()
 
 	staticFs, err := fs.Sub(deliveryHttp.Assets, "static")
@@ -39,12 +42,18 @@ func main() {
 	}
 
 	staticHandler := http.FileServer(http.FS(staticFs))
-	mux.Handle("/static/",
-		http.StripPrefix("/static/",
-			deliveryHttp.GzipMiddleware(staticHandler)))
-	mux.Handle("/favicon.ico",
-		deliveryHttp.GzipMiddleware(staticHandler),
-	)
+
+	mux.Handle("/static/", deliveryHttp.Chain(
+		staticHandler,
+		logger.Handler,
+		deliveryHttp.StripPrefix("/static/"),
+		deliveryHttp.GzipMiddleware,
+	))
+	mux.Handle("/favicon.ico", deliveryHttp.Chain(
+		staticHandler,
+		logger.Handler,
+		deliveryHttp.GzipMiddleware,
+	))
 
 	tmpl, err := template.ParseFS(deliveryHttp.Assets, "templates/*.html", "templates/partials/*.html")
 	if err != nil {
@@ -93,25 +102,36 @@ func main() {
 
 	handler := deliveryHttp.NewHandler(tmpl, search, get, watch)
 
-	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		handler.ShowMain(w, r)
-	})
+	mux.Handle("GET /{$}", deliveryHttp.Chain(
+		http.HandlerFunc(handler.ShowMain),
+		logger.Handler,
+	))
 
-	mux.HandleFunc("GET /search", func(w http.ResponseWriter, r *http.Request) {
-		handler.HandleSearch(w, r)
-	})
+	mux.Handle("GET /search", deliveryHttp.Chain(
+		http.HandlerFunc(handler.HandleSearch),
+		logger.Handler,
+	))
 
-	mux.HandleFunc("GET /movie/{id}", func(w http.ResponseWriter, r *http.Request) {
-		id := r.PathValue("id")
-		handler.HandleMovie(id, w, r)
-	})
+	mux.Handle("GET /movie/{id}", deliveryHttp.Chain(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			id := r.PathValue("id")
+			handler.HandleMovie(id, w, r)
+		}),
+		logger.Handler,
+	))
 
-	mux.HandleFunc("GET /tv/{id}", func(w http.ResponseWriter, r *http.Request) {
-		id := r.PathValue("id")
-		handler.HandleTvShow(id, w, r)
-	})
+	mux.Handle("GET /tv/{id}", deliveryHttp.Chain(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			id := r.PathValue("id")
+			handler.HandleTvShow(id, w, r)
+		}),
+		logger.Handler,
+	))
 
-	mux.HandleFunc("/", handler.ShowNotFound)
+	mux.Handle("/", deliveryHttp.Chain(
+		http.HandlerFunc(handler.ShowNotFound),
+		logger.Handler,
+	))
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.ListenPort),
