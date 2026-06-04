@@ -31,9 +31,6 @@ func main() {
 		log.Fatalf("Error loading config: %v", err)
 	}
 
-	const LoggerBuf = 200
-	logger := deliveryHttp.NewLoggerMiddleware(LoggerBuf)
-
 	mux := http.NewServeMux()
 
 	staticFs, err := fs.Sub(deliveryHttp.Assets, "static")
@@ -45,13 +42,11 @@ func main() {
 
 	mux.Handle("/static/", deliveryHttp.Chain(
 		staticHandler,
-		logger.Handler,
 		deliveryHttp.StripPrefix("/static/"),
 		deliveryHttp.GzipMiddleware,
 	))
 	mux.Handle("/favicon.ico", deliveryHttp.Chain(
 		staticHandler,
-		logger.Handler,
 		deliveryHttp.GzipMiddleware,
 	))
 
@@ -104,12 +99,10 @@ func main() {
 
 	mux.Handle("GET /{$}", deliveryHttp.Chain(
 		http.HandlerFunc(handler.ShowMain),
-		logger.Handler,
 	))
 
 	mux.Handle("GET /search", deliveryHttp.Chain(
 		http.HandlerFunc(handler.HandleSearch),
-		logger.Handler,
 	))
 
 	mux.Handle("GET /movie/{id}", deliveryHttp.Chain(
@@ -117,7 +110,6 @@ func main() {
 			id := r.PathValue("id")
 			handler.HandleMovie(id, w, r)
 		}),
-		logger.Handler,
 	))
 
 	mux.Handle("GET /tv/{id}", deliveryHttp.Chain(
@@ -125,12 +117,10 @@ func main() {
 			id := r.PathValue("id")
 			handler.HandleTvShow(id, w, r)
 		}),
-		logger.Handler,
 	))
 
 	mux.Handle("/", deliveryHttp.Chain(
 		http.HandlerFunc(handler.ShowNotFound),
-		logger.Handler,
 	))
 
 	srv := &http.Server{
