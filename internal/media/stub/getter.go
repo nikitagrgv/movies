@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/nikitagrgv/movies/internal/domain"
+	"github.com/nikitagrgv/movies/internal/media"
 )
 
 type MediaGetter struct{}
@@ -14,22 +14,22 @@ func NewMediaGetter() *MediaGetter {
 	return &MediaGetter{}
 }
 
-func (MediaGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error) {
+func (MediaGetter) GetMovie(ctx context.Context, id int) (media.Movie, error) {
 	name := "Movie " + strconv.Itoa(id)
-	media := domain.Media{
+	m := media.Media{
 		ID:          id,
 		Title:       name,
 		Overview:    name + " is a beautiful movie about love... I cried!",
 		PosterURL:   "",
 		ReleaseYear: 2021,
 	}
-	movie := domain.Movie{Media: media}
+	movie := media.Movie{Media: m}
 	return movie, nil
 }
 
-func (g MediaGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, error) {
+func (g MediaGetter) GetTvShow(ctx context.Context, id int) (media.TvShow, error) {
 	name := "Movie " + strconv.Itoa(id)
-	media := domain.Media{
+	m := media.Media{
 		ID:          id,
 		Title:       name,
 		Overview:    name + " is a beautiful movie about love... I cried!",
@@ -37,22 +37,22 @@ func (g MediaGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, erro
 		ReleaseYear: 2021,
 	}
 
-	movie := domain.TvShow{Media: media, TotalSeasons: 2}
+	movie := media.TvShow{Media: m, TotalSeasons: 2}
 	return movie, nil
 }
 
-func (g MediaGetter) GetTvShowSeason(ctx context.Context, id, season int) (domain.Season, error) {
+func (g MediaGetter) GetTvShowSeason(ctx context.Context, id, season int) (media.Season, error) {
 	if season < 0 || season > 2 {
-		return domain.Season{}, errors.New("season number must be between 0 and 1")
+		return media.Season{}, errors.New("season number must be between 0 and 1")
 	}
 
-	episodes := []domain.Episode{
+	episodes := []media.Episode{
 		{EpisodeNumber: 1, SeasonNumber: season, Name: "First Episode"},
 		{EpisodeNumber: 2, SeasonNumber: season, Name: "Second Episode"},
 		{EpisodeNumber: 3, SeasonNumber: season, Name: "Third Episode"},
 	}
 
-	return domain.Season{
+	return media.Season{
 		ShowID:       id,
 		SeasonNumber: 1,
 		Name:         "Season " + strconv.Itoa(season),

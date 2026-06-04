@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/nikitagrgv/movies/internal/domain"
+	"github.com/nikitagrgv/movies/internal/media"
 )
 
 type MediaSearcher struct{}
@@ -14,20 +14,20 @@ func NewMediaSearcher() *MediaSearcher {
 	return &MediaSearcher{}
 }
 
-func (MediaSearcher) SearchMovies(_ context.Context, query string, page int) (domain.SearchResult, error) {
+func (MediaSearcher) SearchMovies(_ context.Context, query string, page int) (media.SearchResult, error) {
 	return getMedias(query, page)
 }
 
-func (s MediaSearcher) SearchTvShows(_ context.Context, query string, page int) (domain.SearchResult, error) {
+func (s MediaSearcher) SearchTvShows(_ context.Context, query string, page int) (media.SearchResult, error) {
 	return getMedias(query, page)
 }
 
-func getMedias(query string, page int) (domain.SearchResult, error) {
+func getMedias(query string, page int) (media.SearchResult, error) {
 	if page < 1 || page > 3 {
-		return domain.SearchResult{}, errors.New("invalid page")
+		return media.SearchResult{}, errors.New("invalid page")
 	}
 
-	var movies = make([]domain.Media, 0, 3)
+	var movies = make([]media.Media, 0, 3)
 	if page == 1 {
 		movies = append(movies, getMedia(query, 1))
 		movies = append(movies, getMedia(query, 2))
@@ -44,12 +44,12 @@ func getMedias(query string, page int) (domain.SearchResult, error) {
 		movies = append(movies, getMedia(query, 9))
 	}
 
-	return domain.SearchResult{Items: movies, CurrentPage: page, TotalPages: 3}, nil
+	return media.SearchResult{Items: movies, CurrentPage: page, TotalPages: 3}, nil
 }
 
-func getMedia(query string, index int) domain.Media {
+func getMedia(query string, index int) media.Media {
 	name := query + " " + strconv.Itoa(index)
-	media := domain.Media{
+	media := media.Media{
 		ID:          index,
 		Title:       name,
 		Overview:    name + " is a beautiful movie about love... I cried!",
