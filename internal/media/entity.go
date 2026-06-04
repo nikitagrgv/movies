@@ -1,4 +1,4 @@
-package domain
+package media
 
 import (
 	"errors"
@@ -50,9 +50,4 @@ type Season struct {
 	SeasonNumber int
 	Name         string
 	Episodes     []Episode
-}
-
-type WatchServer struct {
-	ID   string
-	Name string
 }

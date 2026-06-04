@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	"github.com/nikitagrgv/movies/internal/domain"
 )
 
 // WatchServer
@@ -22,7 +20,7 @@ type WatchServer struct {
 }
 
 type WatchServerProvider struct {
-	servers    []domain.WatchServer
+	servers    []WatchServer
 	serversMap map[string]WatchServer
 }
 
@@ -35,7 +33,7 @@ func NewWatchServerProvider(servers []WatchServer) (*WatchServerProvider, error)
 		}
 		p.serversMap[server.ID] = server
 
-		p.servers = append(p.servers, domain.WatchServer{
+		p.servers = append(p.servers, WatchServer{
 			ID:   server.ID,
 			Name: server.Name,
 		})
@@ -44,7 +42,7 @@ func NewWatchServerProvider(servers []WatchServer) (*WatchServerProvider, error)
 	return p, nil
 }
 
-func (p *WatchServerProvider) GetServers(ctx context.Context) ([]domain.WatchServer, error) {
+func (p *WatchServerProvider) GetServers(ctx context.Context) ([]WatchServer, error) {
 	return p.servers, nil
 }
 

@@ -9,19 +9,18 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nikitagrgv/movies/internal/domain"
-	"github.com/nikitagrgv/movies/internal/usecase"
+	"github.com/nikitagrgv/movies/internal/media"
+	"github.com/nikitagrgv/movies/internal/watch"
 )
 
 type Handler struct {
-	tmpl   *template.Template
-	search *usecase.SearchMediaUsecase
-	get    *usecase.GetMediaUsecase
-	watch  *usecase.WatchServerUsecase
+	tmpl  *template.Template
+	media *media.Service
+	watch *watch.Service
 }
 
-func NewHandler(tmpl *template.Template, search *usecase.SearchMediaUsecase, get *usecase.GetMediaUsecase, watch *usecase.WatchServerUsecase) *Handler {
-	return &Handler{tmpl: tmpl, search: search, get: get, watch: watch}
+func NewHandler(tmpl *template.Template, media *media.Service, watch *watch.Service) *Handler {
+	return &Handler{tmpl: tmpl, media: media, watch: watch}
 }
 
 func (h *Handler) ShowMain(w http.ResponseWriter, r *http.Request) {
@@ -33,13 +32,13 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	searchType := r.URL.Query().Get("type")
 	pageStr := r.URL.Query().Get("p")
 
-	mtype, err := domain.ParseMediaType(searchType)
+	mtype, err := media.ParseMediaType(searchType)
 	if err != nil {
 		h.render400(w, r)
 		return
 	}
 
-	var page int = 1
+	var page = 1
 	if pageStr != "" {
 		p, err := strconv.Atoi(pageStr)
 		if err != nil {
@@ -49,17 +48,17 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		page = p
 	}
 
-	var result domain.SearchResult
+	var result media.SearchResult
 
 	switch mtype {
-	case domain.MovieType:
-		result, err = h.search.SearchMovies(r.Context(), query, page)
+	case media.MovieType:
+		result, err = h.media.SearchMovies(r.Context(), query, page)
 		if err != nil {
 			h.render500(w, r, err.Error())
 			return
 		}
-	case domain.TvShowType:
-		result, err = h.search.SearchTvShows(r.Context(), query, page)
+	case media.TvShowType:
+		result, err = h.media.SearchTvShows(r.Context(), query, page)
 		if err != nil {
 			h.render500(w, r, err.Error())
 			return
@@ -107,7 +106,7 @@ func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Reque
 		serverId = srv
 	}
 
-	movie, err := h.get.GetMovie(r.Context(), id)
+	movie, err := h.media.GetMovie(r.Context(), id)
 	if err != nil {
 		h.render500(w, r, err.Error())
 		return
@@ -185,13 +184,13 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		serverId = srv
 	}
 
-	tvShow, err := h.get.GetTvShow(r.Context(), id)
+	tvShow, err := h.media.GetTvShow(r.Context(), id)
 	if err != nil {
 		h.render500(w, r, err.Error())
 		return
 	}
 
-	season, err := h.get.GetTvShowSeason(r.Context(), id, seasonNum)
+	season, err := h.media.GetTvShowSeason(r.Context(), id, seasonNum)
 	if err != nil {
 		h.render500(w, r, err.Error())
 		return

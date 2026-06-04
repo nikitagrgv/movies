@@ -4,7 +4,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/nikitagrgv/movies/internal/domain"
+	"github.com/nikitagrgv/movies/internal/media"
 )
 
 type MediaGetter struct {
@@ -15,7 +15,7 @@ func NewMediaGetter(client *Client) *MediaGetter {
 	return &MediaGetter{client: client}
 }
 
-func (g *MediaGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error) {
+func (g *MediaGetter) GetMovie(ctx context.Context, id int) (media.Movie, error) {
 	var raw GetMovieResponse
 	err := g.client.get(
 		ctx,
@@ -24,23 +24,23 @@ func (g *MediaGetter) GetMovie(ctx context.Context, id int) (domain.Movie, error
 		&raw,
 	)
 	if err != nil {
-		return domain.Movie{}, err
+		return media.Movie{}, err
 	}
 
 	poster := g.client.getImageURL(raw.PosterPath)
-	media := domain.Media{
+	m := media.Media{
 		ID:          raw.ID,
 		Title:       raw.Title,
 		Overview:    raw.Overview,
 		PosterURL:   poster,
 		ReleaseYear: parseYear(raw.ReleaseDate),
 	}
-	res := domain.Movie{Media: media}
+	res := media.Movie{Media: m}
 
 	return res, nil
 }
 
-func (g *MediaGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, error) {
+func (g *MediaGetter) GetTvShow(ctx context.Context, id int) (media.TvShow, error) {
 	var raw GetTvShowResponse
 	err := g.client.get(
 		ctx,
@@ -49,11 +49,11 @@ func (g *MediaGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, err
 		&raw,
 	)
 	if err != nil {
-		return domain.TvShow{}, err
+		return media.TvShow{}, err
 	}
 
 	poster := g.client.getImageURL(raw.PosterPath)
-	media := domain.Media{
+	m := media.Media{
 		ID:          raw.ID,
 		Title:       raw.Name,
 		Overview:    raw.Overview,
@@ -61,12 +61,12 @@ func (g *MediaGetter) GetTvShow(ctx context.Context, id int) (domain.TvShow, err
 		ReleaseYear: parseYear(raw.FirstAirDate),
 	}
 
-	res := domain.TvShow{Media: media, TotalSeasons: raw.NumSeasons}
+	res := media.TvShow{Media: m, TotalSeasons: raw.NumSeasons}
 
 	return res, nil
 }
 
-func (g *MediaGetter) GetTvShowSeason(ctx context.Context, id int, seasonNumber int) (domain.Season, error) {
+func (g *MediaGetter) GetTvShowSeason(ctx context.Context, id int, seasonNumber int) (media.Season, error) {
 	var raw GetSeasonResponse
 	err := g.client.get(
 		ctx,
@@ -75,12 +75,12 @@ func (g *MediaGetter) GetTvShowSeason(ctx context.Context, id int, seasonNumber 
 		&raw,
 	)
 	if err != nil {
-		return domain.Season{}, err
+		return media.Season{}, err
 	}
 
-	var episodes []domain.Episode
+	var episodes []media.Episode
 	for _, rawEpisode := range raw.Episodes {
-		episode := domain.Episode{
+		episode := media.Episode{
 			EpisodeNumber: rawEpisode.EpisodeNumber,
 			SeasonNumber:  seasonNumber,
 			Name:          rawEpisode.Name,
@@ -88,7 +88,7 @@ func (g *MediaGetter) GetTvShowSeason(ctx context.Context, id int, seasonNumber 
 		episodes = append(episodes, episode)
 	}
 
-	season := domain.Season{
+	season := media.Season{
 		ShowID:       id,
 		SeasonNumber: seasonNumber,
 		Name:         raw.Name,

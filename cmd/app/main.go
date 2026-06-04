@@ -13,13 +13,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/nikitagrgv/movies/internal/config"
 	deliveryHttp "github.com/nikitagrgv/movies/internal/delivery/http"
-	"github.com/nikitagrgv/movies/internal/domain"
-	"github.com/nikitagrgv/movies/internal/infrastructure/movie/stub"
-	"github.com/nikitagrgv/movies/internal/infrastructure/movie/tmdb"
-	"github.com/nikitagrgv/movies/internal/infrastructure/watch/static"
-	"github.com/nikitagrgv/movies/internal/usecase"
+	"github.com/nikitagrgv/movies/internal/media"
+	mediaStub "github.com/nikitagrgv/movies/internal/media/stub"
+	mediaTmdb "github.com/nikitagrgv/movies/internal/media/tmdb"
+	"github.com/nikitagrgv/movies/internal/watch"
+
+	"github.com/nikitagrgv/movies/internal/config"
+	"github.com/nikitagrgv/movies/internal/media/tmdb"
+	"github.com/nikitagrgv/movies/internal/watch/static"
 )
 
 func main() {
@@ -58,26 +60,26 @@ func main() {
 	noImageURL := "/static/noimage.png"
 	tmdbApiURL := "https://api.themoviedb.org/3"
 	tmdbImageURL := "https://image.tmdb.org/t/p"
-	tmdbClient, err := tmdb.NewClient(tmdbApiURL, tmdbImageURL, cfg.TmdbToken)
-	if err != nil {
-		log.Fatalf("Error loading aggregator client: %v", err)
-	}
 
-	var searcher domain.MediaSearcher
-	if cfg.IsStubUsed(config.SearchStub) {
-		searcher = stub.NewMediaSearcher()
+	var mediaService *media.Service
+	if cfg.IsStubUsed(config.MediaStub) {
+		mediaService = media.NewService(
+			mediaStub.NewMediaGetter(),
+			mediaStub.NewMediaSearcher(),
+			noImageURL,
+		)
 	} else {
-		searcher = tmdb.NewMediaSearcher(tmdbClient)
-	}
-	search := usecase.NewSearchMediaUsecase(searcher, noImageURL)
+		client, err := tmdb.NewClient(tmdbApiURL, tmdbImageURL, cfg.TmdbToken)
+		if err != nil {
+			log.Fatalf("Error loading tmdb client: %v", err)
+		}
 
-	var getter domain.MediaGetter
-	if cfg.IsStubUsed(config.SearchStub) {
-		getter = stub.NewMediaGetter()
-	} else {
-		getter = tmdb.NewMediaGetter(tmdbClient)
+		mediaService = media.NewService(
+			mediaTmdb.NewMediaGetter(client),
+			mediaTmdb.NewMediaSearcher(client),
+			noImageURL,
+		)
 	}
-	get := usecase.NewGetMediaUsecase(getter, noImageURL)
 
 	var servers []static.WatchServer
 	for _, s := range cfg.WatchServers {
@@ -93,9 +95,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error loading watch servers: %v", err)
 	}
-	watch := usecase.NewWatchServerUsecase(watchProvider)
+	watchService := watch.NewService(watchProvider)
 
-	handler := deliveryHttp.NewHandler(tmpl, search, get, watch)
+	handler := deliveryHttp.NewHandler(tmpl, mediaService, watchService)
 
 	mux.Handle("GET /{$}", deliveryHttp.Chain(
 		http.HandlerFunc(handler.ShowMain),
