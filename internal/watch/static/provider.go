@@ -5,14 +5,16 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/nikitagrgv/movies/internal/watch"
 )
 
-// WatchServer
+// WatchServerDescription
 // Template placeholders:
 // {id} - Movie/TV Show ID
 // {s} - TV show season
 // {e} - TV show episode
-type WatchServer struct {
+type WatchServerDescription struct {
 	ID                string
 	Name              string
 	MovieURLTemplate  string
@@ -20,20 +22,20 @@ type WatchServer struct {
 }
 
 type WatchServerProvider struct {
-	servers    []WatchServer
-	serversMap map[string]WatchServer
+	servers    []watch.WatchServer
+	serversMap map[string]WatchServerDescription
 }
 
-func NewWatchServerProvider(servers []WatchServer) (*WatchServerProvider, error) {
+func NewWatchServerProvider(servers []WatchServerDescription) (*WatchServerProvider, error) {
 	p := &WatchServerProvider{}
-	p.serversMap = make(map[string]WatchServer)
+	p.serversMap = make(map[string]WatchServerDescription)
 	for _, server := range servers {
 		if _, ok := p.serversMap[server.ID]; ok {
 			return nil, fmt.Errorf("duplicate server %s", server.ID)
 		}
 		p.serversMap[server.ID] = server
 
-		p.servers = append(p.servers, WatchServer{
+		p.servers = append(p.servers, watch.WatchServer{
 			ID:   server.ID,
 			Name: server.Name,
 		})
@@ -42,7 +44,7 @@ func NewWatchServerProvider(servers []WatchServer) (*WatchServerProvider, error)
 	return p, nil
 }
 
-func (p *WatchServerProvider) GetServers(ctx context.Context) ([]WatchServer, error) {
+func (p *WatchServerProvider) GetServers(ctx context.Context) ([]watch.WatchServer, error) {
 	return p.servers, nil
 }
 

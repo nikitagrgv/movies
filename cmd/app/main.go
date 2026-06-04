@@ -81,9 +81,9 @@ func main() {
 		)
 	}
 
-	var servers []static.WatchServer
+	var servers []static.WatchServerDescription
 	for _, s := range cfg.WatchServers {
-		servers = append(servers, static.WatchServer{
+		servers = append(servers, static.WatchServerDescription{
 			ID:                s.ID,
 			Name:              s.Name,
 			MovieURLTemplate:  s.MovieURLTemplate,
