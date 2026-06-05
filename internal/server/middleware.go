@@ -1,6 +1,10 @@
 package server
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+	"runtime/debug"
+)
 
 type Middleware func(http.Handler) http.Handler
 
@@ -11,8 +15,23 @@ func Chain(handler http.Handler, middlewares ...Middleware) http.Handler {
 	return handler
 }
 
-func StripPrefix(prefix string) Middleware {
+func StripPrefixMiddleware(prefix string) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.StripPrefix(prefix, next)
+	}
+}
+
+func RecoveryMiddleware() Middleware {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			defer func() {
+				if err := recover(); err != nil {
+					log.Printf("[PANIC RECOVERED] %v\nStack Trace:\n%s", err, debug.Stack())
+					w.Header().Set("Connection", "close")
+					http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				}
+			}()
+			next.ServeHTTP(w, r)
+		})
 	}
 }
