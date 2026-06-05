@@ -6,19 +6,21 @@ import (
 
 type Middleware func(http.Handler) http.Handler
 
-// MiddlewareBuilder
-// Immutable builder
+// MiddlewareBuilder is an immutable builder for chaining HTTP middlewares.
 type MiddlewareBuilder struct {
 	middlewares []Middleware
 }
 
-func NewMiddlewareBuilder() *MiddlewareBuilder {
-	return &MiddlewareBuilder{}
+func NewMiddlewareBuilder() MiddlewareBuilder {
+	return MiddlewareBuilder{}
 }
 
 func (b MiddlewareBuilder) With(middleware Middleware) MiddlewareBuilder {
-	b.middlewares = append(b.middlewares, middleware)
-	return b
+	oldLen := len(b.middlewares)
+	cloned := make([]Middleware, oldLen, oldLen+1)
+	copy(cloned, b.middlewares)
+	cloned = append(cloned, middleware)
+	return MiddlewareBuilder{middlewares: cloned}
 }
 
 func (b MiddlewareBuilder) Build(handler http.Handler) http.Handler {
