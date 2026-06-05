@@ -17,7 +17,7 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	staticHandler := http.FileServer(http.FS(staticFs))
 
 	baseMiddleware := server.NewMiddlewareBuilder().
-		With(server.RecoveryMiddleware())
+		With(server.RecoveryMiddleware)
 
 	mux.Handle("/static/", baseMiddleware.
 		With(server.StripPrefixMiddleware("/static/")).

@@ -12,17 +12,15 @@ func StripPrefixMiddleware(prefix string) Middleware {
 	}
 }
 
-func RecoveryMiddleware() Middleware {
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			defer func() {
-				if err := recover(); err != nil {
-					log.Printf("[PANIC RECOVERED] %v\nStack Trace:\n%s", err, debug.Stack())
-					w.Header().Set("Connection", "close")
-					http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-				}
-			}()
-			next.ServeHTTP(w, r)
-		})
-	}
+func RecoveryMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if err := recover(); err != nil {
+				log.Printf("[PANIC RECOVERED] %v\nStack Trace:\n%s", err, debug.Stack())
+				w.Header().Set("Connection", "close")
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			}
+		}()
+		next.ServeHTTP(w, r)
+	})
 }
