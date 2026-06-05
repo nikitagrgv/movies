@@ -16,46 +16,36 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 
 	staticHandler := http.FileServer(http.FS(staticFs))
 
-	mux.Handle("/static/", server.Chain(
-		staticHandler,
-		server.RecoveryMiddleware(),
-		server.StripPrefixMiddleware("/static/"),
-		server.GzipMiddleware,
-	))
-	mux.Handle("/favicon.ico", server.Chain(
-		staticHandler,
-		server.RecoveryMiddleware(),
-		server.GzipMiddleware,
-	))
+	baseMiddleware := server.NewMiddlewareBuilder().
+		With(server.RecoveryMiddleware())
 
-	mux.Handle("GET /{$}", server.Chain(
-		http.HandlerFunc(h.ShowMain),
-		server.RecoveryMiddleware(),
-	))
+	mux.Handle("/static/", baseMiddleware.
+		With(server.StripPrefixMiddleware("/static/")).
+		With(server.GzipMiddleware).
+		Build(staticHandler))
 
-	mux.Handle("GET /search", server.Chain(
-		http.HandlerFunc(h.HandleSearch),
-		server.RecoveryMiddleware(),
-	))
+	mux.Handle("/favicon.ico", baseMiddleware.
+		With(server.GzipMiddleware).
+		Build(staticHandler))
 
-	mux.Handle("GET /movie/{id}", server.Chain(
-		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("GET /{$}", baseMiddleware.
+		Build(http.HandlerFunc(h.showMain)))
+
+	mux.Handle("GET /search", baseMiddleware.
+		Build(http.HandlerFunc(h.handleSearch)))
+
+	mux.Handle("GET /movie/{id}", baseMiddleware.
+		Build(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			id := r.PathValue("id")
-			h.HandleMovie(id, w, r)
-		}),
-		server.RecoveryMiddleware(),
-	))
+			h.handleMovie(id, w, r)
+		})))
 
-	mux.Handle("GET /tv/{id}", server.Chain(
-		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("GET /tv/{id}", baseMiddleware.
+		Build(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			id := r.PathValue("id")
-			h.HandleTvShow(id, w, r)
-		}),
-		server.RecoveryMiddleware(),
-	))
+			h.handleTvShow(id, w, r)
+		})))
 
-	mux.Handle("/", server.Chain(
-		http.HandlerFunc(h.ShowNotFound),
-		server.RecoveryMiddleware(),
-	))
+	mux.Handle("/", baseMiddleware.
+		Build(http.HandlerFunc(h.showNotFound)))
 }

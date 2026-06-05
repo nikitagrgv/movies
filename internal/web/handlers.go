@@ -23,11 +23,11 @@ func NewHandler(tmpl *template.Template, media *media.Service, watch *watch.Serv
 	return &Handler{tmpl: tmpl, media: media, watch: watch}
 }
 
-func (h *Handler) ShowMain(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) showMain(w http.ResponseWriter, r *http.Request) {
 	h.renderTemplate(w, r, "main", nil)
 }
 
-func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) handleSearch(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("s")
 	searchType := r.URL.Query().Get("type")
 	pageStr := r.URL.Query().Get("p")
@@ -93,7 +93,7 @@ func (h *Handler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	h.renderTemplate(w, r, "search", data)
 }
 
-func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Request) {
+func (h *Handler) handleMovie(idStr string, w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		h.render400(w, r)
@@ -155,7 +155,7 @@ func (h *Handler) HandleMovie(idStr string, w http.ResponseWriter, r *http.Reque
 	h.renderTemplate(w, r, "movie", data)
 }
 
-func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Request) {
+func (h *Handler) handleTvShow(idStr string, w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		h.render400(w, r)
@@ -262,7 +262,7 @@ func (h *Handler) HandleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 	h.renderTemplate(w, r, "tv", data)
 }
 
-func (h *Handler) ShowNotFound(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) showNotFound(w http.ResponseWriter, r *http.Request) {
 	h.render404(w, r)
 }
 
