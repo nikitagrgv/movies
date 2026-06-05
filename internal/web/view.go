@@ -1,4 +1,4 @@
-package http
+package web
 
 type ErrorPageView struct {
 	ErrorCode        int

@@ -13,11 +13,12 @@ import (
 	"syscall"
 	"time"
 
-	deliveryHttp "github.com/nikitagrgv/movies/internal/delivery/http"
 	"github.com/nikitagrgv/movies/internal/media"
 	mediaStub "github.com/nikitagrgv/movies/internal/media/stub"
 	mediaTmdb "github.com/nikitagrgv/movies/internal/media/tmdb"
+	"github.com/nikitagrgv/movies/internal/server"
 	"github.com/nikitagrgv/movies/internal/watch"
+	web "github.com/nikitagrgv/movies/internal/web"
 
 	"github.com/nikitagrgv/movies/internal/config"
 	"github.com/nikitagrgv/movies/internal/media/tmdb"
@@ -35,24 +36,24 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	staticFs, err := fs.Sub(deliveryHttp.Assets, "static")
+	staticFs, err := fs.Sub(web.Assets, "static")
 	if err != nil {
 		log.Fatalf("Error loading static assets: %v", err)
 	}
 
 	staticHandler := http.FileServer(http.FS(staticFs))
 
-	mux.Handle("/static/", deliveryHttp.Chain(
+	mux.Handle("/static/", server.Chain(
 		staticHandler,
-		deliveryHttp.StripPrefix("/static/"),
-		deliveryHttp.GzipMiddleware,
+		server.StripPrefix("/static/"),
+		server.GzipMiddleware,
 	))
-	mux.Handle("/favicon.ico", deliveryHttp.Chain(
+	mux.Handle("/favicon.ico", server.Chain(
 		staticHandler,
-		deliveryHttp.GzipMiddleware,
+		server.GzipMiddleware,
 	))
 
-	tmpl, err := template.ParseFS(deliveryHttp.Assets, "templates/*.html", "templates/partials/*.html")
+	tmpl, err := template.ParseFS(web.Assets, "templates/*.html", "templates/partials/*.html")
 	if err != nil {
 		log.Fatalf("Error loading templates: %v", err)
 	}
@@ -97,31 +98,31 @@ func main() {
 	}
 	watchService := watch.NewService(watchProvider)
 
-	handler := deliveryHttp.NewHandler(tmpl, mediaService, watchService)
+	handler := web.NewHandler(tmpl, mediaService, watchService)
 
-	mux.Handle("GET /{$}", deliveryHttp.Chain(
+	mux.Handle("GET /{$}", server.Chain(
 		http.HandlerFunc(handler.ShowMain),
 	))
 
-	mux.Handle("GET /search", deliveryHttp.Chain(
+	mux.Handle("GET /search", server.Chain(
 		http.HandlerFunc(handler.HandleSearch),
 	))
 
-	mux.Handle("GET /movie/{id}", deliveryHttp.Chain(
+	mux.Handle("GET /movie/{id}", server.Chain(
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			id := r.PathValue("id")
 			handler.HandleMovie(id, w, r)
 		}),
 	))
 
-	mux.Handle("GET /tv/{id}", deliveryHttp.Chain(
+	mux.Handle("GET /tv/{id}", server.Chain(
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			id := r.PathValue("id")
 			handler.HandleTvShow(id, w, r)
 		}),
 	))
 
-	mux.Handle("/", deliveryHttp.Chain(
+	mux.Handle("/", server.Chain(
 		http.HandlerFunc(handler.ShowNotFound),
 	))
 
