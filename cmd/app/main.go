@@ -14,7 +14,8 @@ import (
 	mediaTmdb "github.com/nikitagrgv/movies/internal/media/tmdb"
 	"github.com/nikitagrgv/movies/internal/server"
 	"github.com/nikitagrgv/movies/internal/watch"
-	web "github.com/nikitagrgv/movies/internal/web"
+	"github.com/nikitagrgv/movies/internal/web"
+	"golang.org/x/sync/errgroup"
 
 	"github.com/nikitagrgv/movies/internal/config"
 	"github.com/nikitagrgv/movies/internal/media/tmdb"
@@ -22,8 +23,10 @@ import (
 )
 
 func main() {
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+
+	g, gCtx := errgroup.WithContext(signalCtx)
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -79,8 +82,12 @@ func main() {
 	handler := web.NewHandler(tmpl, mediaService, watchService)
 	handler.RegisterRoutes(mux)
 
-	srv := server.NewServer(cfg.ListenPort, mux)
-	srv.Run(ctx)
+	httpServer := server.NewServer(cfg.ListenPort, mux)
+	g.Go(func() error {
+		return httpServer.Run(gCtx)
+	})
+
+	todo grpc. errgropu!!!!
 
 	log.Println("Server cleanly stopped")
 }
