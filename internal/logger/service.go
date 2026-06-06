@@ -1,8 +1,10 @@
 package logger
 
+import "context"
+
 type VisitRepository interface {
-	Create(CreateVisitRequest) (Visit, error)
-	GetVisits(limit, offset int) ([]Visit, error)
+	Create(ctx context.Context, req CreateVisitRequest) (Visit, error)
+	GetVisits(ctx context.Context, limit, offset int) ([]Visit, error)
 }
 
 type Service struct {
@@ -13,10 +15,11 @@ func NewService(repo VisitRepository) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) CreateVisit(req CreateVisitRequest) (Visit, error) {
-	return s.repo.Create(req)
+func (s *Service) PushVisit(ctx context.Context, req CreateVisitRequest) {
+	// TODO# to workers
+	_, _ = s.repo.Create(ctx, req)
 }
 
-func (s *Service) GetVisits(limit, offset int) ([]Visit, error) {
-	return s.repo.GetVisits(limit, offset)
+func (s *Service) GetVisits(ctx context.Context, limit, offset int) ([]Visit, error) {
+	return s.repo.GetVisits(ctx, limit, offset)
 }

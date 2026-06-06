@@ -6,9 +6,10 @@ import (
 	"net/http"
 
 	"github.com/nikitagrgv/movies/internal/httpsrv"
+	"github.com/nikitagrgv/movies/internal/logger"
 )
 
-func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
+func (h *Handler) RegisterRoutes(mux *http.ServeMux, logger *logger.Service) {
 	staticFs, err := fs.Sub(Assets, "static")
 	if err != nil {
 		log.Fatalf("Error loading static assets: %v", err)
@@ -17,7 +18,8 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	staticHandler := http.FileServer(http.FS(staticFs))
 
 	baseMiddleware := httpsrv.NewMiddlewareBuilder().
-		With(httpsrv.RecoveryMiddleware)
+		With(httpsrv.RecoveryMiddleware).
+		With(LoggerMiddleware(logger))
 
 	mux.Handle("/static/", baseMiddleware.
 		With(httpsrv.StripPrefixMiddleware("/static/")).

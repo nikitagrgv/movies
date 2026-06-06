@@ -105,7 +105,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	handler := web.NewHandler(tmpl, mediaService, watchService)
-	handler.RegisterRoutes(mux)
+	handler.RegisterRoutes(mux, loggerService)
 
 	httpServer := httpsrv.NewServer(cfg.ListenPort, mux)
 	g.Go(func() error {
