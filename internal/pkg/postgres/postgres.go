@@ -15,7 +15,7 @@ type Config struct {
 	ConnMaxLifetime time.Duration
 }
 
-func WithDefault(dsn string) Config {
+func NewConfig(dsn string) Config {
 	return Config{
 		DSN:             dsn,
 		MaxOpenConns:    25,
