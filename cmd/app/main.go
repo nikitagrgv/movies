@@ -30,15 +30,7 @@ func main() {
 		log.Fatalf("Error loading config: %v", err)
 	}
 
-	tmpl, err := template.ParseFS(web.Assets, "templates/*.html", "templates/partials/*.html")
-	if err != nil {
-		log.Fatalf("Error loading templates: %v", err)
-	}
-
-	noImageURL := "/static/noimage.png"
-	tmdbApiURL := "https://api.themoviedb.org/3"
-	tmdbImageURL := "https://image.tmdb.org/t/p"
-
+	const noImageURL = "/static/noimage.png"
 	var mediaService *media.Service
 	if cfg.IsStubUsed(config.MediaStub) {
 		mediaService = media.NewService(
@@ -47,6 +39,9 @@ func main() {
 			noImageURL,
 		)
 	} else {
+		const tmdbApiURL = "https://api.themoviedb.org/3"
+		const tmdbImageURL = "https://image.tmdb.org/t/p"
+
 		client, err := tmdb.NewClient(tmdbApiURL, tmdbImageURL, cfg.TmdbToken)
 		if err != nil {
 			log.Fatalf("Error loading tmdb client: %v", err)
@@ -74,6 +69,11 @@ func main() {
 		log.Fatalf("Error loading watch servers: %v", err)
 	}
 	watchService := watch.NewService(watchProvider)
+
+	tmpl, err := template.ParseFS(web.Assets, "templates/*.html", "templates/partials/*.html")
+	if err != nil {
+		log.Fatalf("Error loading templates: %v", err)
+	}
 
 	mux := http.NewServeMux()
 	handler := web.NewHandler(tmpl, mediaService, watchService)
