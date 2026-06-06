@@ -11,7 +11,7 @@ import (
 )
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux, logger *logger.Service) {
-	const cacheControlTime = time.Hour * 24 * 365 // 1 year
+	const cacheControlTime = time.Hour * 5
 
 	staticFs, err := fs.Sub(Assets, "static")
 	if err != nil {
