@@ -10,11 +10,19 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type DbConfig struct {
+	User     string
+	Password string
+	Db       string
+}
+
 type Config struct {
 	ListenPort   int
 	TmdbToken    string
 	Stubs        []stubType
 	WatchServers []WatchServerConfig
+
+	Db DbConfig
 }
 
 type WatchServersConfig struct {
@@ -44,6 +52,11 @@ func Load() (Config, error) {
 		return Config{}, errors.New("MOVIES_TMDB_TOKEN must be set")
 	}
 
+	db, err := loadDbConfig()
+	if err != nil {
+		return Config{}, err
+	}
+
 	var stubs []stubType
 	stubsStr, ok := os.LookupEnv("MOVIES_STUBS")
 	if ok {
@@ -64,6 +77,7 @@ func Load() (Config, error) {
 		TmdbToken:    tmdbToken,
 		Stubs:        stubs,
 		WatchServers: servers,
+		Db:           db,
 	}, nil
 }
 
@@ -87,4 +101,27 @@ func loadWatchServersConfig() ([]WatchServerConfig, error) {
 		return []WatchServerConfig{}, fmt.Errorf("error parsing watch servers config: %s", err)
 	}
 	return cfg.Servers, nil
+}
+
+func loadDbConfig() (DbConfig, error) {
+	user, ok := os.LookupEnv("POSTGRES_USER")
+	if !ok {
+		return DbConfig{}, errors.New("POSTGRES_USER must be set")
+	}
+
+	password, ok := os.LookupEnv("POSTGRES_PASSWORD")
+	if !ok {
+		return DbConfig{}, errors.New("POSTGRES_PASSWORD must be set")
+	}
+
+	db, ok := os.LookupEnv("POSTGRES_DB")
+	if !ok {
+		return DbConfig{}, errors.New("POSTGRES_DB must be set")
+	}
+
+	return DbConfig{
+		User:     user,
+		Password: password,
+		Db:       db,
+	}, nil
 }
