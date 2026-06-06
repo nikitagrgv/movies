@@ -30,7 +30,7 @@ func (s *Server) Run(ctx context.Context) {
 	go func() {
 		fmt.Printf("Listening on address %s\n", s.httpServer.Addr)
 		if err := s.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("listen error: %s\n", err)
+			log.Printf("listen error: %s\n", err)
 		}
 	}()
 
@@ -41,6 +41,6 @@ func (s *Server) Run(ctx context.Context) {
 	defer cancel()
 
 	if err := s.httpServer.Shutdown(shutdownCtx); err != nil {
-		log.Fatalf("Server forced to shutdown: %v", err)
+		log.Printf("Server forced to shutdown: %v", err)
 	}
 }
