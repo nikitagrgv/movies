@@ -30,7 +30,7 @@
       [
         "-path", "/migrations",
         "-database",
-        "postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_DATABASE}?sslmode=disable",
+        "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable",
         "up"
       ]
 
