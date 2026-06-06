@@ -22,6 +22,8 @@ type Config struct {
 	Stubs        []stubType
 	WatchServers []WatchServerConfig
 
+	GRPCListenPort int
+
 	Db DbConfig
 }
 

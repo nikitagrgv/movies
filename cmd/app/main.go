@@ -9,10 +9,11 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/nikitagrgv/movies/internal/grpc"
+	"github.com/nikitagrgv/movies/internal/httpsrv"
 	"github.com/nikitagrgv/movies/internal/media"
 	mediaStub "github.com/nikitagrgv/movies/internal/media/stub"
 	mediaTmdb "github.com/nikitagrgv/movies/internal/media/tmdb"
-	"github.com/nikitagrgv/movies/internal/server"
 	"github.com/nikitagrgv/movies/internal/watch"
 	"github.com/nikitagrgv/movies/internal/web"
 	"golang.org/x/sync/errgroup"
@@ -82,12 +83,20 @@ func main() {
 	handler := web.NewHandler(tmpl, mediaService, watchService)
 	handler.RegisterRoutes(mux)
 
-	httpServer := server.NewServer(cfg.ListenPort, mux)
+	httpServer := httpsrv.NewServer(cfg.ListenPort, mux)
 	g.Go(func() error {
 		return httpServer.Run(gCtx)
 	})
 
-	todo grpc. errgropu!!!!
+	grpcServer := grpc.NewServer(cfg.GRPCListenPort)
+	g.Go(func() error {
+		return grpcServer.Run(gCtx)
+	})
 
-	log.Println("Server cleanly stopped")
+	err = g.Wait()
+	if err != nil {
+		log.Fatalf("FATAL: %v", err)
+	}
+
+	log.Println("Server stopped")
 }

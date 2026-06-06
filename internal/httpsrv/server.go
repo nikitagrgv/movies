@@ -1,10 +1,11 @@
-package server
+package httpsrv
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -14,7 +15,7 @@ type Server struct {
 
 func NewServer(port int, handler http.Handler) *Server {
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%d", port),
+		Addr:         ":" + strconv.Itoa(port),
 		Handler:      handler,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -28,7 +29,7 @@ func NewServer(port int, handler http.Handler) *Server {
 func (s *Server) Run(ctx context.Context) error {
 	errChan := make(chan error, 1)
 	go func() {
-		fmt.Printf("Listening on address %s\n", s.httpServer.Addr)
+		fmt.Printf("HTTP Listening on address %s\n", s.httpServer.Addr)
 		var ret error
 		if err := s.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			ret = err
@@ -41,14 +42,14 @@ func (s *Server) Run(ctx context.Context) error {
 		return err
 	case <-ctx.Done():
 		fmt.Println("\nShutting down server gracefully...")
+
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		if err := s.httpServer.Shutdown(shutdownCtx); err != nil {
+			return fmt.Errorf("server forced to shutdown: %w", err)
+		}
+
+		return <-errChan
 	}
-
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := s.httpServer.Shutdown(shutdownCtx); err != nil {
-		return fmt.Errorf("server server forced to shutdown: %w", err)
-	}
-
-	return <-errChan
 }

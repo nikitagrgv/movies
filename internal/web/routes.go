@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/nikitagrgv/movies/internal/server"
+	"github.com/nikitagrgv/movies/internal/httpsrv"
 )
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
@@ -16,16 +16,16 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 
 	staticHandler := http.FileServer(http.FS(staticFs))
 
-	baseMiddleware := server.NewMiddlewareBuilder().
-		With(server.RecoveryMiddleware)
+	baseMiddleware := httpsrv.NewMiddlewareBuilder().
+		With(httpsrv.RecoveryMiddleware)
 
 	mux.Handle("/static/", baseMiddleware.
-		With(server.StripPrefixMiddleware("/static/")).
-		With(server.GzipMiddleware).
+		With(httpsrv.StripPrefixMiddleware("/static/")).
+		With(httpsrv.GzipMiddleware).
 		Build(staticHandler))
 
 	mux.Handle("/favicon.ico", baseMiddleware.
-		With(server.GzipMiddleware).
+		With(httpsrv.GzipMiddleware).
 		Build(staticHandler))
 
 	mux.Handle("GET /{$}", baseMiddleware.

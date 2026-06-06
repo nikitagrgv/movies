@@ -1,4 +1,4 @@
-package server
+package httpsrv
 
 import (
 	"log"
