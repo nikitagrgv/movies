@@ -1,9 +1,11 @@
 package httpsrv
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
 
 type Middleware func(http.Handler) http.Handler
@@ -55,4 +57,15 @@ func RecoveryMiddleware(next http.Handler) http.Handler {
 		}()
 		next.ServeHTTP(w, r)
 	})
+}
+
+func CacheControlMiddleware(duration time.Duration) Middleware {
+	ccValue := fmt.Sprintf("public, max-age=%d, immutable", int64(duration.Seconds()))
+
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Cache-Control", ccValue)
+			next.ServeHTTP(w, r)
+		})
+	}
 }

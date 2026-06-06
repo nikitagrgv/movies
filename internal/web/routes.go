@@ -4,12 +4,15 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/nikitagrgv/movies/internal/httpsrv"
 	"github.com/nikitagrgv/movies/internal/logger"
 )
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux, logger *logger.Service) {
+	const cacheControlTime = time.Hour * 24 * 365 // 1 year
+
 	staticFs, err := fs.Sub(Assets, "static")
 	if err != nil {
 		log.Fatalf("Error loading static assets: %v", err)
@@ -21,13 +24,15 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux, logger *logger.Service) {
 		With(httpsrv.RecoveryMiddleware).
 		With(LoggerMiddleware(logger))
 
-	mux.Handle("/static/", baseMiddleware.
+	staticMiddleware := baseMiddleware.
+		With(httpsrv.CacheControlMiddleware(cacheControlTime)).
+		With(httpsrv.GzipMiddleware)
+
+	mux.Handle("GET /static/", staticMiddleware.
 		With(httpsrv.StripPrefixMiddleware("/static/")).
-		With(httpsrv.GzipMiddleware).
 		Build(staticHandler))
 
-	mux.Handle("/favicon.ico", baseMiddleware.
-		With(httpsrv.GzipMiddleware).
+	mux.Handle("GET /favicon.ico", staticMiddleware.
 		Build(staticHandler))
 
 	mux.Handle("GET /{$}", baseMiddleware.
