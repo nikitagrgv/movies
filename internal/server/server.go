@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 )
@@ -26,21 +25,30 @@ func NewServer(port int, handler http.Handler) *Server {
 	}
 }
 
-func (s *Server) Run(ctx context.Context) {
+func (s *Server) Run(ctx context.Context) error {
+	errChan := make(chan error, 1)
 	go func() {
 		fmt.Printf("Listening on address %s\n", s.httpServer.Addr)
+		var ret error
 		if err := s.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Printf("listen error: %s\n", err)
+			ret = err
 		}
+		errChan <- ret
 	}()
 
-	<-ctx.Done()
-	fmt.Println("\nShutting down server gracefully...")
+	select {
+	case err := <-errChan:
+		return err
+	case <-ctx.Done():
+		fmt.Println("\nShutting down server gracefully...")
+	}
 
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := s.httpServer.Shutdown(shutdownCtx); err != nil {
-		log.Printf("Server forced to shutdown: %v", err)
+		return fmt.Errorf("server server forced to shutdown: %w", err)
 	}
+
+	return <-errChan
 }
