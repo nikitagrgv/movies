@@ -15,9 +15,9 @@ func NewService(repo VisitRepository) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) PushVisit(ctx context.Context, req CreateVisitRequest) {
+func (s *Service) PushVisit(req CreateVisitRequest) {
 	// TODO# to workers
-	_, _ = s.repo.Create(ctx, req)
+	_, _ = s.repo.Create(context.TODO(), req)
 }
 
 func (s *Service) GetVisits(ctx context.Context, limit, offset int) ([]Visit, error) {

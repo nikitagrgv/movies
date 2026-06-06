@@ -30,7 +30,7 @@ func LoggerMiddleware(loggerService *logger.Service) httpsrv.Middleware {
 				Duration:    duration,
 				AttemptedAt: start,
 			}
-			loggerService.PushVisit(r.Context(), req)
+			loggerService.PushVisit(req)
 		})
 	}
 }
