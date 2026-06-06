@@ -11,7 +11,8 @@ import (
 type Config struct {
 	DSN             string
 	MaxOpenConns    int32
-	MaxIdleConns    int32
+	MinConns        int32
+	MaxConnIdleTime time.Duration
 	ConnMaxLifetime time.Duration
 }
 
@@ -19,6 +20,8 @@ func NewConfig(dsn string) Config {
 	return Config{
 		DSN:             dsn,
 		MaxOpenConns:    25,
+		MinConns:        5,
+		MaxConnIdleTime: 30 * time.Minute,
 		ConnMaxLifetime: 5 * time.Minute,
 	}
 }
@@ -31,6 +34,12 @@ func Connect(ctx context.Context, cfg Config) (*pgxpool.Pool, error) {
 
 	if cfg.MaxOpenConns > 0 {
 		poolCfg.MaxConns = cfg.MaxOpenConns
+	}
+	if cfg.MinConns > 0 {
+		poolCfg.MinConns = cfg.MinConns
+	}
+	if cfg.MaxConnIdleTime > 0 {
+		poolCfg.MaxConnIdleTime = cfg.MaxConnIdleTime
 	}
 	if cfg.ConnMaxLifetime > 0 {
 		poolCfg.MaxConnLifetime = cfg.ConnMaxLifetime
