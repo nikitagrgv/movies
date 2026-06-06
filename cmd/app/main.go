@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -11,9 +12,11 @@ import (
 
 	"github.com/nikitagrgv/movies/internal/grpc"
 	"github.com/nikitagrgv/movies/internal/httpsrv"
+	postgresLogRepo "github.com/nikitagrgv/movies/internal/logger/postgres"
 	"github.com/nikitagrgv/movies/internal/media"
 	mediaStub "github.com/nikitagrgv/movies/internal/media/stub"
 	mediaTmdb "github.com/nikitagrgv/movies/internal/media/tmdb"
+	"github.com/nikitagrgv/movies/internal/pkg/postgres"
 	"github.com/nikitagrgv/movies/internal/watch"
 	"github.com/nikitagrgv/movies/internal/web"
 	"golang.org/x/sync/errgroup"
@@ -33,6 +36,21 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
 	}
+
+	loggerDbConfig := postgres.NewConfig(fmt.Sprintf("postgres://%s:%s@%s:%d/%s",
+		cfg.Db.User,
+		cfg.Db.Password,
+		cfg.Db.Host,
+		cfg.Db.Port,
+		cfg.Db.Db,
+	))
+	loggerDbPool, err := postgres.Connect(gCtx, loggerDbConfig)
+	if err != nil {
+		log.Fatalf("Error connecting to db: %v", err)
+	}
+	defer loggerDbPool.Close()
+
+	visitRepo := postgresLogRepo.NewVisitRepository(loggerDbPool)
 
 	const noImageURL = "/static/noimage.png"
 	var mediaService *media.Service

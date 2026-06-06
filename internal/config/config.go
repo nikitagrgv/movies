@@ -13,7 +13,9 @@ import (
 type DbConfig struct {
 	User     string
 	Password string
+	Host     string
 	Db       string
+	Port     int
 }
 
 type Config struct {
@@ -116,6 +118,11 @@ func loadDbConfig() (DbConfig, error) {
 		return DbConfig{}, errors.New("POSTGRES_PASSWORD must be set")
 	}
 
+	host, ok := os.LookupEnv("POSTGRES_HOST")
+	if !ok {
+		return DbConfig{}, errors.New("POSTGRES_HOST must be set")
+	}
+
 	db, ok := os.LookupEnv("POSTGRES_DB")
 	if !ok {
 		return DbConfig{}, errors.New("POSTGRES_DB must be set")
@@ -124,6 +131,8 @@ func loadDbConfig() (DbConfig, error) {
 	return DbConfig{
 		User:     user,
 		Password: password,
+		Host:     host,
 		Db:       db,
+		Port:     5432, // TODO: #hardcoded
 	}, nil
 }
