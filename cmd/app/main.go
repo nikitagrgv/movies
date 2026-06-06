@@ -12,6 +12,7 @@ import (
 
 	"github.com/nikitagrgv/movies/internal/grpc"
 	"github.com/nikitagrgv/movies/internal/httpsrv"
+	"github.com/nikitagrgv/movies/internal/logger"
 	postgresLogRepo "github.com/nikitagrgv/movies/internal/logger/postgres"
 	"github.com/nikitagrgv/movies/internal/media"
 	mediaStub "github.com/nikitagrgv/movies/internal/media/stub"
@@ -26,6 +27,17 @@ import (
 	"github.com/nikitagrgv/movies/internal/watch/static"
 )
 
+func makePostgresConfig(cfg config.DbConfig, schema string) postgres.Config {
+	return postgres.NewConfig(fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable&search_path=%s",
+		cfg.User,
+		cfg.Password,
+		cfg.Host,
+		cfg.Port,
+		cfg.Db,
+		schema,
+	))
+}
+
 func main() {
 	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -37,20 +49,14 @@ func main() {
 		log.Fatalf("Error loading config: %v", err)
 	}
 
-	loggerDbConfig := postgres.NewConfig(fmt.Sprintf("postgres://%s:%s@%s:%d/%s",
-		cfg.Db.User,
-		cfg.Db.Password,
-		cfg.Db.Host,
-		cfg.Db.Port,
-		cfg.Db.Db,
-	))
-	loggerDbPool, err := postgres.Connect(gCtx, loggerDbConfig)
+	loggerDbPool, err := postgres.Connect(gCtx, makePostgresConfig(cfg.Db, "logger"))
 	if err != nil {
 		log.Fatalf("Error connecting to db: %v", err)
 	}
 	defer loggerDbPool.Close()
 
 	visitRepo := postgresLogRepo.NewVisitRepository(loggerDbPool)
+	loggerService := logger.NewService(visitRepo)
 
 	const noImageURL = "/static/noimage.png"
 	var mediaService *media.Service

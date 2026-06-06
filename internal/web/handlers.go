@@ -232,7 +232,7 @@ func (h *Handler) handleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 		episodeViews = append(episodeViews, EpisodeView{
 			EpisodeNumber: episodeNumber,
 			Name:          season.Episodes[i].Name,
-			IsAvailable:   true, // TODO# implement
+			IsAvailable:   true, // TODO: #implement
 		})
 	}
 

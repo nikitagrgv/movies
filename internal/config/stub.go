@@ -8,7 +8,8 @@ import (
 type stubType string
 
 const (
-	MediaStub stubType = "media"
+	MediaStub    stubType = "media"
+	LoggerDbStub stubType = "logger" // TODO: #implement. Not used now
 )
 
 func parseStubTypes(s string) ([]stubType, error) {
@@ -22,7 +23,7 @@ func parseStubTypes(s string) ([]stubType, error) {
 		p = strings.TrimSpace(p)
 
 		switch stubType(p) {
-		case MediaStub:
+		case MediaStub, LoggerDbStub:
 			result = append(result, stubType(p))
 		default:
 			return nil, fmt.Errorf("invalid stub type: %s", p)
