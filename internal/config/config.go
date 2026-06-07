@@ -19,12 +19,12 @@ type DbConfig struct {
 }
 
 type Config struct {
-	ListenPort   int
+	ListenPort     int
+	GRPCListenPort int
+
 	TmdbToken    string
 	Stubs        []stubType
 	WatchServers []WatchServerConfig
-
-	GRPCListenPort int
 
 	Db DbConfig
 }
@@ -49,6 +49,16 @@ func Load() (Config, error) {
 	port, err := strconv.Atoi(portStr)
 	if err != nil {
 		return Config{}, errors.New("MOVIES_LISTEN_PORT must be an integer")
+	}
+
+	grpcPortStr, ok := os.LookupEnv("MOVIES_GRPC_LISTEN_PORT")
+	if !ok {
+		return Config{}, errors.New("MOVIES_GRPC_LISTEN_PORT must be set")
+	}
+
+	grpcPort, err := strconv.Atoi(grpcPortStr)
+	if err != nil {
+		return Config{}, errors.New("MOVIES_GRPC_LISTEN_PORT must be an integer")
 	}
 
 	tmdbToken, ok := os.LookupEnv("MOVIES_TMDB_TOKEN")
@@ -77,11 +87,12 @@ func Load() (Config, error) {
 	}
 
 	return Config{
-		ListenPort:   port,
-		TmdbToken:    tmdbToken,
-		Stubs:        stubs,
-		WatchServers: servers,
-		Db:           db,
+		ListenPort:     port,
+		GRPCListenPort: grpcPort,
+		TmdbToken:      tmdbToken,
+		Stubs:          stubs,
+		WatchServers:   servers,
+		Db:             db,
 	}, nil
 }
 

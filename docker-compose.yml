@@ -40,6 +40,7 @@
     restart: unless-stopped
     environment:
       MOVIES_LISTEN_PORT: ${MOVIES_LISTEN_PORT}
+      MOVIES_GRPC_LISTEN_PORT: ${MOVIES_GRPC_LISTEN_PORT}
       MOVIES_TMDB_TOKEN: ${MOVIES_TMDB_TOKEN}
 
       POSTGRES_USER: ${POSTGRES_USER}
@@ -49,6 +50,7 @@
 
     ports:
       - "${MOVIES_LISTEN_PORT}:${MOVIES_LISTEN_PORT}"
+      - "127.0.0.1:${MOVIES_GRPC_LISTEN_PORT}:${MOVIES_GRPC_LISTEN_PORT}"
 
 volumes:
   postgres_data:
