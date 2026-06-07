@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
@@ -118,7 +119,7 @@ func main() {
 	})
 
 	err = g.Wait()
-	if err != nil {
+	if err != nil && !errors.Is(err, context.Canceled) {
 		log.Fatalf("FATAL: %v", err)
 	}
 
