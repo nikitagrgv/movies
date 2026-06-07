@@ -26,7 +26,7 @@ func LoggerMiddleware(loggerService *logger.Service) httpsrv.Middleware {
 
 			req := logger.CreateVisitRequest{
 				IP:          ip,
-				Path:        r.URL.Path,
+				Path:        r.RequestURI,
 				Duration:    duration,
 				AttemptedAt: start,
 			}
