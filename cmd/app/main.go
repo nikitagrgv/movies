@@ -28,17 +28,6 @@ import (
 	"github.com/nikitagrgv/movies/internal/watch/static"
 )
 
-func makePostgresConfig(cfg config.DbConfig, schema string) postgres.Config {
-	return postgres.NewConfig(fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable&search_path=%s",
-		cfg.User,
-		cfg.Password,
-		cfg.Host,
-		cfg.Port,
-		cfg.Db,
-		schema,
-	))
-}
-
 const (
 	cacheVersion = 1 // Increment when static web files changes to invalidate browser caches
 	tmdbApiURL   = "https://api.themoviedb.org/3"
@@ -102,7 +91,7 @@ func main() {
 	}
 	watchService := watch.NewService(watchProvider)
 
-	tmpl, err := template.ParseFS(web.Assets, "templates/*.html", "templates/partials/*.html")
+	tmpl, err := loadTemplates()
 	if err != nil {
 		log.Fatalf("Error loading templates: %v", err)
 	}
@@ -127,4 +116,30 @@ func main() {
 	}
 
 	log.Println("Server stopped")
+}
+
+func loadTemplates() (*template.Template, error) {
+	funcMap := template.FuncMap{
+		"static": func(relPath string) string {
+			return web.ResolveStaticAssetPath(cacheVersion, relPath)
+		},
+	}
+
+	tmpl, err := template.
+		New("").
+		Funcs(funcMap).
+		ParseFS(web.Assets, "templates/*.html", "templates/partials/*.html")
+
+	return tmpl, err
+}
+
+func makePostgresConfig(cfg config.DbConfig, schema string) postgres.Config {
+	return postgres.NewConfig(fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable&search_path=%s",
+		cfg.User,
+		cfg.Password,
+		cfg.Host,
+		cfg.Port,
+		cfg.Db,
+		schema,
+	))
 }
