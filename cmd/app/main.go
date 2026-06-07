@@ -79,7 +79,6 @@ func main() {
 		getter = mediaCache.NewMediaGetter(redisClient, getter)
 
 		var searcher media.Searcher = mediaTmdb.NewMediaSearcher(client)
-		searcher = mediaCache.NewMediaSearcher(redisClient, searcher)
 
 		mediaService = media.NewService(
 			getter,
