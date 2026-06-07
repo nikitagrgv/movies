@@ -28,7 +28,7 @@ import (
 )
 
 const (
-	cacheVersion = 1 // Increment when static web files changes to invalidate browser caches
+	cacheVersion = 2 // Increment when static web files changes to invalidate browser caches
 	tmdbApiURL   = "https://api.themoviedb.org/3"
 	tmdbImageURL = "https://image.tmdb.org/t/p"
 )
