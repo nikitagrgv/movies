@@ -150,12 +150,22 @@ func loadDbConfig() (DbConfig, error) {
 		return DbConfig{}, errors.New("POSTGRES_DB must be set")
 	}
 
+	portStr, ok := os.LookupEnv("POSTGRES_PORT")
+	if !ok {
+		return DbConfig{}, errors.New("POSTGRES_PORT must be set")
+	}
+
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		return DbConfig{}, errors.New("POSTGRES_PORT must be an integer")
+	}
+
 	return DbConfig{
 		User:     user,
 		Password: password,
 		Host:     host,
 		Db:       db,
-		Port:     5432, // TODO: #hardcoded
+		Port:     port,
 	}, nil
 }
 
