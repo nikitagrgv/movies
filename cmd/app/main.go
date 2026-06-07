@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -91,7 +90,7 @@ func main() {
 	}
 	watchService := watch.NewService(watchProvider)
 
-	tmpl, err := loadTemplates()
+	tmpl, err := web.LoadTemplates(cacheVersion)
 	if err != nil {
 		log.Fatalf("Error loading templates: %v", err)
 	}
@@ -116,21 +115,6 @@ func main() {
 	}
 
 	log.Println("Server stopped")
-}
-
-func loadTemplates() (*template.Template, error) {
-	funcMap := template.FuncMap{
-		"static": func(relPath string) string {
-			return web.ResolveStaticAssetPath(cacheVersion, relPath)
-		},
-	}
-
-	tmpl, err := template.
-		New("").
-		Funcs(funcMap).
-		ParseFS(web.Assets, "templates/*.html", "templates/partials/*.html")
-
-	return tmpl, err
 }
 
 func makePostgresConfig(cfg config.DbConfig, schema string) postgres.Config {

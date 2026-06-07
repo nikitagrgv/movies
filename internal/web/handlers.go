@@ -23,6 +23,21 @@ func NewHandler(tmpl *template.Template, media *media.Service, watch *watch.Serv
 	return &Handler{tmpl: tmpl, media: media, watch: watch}
 }
 
+func LoadTemplates(cacheVersion int) (*template.Template, error) {
+	funcMap := template.FuncMap{
+		"static": func(relPath string) string {
+			return ResolveStaticAssetPath(cacheVersion, relPath)
+		},
+	}
+
+	tmpl, err := template.
+		New("").
+		Funcs(funcMap).
+		ParseFS(Assets, "templates/*.html", "templates/partials/*.html")
+
+	return tmpl, err
+}
+
 func (h *Handler) showMain(w http.ResponseWriter, r *http.Request) {
 	h.renderTemplate(w, r, "main", nil)
 }
