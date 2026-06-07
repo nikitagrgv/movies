@@ -18,6 +18,10 @@ type DbConfig struct {
 	Port     int
 }
 
+type RedisConfig struct {
+	URL string
+}
+
 type Config struct {
 	ListenPort     int
 	GRPCListenPort int
@@ -26,7 +30,8 @@ type Config struct {
 	Stubs        []stubType
 	WatchServers []WatchServerConfig
 
-	Db DbConfig
+	Db    DbConfig
+	Redis RedisConfig
 }
 
 type WatchServersConfig struct {
@@ -71,6 +76,11 @@ func Load() (Config, error) {
 		return Config{}, err
 	}
 
+	redis, err := loadRedisConfig()
+	if err != nil {
+		return Config{}, err
+	}
+
 	var stubs []stubType
 	stubsStr, ok := os.LookupEnv("MOVIES_STUBS")
 	if ok {
@@ -93,6 +103,7 @@ func Load() (Config, error) {
 		Stubs:          stubs,
 		WatchServers:   servers,
 		Db:             db,
+		Redis:          redis,
 	}, nil
 }
 
@@ -145,5 +156,16 @@ func loadDbConfig() (DbConfig, error) {
 		Host:     host,
 		Db:       db,
 		Port:     5432, // TODO: #hardcoded
+	}, nil
+}
+
+func loadRedisConfig() (RedisConfig, error) {
+	url, ok := os.LookupEnv("REDIS_URL")
+	if !ok {
+		return RedisConfig{}, errors.New("REDIS_URL must be set")
+	}
+
+	return RedisConfig{
+		URL: url,
 	}, nil
 }

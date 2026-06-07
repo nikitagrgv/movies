@@ -34,6 +34,20 @@
         "up"
       ]
 
+  redis:
+    image: redis:7-alpine
+    container_name: movies_redis
+    command: [
+      "redis-server",
+      "--maxmemory", "500mb",
+      "--maxmemory-policy", "allkeys-lru"
+    ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   movies:
     build: .
     container_name: movies_app
@@ -47,6 +61,14 @@
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_DB: ${POSTGRES_DB}
+
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
     ports:
       - "${MOVIES_LISTEN_PORT}:${MOVIES_LISTEN_PORT}"
