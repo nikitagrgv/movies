@@ -13,9 +13,6 @@ import (
 func (h *Handler) RegisterRoutes(mux *http.ServeMux, logger *logger.Service) {
 	const cacheControlTime = time.Hour * 5
 
-	todo static version middleware
-	todo full path with ?
-
 	staticFs, err := fs.Sub(Assets, "static")
 	if err != nil {
 		log.Fatalf("Error loading static assets: %v", err)
