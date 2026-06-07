@@ -41,7 +41,6 @@ func makePostgresConfig(cfg config.DbConfig, schema string) postgres.Config {
 
 const (
 	cacheVersion = 1 // Increment when static web files changes to invalidate browser caches
-	noImageURL   = "/static/noimage.png"
 	tmdbApiURL   = "https://api.themoviedb.org/3"
 	tmdbImageURL = "https://image.tmdb.org/t/p"
 )
@@ -66,6 +65,7 @@ func main() {
 	visitRepo := postgresLogRepo.NewVisitRepository(loggerDbPool)
 	loggerService := logger.NewService(visitRepo)
 
+	noImageURL := web.ResolveStaticAssetPath(cacheVersion, "noimage.png")
 	var mediaService *media.Service
 	if cfg.IsStubUsed(config.MediaStub) {
 		mediaService = media.NewService(

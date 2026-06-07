@@ -11,6 +11,11 @@ import (
 	"github.com/nikitagrgv/movies/internal/logger"
 )
 
+func ResolveStaticAssetPath(cacheVersion int, relPath string) string {
+	versionedPath := fmt.Sprintf("/static/v%d/%s", cacheVersion, relPath)
+	return versionedPath
+}
+
 func (h *Handler) RegisterRoutes(mux *http.ServeMux, cacheVersion int, logger *logger.Service) {
 	const cacheControlTime = time.Hour * 24 * 365
 
@@ -29,7 +34,7 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux, cacheVersion int, logger *l
 		With(httpsrv.CacheControlMiddleware(cacheControlTime)).
 		With(httpsrv.GzipMiddleware)
 
-	versionedPath := fmt.Sprintf("/static/v%d/", cacheVersion)
+	versionedPath := ResolveStaticAssetPath(cacheVersion, "")
 	mux.Handle("GET "+versionedPath, staticMiddleware.
 		With(httpsrv.StripPrefixMiddleware(versionedPath)).
 		Build(staticHandler))
