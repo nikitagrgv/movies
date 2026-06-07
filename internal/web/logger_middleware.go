@@ -15,18 +15,21 @@ func LoggerMiddleware(loggerService *logger.Service) httpsrv.Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
-			next.ServeHTTP(w, r)
-			duration := time.Since(start)
 
+			path := r.URL.Path
 			ip, err := getUserIP(r)
 			if err != nil {
 				// Record at least something
 				ip = netip.Addr{}
 			}
 
+			next.ServeHTTP(w, r)
+
+			duration := time.Since(start)
+
 			req := logger.CreateVisitRequest{
 				IP:          ip,
-				Path:        r.RequestURI,
+				Path:        path,
 				Duration:    duration,
 				AttemptedAt: start,
 			}
