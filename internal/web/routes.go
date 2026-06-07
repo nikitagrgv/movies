@@ -29,9 +29,9 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux, cacheVersion int, logger *l
 		With(httpsrv.CacheControlMiddleware(cacheControlTime)).
 		With(httpsrv.GzipMiddleware)
 
-	versionatedPath := fmt.Sprintf("/static/v%d/", cacheVersion)
-	mux.Handle("GET "+versionatedPath, staticMiddleware.
-		With(httpsrv.StripPrefixMiddleware(versionatedPath)).
+	versionedPath := fmt.Sprintf("/static/v%d/", cacheVersion)
+	mux.Handle("GET "+versionedPath, staticMiddleware.
+		With(httpsrv.StripPrefixMiddleware(versionedPath)).
 		Build(staticHandler))
 
 	mux.Handle("GET /{$}", baseMiddleware.
