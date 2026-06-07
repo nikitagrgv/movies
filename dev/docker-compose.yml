@@ -1,0 +1,60 @@
+﻿services:
+  postgres:
+    image: postgres:16
+    container_name: movies_db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "127.0.0.1:${POSTGRES_EXPOSED_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    build:
+      context: ../.
+      dockerfile: Dockerfile.migrate
+    container_name: movies_migrate
+    restart: no
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      [
+        "-path", "/migrations",
+        "-database",
+        "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable",
+        "up"
+      ]
+
+  redis:
+    image: redis:7-alpine
+    container_name: movies_redis
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:${REDIS_EXPOSED_PORT}:6379"
+    command: [
+      "redis-server",
+      "--maxmemory", "500mb",
+      "--maxmemory-policy", "allkeys-lru"
+    ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

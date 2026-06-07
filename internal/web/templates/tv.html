@@ -1,0 +1,105 @@
+{{define "tv"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <link rel="icon" href="{{ static `favicon.ico`}} " sizes="any">
+    <link rel="stylesheet" href="{{ static `css/style.css`}} ">
+</head>
+<body>
+
+<div class="container">
+    <a href="/" class="back-link" aria-label="Back to homepage">← Home</a>
+    <div class="movie-detail">
+        <div class="movie-detail__main">
+            <div class="movie-detail__poster">
+                <img src="{{.PosterURL}}" alt="{{.Title}}">
+            </div>
+
+            <div class="movie-detail__info">
+                <h1 class="movie-detail__title">{{.Title}}</h1>
+
+                {{if .ReleaseYear}}
+                <div class="movie-detail__meta">
+                    <span class="movie-detail__date">{{.ReleaseYear}}</span>
+                </div>
+                {{end}}
+
+                {{if .Overview}}
+                <div class="movie-detail__section">
+                    <h2 class="movie-detail__section-title">Overview</h2>
+                    <p class="movie-detail__overview">{{.Overview}}</p>
+                </div>
+                {{end}}
+            </div>
+        </div>
+        {{if .Seasons}}
+        <div class="eps-panel">
+            <div class="ep-rail">
+                <span class="season-rail__label">Seasons</span>
+            </div>
+            <div class="season-rail">
+                <div class="season-pills">
+                    {{range .Seasons}}
+                    <a
+                            class="season-pill {{if eq .SeasonNumber $.CurrentSeason}}is-active{{end}}"
+                            href="/tv/{{$.ID}}?s={{.SeasonNumber}}&e=1&srv={{$.CurrentServer}}"
+                            title="{{.Name}}"
+                    >
+                        S{{.SeasonNumber}}
+                    </a>
+                    {{end}}
+                </div>
+            </div>
+            <div class="ep-rail">
+                <span class="ep-rail__label">Episodes</span>
+            </div>
+            <div class="ep-grid">
+                {{range .Episodes}}
+                <a
+                        href="/tv/{{$.ID}}?s={{$.CurrentSeason}}&e={{.EpisodeNumber}}&srv={{$.CurrentServer}}"
+                        class="ep-tile
+                            {{if eq .EpisodeNumber $.CurrentEpisode}}is-current{{end}}
+                            {{if .IsAvailable}}is-available{{else}}coming{{end}}"
+                        title="{{.Name}}"
+                >
+                    <span class="ep-tile__num">{{.EpisodeNumber}}</span>
+                    <span class="ep-tile__name">{{.Name}}</span>
+                </a>
+                {{end}}
+            </div>
+            {{if .Servers}}
+            <div class="ep-rail">
+                <span class="ep-rail__label">Servers</span>
+            </div>
+            <div class="server-rail">
+                <div class="server-pills">
+                    {{range .Servers}}
+                    <a
+                            class="server-pill {{if eq .ID $.CurrentServer}}is-active{{end}}"
+                            href="/tv/{{$.ID}}?s={{$.CurrentSeason}}&e={{$.CurrentEpisode}}&srv={{.ID}}"
+                            title="{{.Name}}"
+                    >
+                        {{.Name}}
+                    </a>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+        <div class="movie-detail__player">
+            <iframe
+                    src="{{.WatchURL}}"
+                    title="{{.Title}} player"
+                    allowfullscreen
+                    loading="lazy"
+            ></iframe>
+        </div>
+        {{end}}
+    </div>
+</div>
+</body>
+</html>
+{{end}}

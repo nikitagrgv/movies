@@ -1,0 +1,67 @@
+{{define "search-form"}}
+<div class="search-wrapper">
+    <form class="search-form" action="/search" method="GET">
+        <div class="search-type-toggle">
+            <button type="button" class="toggle-segment" data-type="movie">Movies</button>
+            <button type="button" class="toggle-segment" data-type="tv">TV Shows</button>
+        </div>
+        <input
+                type="text"
+                name="s"
+                class="search-input"
+                placeholder="Search Movies..."
+                value="{{.SearchString}}"
+                autocomplete="off"
+        >
+        <input type="hidden" name="type" value="movie">
+        <button type="submit" class="search-button">Search</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleContainer = document.querySelector('.search-type-toggle');
+        const toggleSegments = document.querySelectorAll('.toggle-segment');
+        const searchInput = document.querySelector('.search-input');
+        const typeInput = document.querySelector('input[name="type"]');
+
+        function applyType(type, save) {
+            toggleSegments.forEach(segment => {
+                segment.classList.toggle(
+                    'toggle-segment--active',
+                    segment.dataset.type === type
+                );
+            });
+
+            searchInput.placeholder =
+                type === 'movie'
+                    ? 'Search Movies...'
+                    : 'Search TV Shows...';
+
+            typeInput.value = type;
+            if (save) {
+                localStorage.setItem('searchType', type);
+            }
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const urlType = params.get('type');
+
+        const initialType =
+            urlType === 'movie' || urlType === 'tv'
+                ? urlType
+                : localStorage.getItem('searchType') || 'movie';
+
+        applyType(initialType, false);
+
+        toggleContainer.addEventListener('click', function (e) {
+            const clickedSegment = e.target.closest('.toggle-segment');
+            if (!clickedSegment) {
+                return;
+            }
+
+            applyType(clickedSegment.dataset.type, true);
+        });
+    });
+</script>
+{{end}}

@@ -1,0 +1,74 @@
+{{define "search"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search results: {{.SearchString}}</title>
+    <link rel="icon" href="{{ static `favicon.ico`}} " sizes="any">
+    <link rel="stylesheet" href="{{ static `css/style.css`}} ">
+</head>
+<body>
+
+<div class="container">
+    <div class="search-header">
+        <a href="/" class="back-link" aria-label="Back to homepage">← Home</a>
+        {{template "search-form" .}}
+    </div>
+
+    <h1 class="results-heading">
+        Results for "{{.SearchString}}"
+        <span class="results-range">{{.CurrentPage}} of {{.TotalPages}}</span>
+    </h1>
+
+    {{if .Items}}
+    <div class="movies-grid">
+        {{range .Items}}
+        <article class="movie-card">
+            <a class="movie-card-link" href="/{{$.MediaType}}/{{.ID}}" aria-label="{{.Title}}"></a>
+            <img class="movie-poster" src="{{.PosterURL}}" alt="{{.Title}}" loading="lazy">
+            <div class="movie-info">
+                <h2 class="movie-title">
+                    <a href="/{{$.MediaType}}/{{.ID}}">{{.Title}}</a>
+                </h2>
+                {{if .Overview}}
+                <p class="movie-overview">{{.Overview}}</p>
+                {{end}}
+                {{if .ReleaseYear}}
+                <div class="movie-meta">
+                    <span class="movie-date">{{.ReleaseYear}}</span>
+                </div>
+                {{end}}
+            </div>
+        </article>
+        {{end}}
+    </div>
+    {{else}}
+    <div class="empty-state">
+        <p class="empty-text">No movies found.</p>
+    </div>
+    {{end}}
+
+    {{if gt .TotalPages 1}}
+    <nav class="pagination" aria-label="Pagination">
+        {{if gt .CurrentPage 1}}
+        <a class="page-btn page-btn--prev" href="/search?s={{.SearchString}}&type={{.MediaType}}&p={{.PrevPage}}">←
+            Prev</a>
+        {{else}}
+        <span class="page-btn page-btn--disabled">← Prev</span>
+        {{end}}
+
+        <span class="page-indicator">Page {{.CurrentPage}} of {{.TotalPages}}</span>
+
+        {{if lt .CurrentPage .TotalPages}}
+        <a class="page-btn page-btn--next" href="/search?s={{.SearchString}}&type={{.MediaType}}&p={{.NextPage}}">Next
+            →</a>
+        {{else}}
+        <span class="page-btn page-btn--disabled">Next →</span>
+        {{end}}
+    </nav>
+    {{end}}
+</div>
+
+</body>
+</html>
+{{end}}
