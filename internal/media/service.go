@@ -10,24 +10,24 @@ type SearchResult struct {
 	TotalPages  int
 }
 
-type searcher interface {
+type Searcher interface {
 	SearchMovies(ctx context.Context, query string, page int) (SearchResult, error)
 	SearchTvShows(ctx context.Context, query string, page int) (SearchResult, error)
 }
 
-type getter interface {
+type Getter interface {
 	GetMovie(ctx context.Context, id int) (Movie, error)
 	GetTvShow(ctx context.Context, id int) (TvShow, error)
 	GetTvShowSeason(ctx context.Context, id, season int) (Season, error)
 }
 
 type Service struct {
-	getter     getter
-	searcher   searcher
+	getter     Getter
+	searcher   Searcher
 	noImageURL string
 }
 
-func NewService(getter getter, searcher searcher, noImageURL string) *Service {
+func NewService(getter Getter, searcher Searcher, noImageURL string) *Service {
 	return &Service{getter: getter, searcher: searcher, noImageURL: noImageURL}
 }
 

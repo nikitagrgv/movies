@@ -15,8 +15,10 @@ import (
 	"github.com/nikitagrgv/movies/internal/logger"
 	postgresLogRepo "github.com/nikitagrgv/movies/internal/logger/postgres"
 	"github.com/nikitagrgv/movies/internal/media"
+	mediaCache "github.com/nikitagrgv/movies/internal/media/cached"
 	mediaStub "github.com/nikitagrgv/movies/internal/media/stub"
 	mediaTmdb "github.com/nikitagrgv/movies/internal/media/tmdb"
+	"github.com/nikitagrgv/movies/internal/pkg/cache"
 	"github.com/nikitagrgv/movies/internal/pkg/postgres"
 	"github.com/nikitagrgv/movies/internal/watch"
 	"github.com/nikitagrgv/movies/internal/web"
@@ -53,6 +55,12 @@ func main() {
 	visitRepo := postgresLogRepo.NewVisitRepository(loggerDbPool)
 	loggerService := logger.NewService(visitRepo)
 
+	redisClient, err := cache.NewRedisClient(cfg.Redis.URL, "", 0)
+	if err != nil {
+		log.Fatalf("Error connecting to redis: %v", err)
+	}
+	defer redisClient.Close()
+
 	noImageURL := web.ResolveStaticAssetPath(cacheVersion, "noimage.png")
 	var mediaService *media.Service
 	if cfg.IsStubUsed(config.MediaStub) {
@@ -67,9 +75,15 @@ func main() {
 			log.Fatalf("Error loading tmdb client: %v", err)
 		}
 
+		var getter media.Getter = mediaTmdb.NewMediaGetter(client)
+		getter = mediaCache.NewMediaGetter(redisClient, getter)
+
+		var searcher media.Searcher = mediaTmdb.NewMediaSearcher(client)
+		searcher = mediaCache.NewMediaSearcher(redisClient, searcher)
+
 		mediaService = media.NewService(
-			mediaTmdb.NewMediaGetter(client),
-			mediaTmdb.NewMediaSearcher(client),
+			getter,
+			searcher,
 			noImageURL,
 		)
 	}
