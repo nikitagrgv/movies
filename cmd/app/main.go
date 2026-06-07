@@ -55,7 +55,7 @@ func main() {
 	visitRepo := postgresLogRepo.NewVisitRepository(loggerDbPool)
 	loggerService := logger.NewService(visitRepo)
 
-	redisClient, err := cache.NewRedisClient(cfg.Redis.URL, "", 0)
+	redisClient, err := cache.NewRedisClient(cfg.Redis.URL)
 	if err != nil {
 		log.Fatalf("Error connecting to redis: %v", err)
 	}
