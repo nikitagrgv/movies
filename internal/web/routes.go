@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"io/fs"
 	"log"
 	"net/http"
@@ -10,8 +11,8 @@ import (
 	"github.com/nikitagrgv/movies/internal/logger"
 )
 
-func (h *Handler) RegisterRoutes(mux *http.ServeMux, logger *logger.Service) {
-	const cacheControlTime = time.Hour * 5
+func (h *Handler) RegisterRoutes(mux *http.ServeMux, cacheVersion int, logger *logger.Service) {
+	const cacheControlTime = time.Hour * 24 * 365
 
 	staticFs, err := fs.Sub(Assets, "static")
 	if err != nil {
@@ -28,11 +29,9 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux, logger *logger.Service) {
 		With(httpsrv.CacheControlMiddleware(cacheControlTime)).
 		With(httpsrv.GzipMiddleware)
 
-	mux.Handle("GET /static/", staticMiddleware.
-		With(httpsrv.StripPrefixMiddleware("/static/")).
-		Build(staticHandler))
-
-	mux.Handle("GET /favicon.ico", staticMiddleware.
+	versionatedPath := fmt.Sprintf("/static/v%d/", cacheVersion)
+	mux.Handle("GET "+versionatedPath, staticMiddleware.
+		With(httpsrv.StripPrefixMiddleware(versionatedPath)).
 		Build(staticHandler))
 
 	mux.Handle("GET /{$}", baseMiddleware.

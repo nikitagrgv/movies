@@ -39,6 +39,13 @@ func makePostgresConfig(cfg config.DbConfig, schema string) postgres.Config {
 	))
 }
 
+const (
+	cacheVersion = 1 // Increment when static web files changes to invalidate browser caches
+	noImageURL   = "/static/noimage.png"
+	tmdbApiURL   = "https://api.themoviedb.org/3"
+	tmdbImageURL = "https://image.tmdb.org/t/p"
+)
+
 func main() {
 	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -59,7 +66,6 @@ func main() {
 	visitRepo := postgresLogRepo.NewVisitRepository(loggerDbPool)
 	loggerService := logger.NewService(visitRepo)
 
-	const noImageURL = "/static/noimage.png"
 	var mediaService *media.Service
 	if cfg.IsStubUsed(config.MediaStub) {
 		mediaService = media.NewService(
@@ -68,9 +74,6 @@ func main() {
 			noImageURL,
 		)
 	} else {
-		const tmdbApiURL = "https://api.themoviedb.org/3"
-		const tmdbImageURL = "https://image.tmdb.org/t/p"
-
 		client, err := tmdb.NewClient(tmdbApiURL, tmdbImageURL, cfg.TmdbToken)
 		if err != nil {
 			log.Fatalf("Error loading tmdb client: %v", err)
@@ -106,7 +109,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	handler := web.NewHandler(tmpl, mediaService, watchService)
-	handler.RegisterRoutes(mux, loggerService)
+	handler.RegisterRoutes(mux, cacheVersion, loggerService)
 
 	httpServer := httpsrv.NewServer(cfg.ListenPort, mux)
 	g.Go(func() error {
