@@ -8,12 +8,13 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func NewRedisClient(addr, password string, db int) (*redis.Client, error) {
-	client := redis.NewClient(&redis.Options{
-		Addr:     addr,
-		Password: password,
-		DB:       db,
-	})
+func NewRedisClient(addr string) (*redis.Client, error) {
+	opt, err := redis.ParseURL(addr)
+	if err != nil {
+		return nil, err
+	}
+
+	client := redis.NewClient(opt)
 
 	if err := client.Ping(context.TODO()).Err(); err != nil {
 		_ = client.Close()
