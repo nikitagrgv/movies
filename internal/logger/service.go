@@ -16,7 +16,7 @@ func NewService(repo VisitRepository) *Service {
 }
 
 func (s *Service) PushVisit(req CreateVisitRequest) {
-	// TODO# to workers
+	// TODO# to workers queue
 	_, _ = s.repo.Create(context.TODO(), req)
 }
 
