@@ -1,7 +1,7 @@
 ﻿services:
   postgres:
     image: postgres:16
-    container_name: movies_db
+    container_name: dev_movies_db
     restart: unless-stopped
     env_file:
       - .env
@@ -23,7 +23,7 @@
     build:
       context: ../.
       dockerfile: Dockerfile.migrate
-    container_name: movies_migrate
+    container_name: dev_movies_migrate
     restart: no
     env_file:
       - .env
@@ -40,7 +40,7 @@
 
   redis:
     image: redis:7-alpine
-    container_name: movies_redis
+    container_name: dev_movies_redis
     env_file:
       - .env
     ports:
