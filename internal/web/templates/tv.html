@@ -7,6 +7,21 @@
     <title>{{.Title}}</title>
     <link rel="icon" href="{{ static `favicon.ico`}} " sizes="any">
     <link rel="stylesheet" href="{{ static `css/style.css`}} ">
+
+    <script>
+        window.pageData = {
+            id: "{{$.ID}}",
+            type: "movie",
+            title: "{{$.Title}}",
+            poster: "{{$.PosterURL}}",
+            server: "{{$.CurrentServer}}",
+            season: "{{$.CurrentSeason}}",
+            episode: "{{$.CurrentEpisode}}"
+        }
+    </script>
+
+    <script src="{{static `js/storage.js`}}" defer></script>
+    <script src="{{static `js/tv-page.js`}}" defer></script>
 </head>
 <body>
 
