@@ -63,7 +63,7 @@
                         class="ep-tile
                             {{if eq .EpisodeNumber $.CurrentEpisode}}is-current{{end}}
                             {{if .IsAvailable}}is-available{{else}}coming{{end}}"
-                        title="{{.Name}}"
+                        title="{{.Name}}&#10;Release Date: {{.Date}}"
                 >
                     <span class="ep-tile__num">{{.EpisodeNumber}}</span>
                     <span class="ep-tile__name">{{.Name}}</span>

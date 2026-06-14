@@ -46,6 +46,7 @@ type MovieView struct {
 type EpisodeView struct {
 	EpisodeNumber int
 	Name          string
+	Date          string
 	IsAvailable   bool
 }
 

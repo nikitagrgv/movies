@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strconv"
+	"time"
 
 	"github.com/nikitagrgv/movies/internal/media"
 )
@@ -46,10 +47,11 @@ func (g MediaGetter) GetTvShowSeason(ctx context.Context, id, season int) (media
 		return media.Season{}, errors.New("season number must be between 0 and 1")
 	}
 
+	date, _ := time.Parse("01 02 2006", "01 02 2006")
 	episodes := []media.Episode{
-		{EpisodeNumber: 1, SeasonNumber: season, Name: "First Episode"},
-		{EpisodeNumber: 2, SeasonNumber: season, Name: "Second Episode"},
-		{EpisodeNumber: 3, SeasonNumber: season, Name: "Third Episode"},
+		{EpisodeNumber: 1, SeasonNumber: season, Name: "First Episode", Date: date},
+		{EpisodeNumber: 2, SeasonNumber: season, Name: "Second Episode", Date: date.Add(time.Hour * 24 * 10)},
+		{EpisodeNumber: 3, SeasonNumber: season, Name: "Third Episode", Date: date.Add(time.Hour * 24 * 10)},
 	}
 
 	return media.Season{

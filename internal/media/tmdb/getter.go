@@ -3,6 +3,7 @@ package tmdb
 import (
 	"context"
 	"strconv"
+	"time"
 
 	"github.com/nikitagrgv/movies/internal/media"
 )
@@ -80,10 +81,15 @@ func (g *MediaGetter) GetTvShowSeason(ctx context.Context, id int, seasonNumber 
 
 	var episodes []media.Episode
 	for _, rawEpisode := range raw.Episodes {
+		date, err := time.Parse("2006-01-02", rawEpisode.AirDate)
+		if err != nil {
+			date = time.Time{}
+		}
 		episode := media.Episode{
 			EpisodeNumber: rawEpisode.EpisodeNumber,
 			SeasonNumber:  seasonNumber,
 			Name:          rawEpisode.Name,
+			Date:          date,
 		}
 		episodes = append(episodes, episode)
 	}
