@@ -16,9 +16,15 @@ function addLastVisited(mediaItem) {
 
     history.unshift(mediaItem);
 
-    if (history.length > 5) {
-        history.pop();
+    if (history.length > 20) {
+        history.length = 20;
     }
 
+    saveHistory(history);
+}
+
+function removeLastVisited(id) {
+    let history = getHistory();
+    history = history.filter(item => String(item.id) !== String(id));
     saveHistory(history);
 }

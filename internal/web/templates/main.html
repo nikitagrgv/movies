@@ -12,12 +12,18 @@
 </head>
 <body>
 
-{{template "search-form" .}}
+<div class="main-page">
+    {{template "search-form" .}}
 
-<section class="recent-section" hidden>
-    <h2 class="results-heading">Continue watching</h2>
-    <div id="recent-watched" class="movies-grid"></div>
-</section>
+    <section class="recent-section" hidden>
+        <h2 class="results-heading">Continue watching</h2>
+        <div class="recent-carousel">
+            <button class="recent-nav recent-nav--prev" type="button" aria-label="Scroll left" hidden>‹</button>
+            <div id="recent-watched" class="recent-track"></div>
+            <button class="recent-nav recent-nav--next" type="button" aria-label="Scroll right" hidden>›</button>
+        </div>
+    </section>
+</div>
 
 </body>
 </html>
