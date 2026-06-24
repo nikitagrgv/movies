@@ -30,8 +30,8 @@ import (
 )
 
 const (
-	cacheVersion    = 2 // Increment when static web files changes to invalidate browser caches
-	staticFilesHash = "a696737ccbd1ee5325c118b119e13a416b390f1e0bb2b34ad0822da271b9c66f"
+	cacheVersion    = 4 // Increment when static web files changes to invalidate browser caches
+	staticFilesHash = "2cd95a6ddd1bf66f41be4881688226ccd441f60913da88a74b08102beb50e7cd"
 
 	tmdbApiURL   = "https://api.themoviedb.org/3"
 	tmdbImageURL = "https://image.tmdb.org/t/p"
