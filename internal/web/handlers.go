@@ -23,10 +23,10 @@ func NewHandler(tmpl *template.Template, media *media.Service, watch *watch.Serv
 	return &Handler{tmpl: tmpl, media: media, watch: watch}
 }
 
-func LoadTemplates(cacheVersion int) (*template.Template, error) {
+func LoadTemplates(cacheHash string) (*template.Template, error) {
 	funcMap := template.FuncMap{
 		"static": func(relPath string) string {
-			return ResolveStaticAssetPath(cacheVersion, relPath)
+			return ResolveStaticAssetPath(cacheHash, relPath)
 		},
 	}
 

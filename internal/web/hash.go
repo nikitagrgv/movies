@@ -40,5 +40,6 @@ func GetStaticFilesHash() (string, error) {
 		h.Write([]byte{0})
 	}
 
-	return hex.EncodeToString(h.Sum(nil)), nil
+	fullStr := hex.EncodeToString(h.Sum(nil))
+	return fullStr[:12], nil
 }
