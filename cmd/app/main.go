@@ -30,22 +30,17 @@ import (
 )
 
 const (
-	cacheVersion    = 4 // Increment when static web files changes to invalidate browser caches
-	staticFilesHash = "2cd95a6ddd1bf66f41be4881688226ccd441f60913da88a74b08102beb50e7cd"
-
 	tmdbApiURL   = "https://api.themoviedb.org/3"
 	tmdbImageURL = "https://image.tmdb.org/t/p"
 )
 
 func main() {
-	staticHash, err := web.GetStaticFilesHash()
+	staticFilesHash, err := web.GetStaticFilesHash()
 	if err != nil {
 		log.Fatalf("Failed to get static files hash: %v", err)
 	}
 
-	if staticHash != staticFilesHash {
-		log.Fatalf("Static files hash does not match. Current hash: %s", staticHash)
-	}
+	log.Printf("Static files hash: %s", staticFilesHash)
 
 	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -72,7 +67,7 @@ func main() {
 	}
 	defer redisClient.Close()
 
-	noImageURL := web.ResolveStaticAssetPath(cacheVersion, "noimage.png")
+	noImageURL := web.ResolveStaticAssetPath(staticFilesHash, "noimage.png")
 	var mediaService *media.Service
 	if cfg.IsStubUsed(config.MediaStub) {
 		mediaService = media.NewService(
@@ -114,14 +109,14 @@ func main() {
 	}
 	watchService := watch.NewService(watchProvider)
 
-	tmpl, err := web.LoadTemplates(cacheVersion)
+	tmpl, err := web.LoadTemplates(staticFilesHash)
 	if err != nil {
 		log.Fatalf("Error loading templates: %v", err)
 	}
 
 	mux := http.NewServeMux()
 	handler := web.NewHandler(tmpl, mediaService, watchService)
-	handler.RegisterRoutes(mux, cacheVersion, loggerService)
+	handler.RegisterRoutes(mux, staticFilesHash, loggerService)
 
 	httpServer := httpsrv.NewServer(cfg.ListenPort, mux)
 	g.Go(func() error {
