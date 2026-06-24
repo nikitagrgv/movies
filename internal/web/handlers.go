@@ -244,9 +244,16 @@ func (h *Handler) handleTvShow(idStr string, w http.ResponseWriter, r *http.Requ
 	var episodeViews []EpisodeView
 	for i := range len(season.Episodes) {
 		episodeNumber := i + 1
+		var date string
+		if season.Episodes[i].Date.IsZero() {
+			date = "Unknown"
+		} else {
+			date = season.Episodes[i].Date.Format("January 2, 2006")
+		}
 		episodeViews = append(episodeViews, EpisodeView{
 			EpisodeNumber: episodeNumber,
 			Name:          season.Episodes[i].Name,
+			Date:          date,
 			IsAvailable:   true, // TODO: #implement
 		})
 	}

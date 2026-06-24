@@ -46,5 +46,6 @@ type GetSeasonResponse struct {
 	Episodes []struct {
 		Name          string `json:"name"`
 		EpisodeNumber int    `json:"episode_number"`
+		AirDate       string `json:"air_date"`
 	} `json:"episodes"`
 }

@@ -2,6 +2,7 @@ package media
 
 import (
 	"errors"
+	"time"
 )
 
 var ErrInvalidMediaType = errors.New("invalid media type")
@@ -43,6 +44,7 @@ type Episode struct {
 	EpisodeNumber int
 	SeasonNumber  int
 	Name          string
+	Date          time.Time
 }
 
 type Season struct {

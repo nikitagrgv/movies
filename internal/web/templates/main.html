@@ -4,12 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Movies</title>
-    <link rel="icon" href="{{ static `favicon.ico`}} " sizes="any">
-    <link rel="stylesheet" href="{{ static `css/style.css`}} ">
+    <link rel="icon" href="{{ static `favicon.ico`}}" sizes="any">
+    <link rel="stylesheet" href="{{ static `css/style.css`}}">
+
+    <script src="{{static `js/storage.js`}}" defer></script>
+    <script src="{{static `js/main-page.js`}}" defer></script>
 </head>
 <body>
 
-{{template "search-form" .}}
+<div class="main-page">
+    {{template "search-form" .}}
+
+    <section class="recent-section" hidden>
+        <h2 class="results-heading">Continue watching</h2>
+        <div class="recent-carousel">
+            <button class="recent-nav recent-nav--prev" type="button" aria-label="Scroll left" hidden>‹</button>
+            <div id="recent-watched" class="recent-track"></div>
+            <button class="recent-nav recent-nav--next" type="button" aria-label="Scroll right" hidden>›</button>
+        </div>
+    </section>
+</div>
 
 </body>
 </html>

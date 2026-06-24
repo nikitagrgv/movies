@@ -5,8 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}}</title>
-    <link rel="icon" href="{{ static `favicon.ico`}} " sizes="any">
-    <link rel="stylesheet" href="{{ static `css/style.css`}} ">
+    <link rel="icon" href="{{ static `favicon.ico`}}" sizes="any">
+    <link rel="stylesheet" href="{{ static `css/style.css`}}">
+
+    <script>
+        window.pageData = {
+            id: "{{$.ID}}",
+            type: "movie",
+            title: "{{$.Title}}",
+            poster: "{{$.PosterURL}}",
+            server: "{{$.CurrentServer}}",
+        }
+    </script>
+
+    <script src="{{static `js/storage.js`}}" defer></script>
+    <script src="{{static `js/movie-page.js`}}" defer></script>
 </head>
 <body>
 

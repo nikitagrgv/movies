@@ -5,8 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}}</title>
-    <link rel="icon" href="{{ static `favicon.ico`}} " sizes="any">
-    <link rel="stylesheet" href="{{ static `css/style.css`}} ">
+    <link rel="icon" href="{{ static `favicon.ico`}}" sizes="any">
+    <link rel="stylesheet" href="{{ static `css/style.css`}}">
+
+    <script>
+        window.pageData = {
+            id: "{{$.ID}}",
+            type: "tv",
+            title: "{{$.Title}}",
+            poster: "{{$.PosterURL}}",
+            server: "{{$.CurrentServer}}",
+            season: "{{$.CurrentSeason}}",
+            episode: "{{$.CurrentEpisode}}"
+        }
+    </script>
+
+    <script src="{{static `js/storage.js`}}" defer></script>
+    <script src="{{static `js/tv-page.js`}}" defer></script>
 </head>
 <body>
 
@@ -63,7 +78,7 @@
                         class="ep-tile
                             {{if eq .EpisodeNumber $.CurrentEpisode}}is-current{{end}}
                             {{if .IsAvailable}}is-available{{else}}coming{{end}}"
-                        title="{{.Name}}"
+                        title="{{.Name}}&#10;Release Date: {{.Date}}"
                 >
                     <span class="ep-tile__num">{{.EpisodeNumber}}</span>
                     <span class="ep-tile__name">{{.Name}}</span>

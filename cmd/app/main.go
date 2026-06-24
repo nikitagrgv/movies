@@ -30,12 +30,23 @@ import (
 )
 
 const (
-	cacheVersion = 2 // Increment when static web files changes to invalidate browser caches
+	cacheVersion    = 4 // Increment when static web files changes to invalidate browser caches
+	staticFilesHash = "2cd95a6ddd1bf66f41be4881688226ccd441f60913da88a74b08102beb50e7cd"
+
 	tmdbApiURL   = "https://api.themoviedb.org/3"
 	tmdbImageURL = "https://image.tmdb.org/t/p"
 )
 
 func main() {
+	staticHash, err := web.GetStaticFilesHash()
+	if err != nil {
+		log.Fatalf("Failed to get static files hash: %v", err)
+	}
+
+	if staticHash != staticFilesHash {
+		log.Fatalf("Static files hash does not match. Current hash: %s", staticHash)
+	}
+
 	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
