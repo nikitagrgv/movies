@@ -658,6 +658,33 @@ body:has(.error-container) {
     }
 }
 
+@media (max-width: 560px) {
+    .search-form {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+
+    .search-type-toggle {
+        width: 100%;
+    }
+
+    .toggle-segment {
+        flex: 1;
+        text-align: center;
+    }
+
+    .search-input {
+        width: 100%;
+        flex-basis: 100%;
+        padding: 8px 4px;
+    }
+
+    .search-button {
+        flex: 1;
+    }
+}
+
 @media (max-width: 480px) {
     .container {
         padding: 16px 12px 40px;
@@ -665,6 +692,12 @@ body:has(.error-container) {
 
     .results-heading {
         font-size: 18px;
+    }
+
+    .results-range {
+        display: block;
+        margin-left: 0;
+        margin-top: 4px;
     }
 
     .movie-card {
@@ -695,6 +728,11 @@ body:has(.error-container) {
     .page-indicator {
         padding: 8px 14px;
         font-size: 13px;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        gap: 10px;
     }
 }
 

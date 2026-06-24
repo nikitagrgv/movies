@@ -40,7 +40,7 @@ func main() {
 		log.Fatalf("Failed to get static files hash: %v", err)
 	}
 
-	log.Printf("Static files hash: %s", staticFilesHash)
+	fmt.Printf("Static files hash: %s", staticFilesHash)
 
 	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
