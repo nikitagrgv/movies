@@ -1,9 +1,15 @@
 .git
 bin
+obj
 tmp
+dist
 node_modules
-*.log
+dev
+
 Dockerfile
 docker-compose.yml
-dev
+
+*.log
+
 .env*
+!.env.example
